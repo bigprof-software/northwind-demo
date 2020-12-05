@@ -1,0 +1,16 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the employees_init() hook (in hooks/employees.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="employees-Photo-<%%VALUE(EmployeeID)%%>" class="employees-Photo"><a href="<%%TRANSLATION(ImageFolder)%%><%%VALUE(Photo)%%>" data-lightbox="employees-Photo"><img src="thumbnail.php?i=<%%VALUE(Photo)%%>&t=employees&f=Photo&v=tv" class="img-thumbnail"></a></td>
+		<td id="employees-LastName-<%%VALUE(EmployeeID)%%>" class="employees-LastName"><%%SELECT%%><%%VALUE(LastName)%%><%%ENDSELECT%%></td>
+		<td id="employees-FirstName-<%%VALUE(EmployeeID)%%>" class="employees-FirstName"><%%VALUE(FirstName)%%></td>
+		<td id="employees-Title-<%%VALUE(EmployeeID)%%>" class="employees-Title"><%%VALUE(Title)%%></td>
+		<td id="employees-Age-<%%VALUE(EmployeeID)%%>" class="employees-Age text-right"><%%SELECT%%><%%VALUE(Age)%%><%%ENDSELECT%%></td>
+		<td id="employees-HireDate-<%%VALUE(EmployeeID)%%>" class="employees-HireDate"><%%VALUE(HireDate)%%></td>
+		<td id="employees-Country-<%%VALUE(EmployeeID)%%>" class="employees-Country"><%%VALUE(Country)%%></td>
+		<td id="employees-ReportsTo-<%%VALUE(EmployeeID)%%>" class="employees-ReportsTo"><%%VALUE(ReportsTo)%%></td>
+		<td id="employees-TotalSales-<%%VALUE(EmployeeID)%%>" class="employees-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>

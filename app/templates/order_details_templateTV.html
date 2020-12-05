@@ -1,0 +1,14 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the order_details_init() hook (in hooks/order_details.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="order_details-OrderID-<%%VALUE(odID)%%>" class="order_details-OrderID text-right"><%%SELECT%%><%%VALUE(OrderID)%%><%%ENDSELECT%%></td>
+		<td id="order_details-ProductID-<%%VALUE(odID)%%>" class="order_details-ProductID"><%%SELECT%%><%%VALUE(ProductID)%%><%%ENDSELECT%%></td>
+		<td id="order_details-Category-<%%VALUE(odID)%%>" class="order_details-Category"><%%SELECT%%><%%VALUE(Category)%%><%%ENDSELECT%%></td>
+		<td id="order_details-UnitPrice-<%%VALUE(odID)%%>" class="order_details-UnitPrice text-right"><%%SELECT%%><%%VALUE(UnitPrice)%%><%%ENDSELECT%%></td>
+		<td id="order_details-Quantity-<%%VALUE(odID)%%>" class="order_details-Quantity text-right"><%%SELECT%%><%%VALUE(Quantity)%%><%%ENDSELECT%%></td>
+		<td id="order_details-Discount-<%%VALUE(odID)%%>" class="order_details-Discount text-right"><%%SELECT%%><%%VALUE(Discount)%%><%%ENDSELECT%%></td>
+		<td id="order_details-Subtotal-<%%VALUE(odID)%%>" class="order_details-Subtotal text-right"><%%SELECT%%><%%VALUE(Subtotal)%%><%%ENDSELECT%%></td>

@@ -1,0 +1,3 @@
+<FilesMatch "\.(csv)$">
+    Order allow,deny
+</FilesMatch>

@@ -1,0 +1,131 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<div class="btn-group">
+			<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-primary"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>
+			<button type="submit" id="back" title="<%%TRANSLATION(Cancel Printing)%%>" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<!-- Field: Supplier ID -->
+		<div class="form-group suppliers-SupplierID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Supplier ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(SupplierID)%%></div>
+			</div>
+		</div>
+		<!-- Field: Company Name -->
+		<div class="form-group suppliers-CompanyName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Company Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(CompanyName)%%></div>
+			</div>
+		</div>
+		<!-- Field: Contact Name -->
+		<div class="form-group suppliers-ContactName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Contact Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(ContactName)%%></div>
+			</div>
+		</div>
+		<!-- Field: Contact Title -->
+		<div class="form-group suppliers-ContactTitle" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Contact Title</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(ContactTitle)%%></div>
+			</div>
+		</div>
+		<!-- Field: Address -->
+		<div class="form-group suppliers-Address" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Address</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Address)%%></div>
+			</div>
+		</div>
+		<!-- Field: City -->
+		<div class="form-group suppliers-City" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">City</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(City)%%></div>
+			</div>
+		</div>
+		<!-- Field: Region -->
+		<div class="form-group suppliers-Region" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Region</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Region)%%></div>
+			</div>
+		</div>
+		<!-- Field: Postal Code -->
+		<div class="form-group suppliers-PostalCode" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Postal Code</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(PostalCode)%%></div>
+			</div>
+		</div>
+		<!-- Field: Country -->
+		<div class="form-group suppliers-Country" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Country</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(Country)%%></div>
+			</div>
+		</div>
+		<!-- Field: Phone -->
+		<div class="form-group suppliers-Phone" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Phone</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Phone)%%></div>
+			</div>
+		</div>
+		<!-- Field: Fax -->
+		<div class="form-group suppliers-Fax" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Fax</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Fax)%%></div>
+			</div>
+		</div>
+		<!-- Field: Home Page -->
+		<div class="form-group suppliers-HomePage" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Home Page</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><a id="HomePage-link" href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank"><i class="glyphicon glyphicon-globe" title="<%%VALUE(HomePage)%%>" style="font-size: x-large;"></i></a><script>jQuery(function() { /* */ var e_HomePage = '<%%VALUE(HomePage)%%>'; if(e_HomePage == '' || e_HomePage == '&nbsp;' || e_HomePage == 'blank.gif') jQuery('#HomePage-link').hide(); });</script></div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- child records -->
+<div class="panel-body">
+	<div id="suppliers-children"></div>
+</div>
+
+<script>
+	$j(function() {
+		/* prevent loading child records in multiple DVP */
+		if($j('[id=suppliers-children]').length > 1) return;
+
+		post(
+			'parent-children.php', {
+				ParentTable: 'suppliers',
+				SelectedID: '<%%VALUE(SupplierID)%%>',
+				Operation: 'show-children-printable'
+			},
+			'suppliers-children',
+			'disable-element',
+			'loading-element',
+			apply_persisting_children
+		);
+
+		$j('form').on('click', '#children-tabs button[data-target]', function() {
+			$j(this).toggleClass('active');
+			persist_expanded_child($j(this).attr('id'));
+		});
+	})
+</script>
+

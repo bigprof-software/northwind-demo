@@ -1,0 +1,17 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the  and  formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the suppliers_init() hook (in hooks/suppliers.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="suppliers-CompanyName-<%%VALUE(SupplierID)%%>" class="suppliers-CompanyName"><%%VALUE(CompanyName)%%></td>
+		<td id="suppliers-ContactName-<%%VALUE(SupplierID)%%>" class="suppliers-ContactName"><%%VALUE(ContactName)%%></td>
+		<td id="suppliers-ContactTitle-<%%VALUE(SupplierID)%%>" class="suppliers-ContactTitle"><%%VALUE(ContactTitle)%%></td>
+		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country"><%%VALUE(Country)%%></td>
+		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone"><%%VALUE(Phone)%%></td>
+		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax"><%%VALUE(Fax)%%></td>
+		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<script>$j(function() {
+			var e_HomePage = '<%%VALUE(HomePage)%%>'; if(e_HomePage == '' || e_HomePage == '&nbsp;') $j(/*<*/ '#suppliers-HomePage-<%%VALUE(SupplierID)%%>' /*>*/).html('');
+		});</script>

@@ -1,0 +1,159 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<div class="btn-group">
+			<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-primary"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>
+			<button type="submit" id="back" title="<%%TRANSLATION(Cancel Printing)%%>" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<!-- Field: Order ID -->
+		<div class="form-group orders-OrderID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Order ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(OrderID)%%></div>
+			</div>
+		</div>
+		<!-- Field: Status -->
+		<div class="form-group orders-status" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Status</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(status)%%></div>
+			</div>
+		</div>
+		<!-- Field: Customer -->
+		<div class="form-group orders-CustomerID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Customer</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="CustomerID<%%RND1%%>"><%%COMBOTEXT(CustomerID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Employee -->
+		<div class="form-group orders-EmployeeID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Employee</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="EmployeeID<%%RND1%%>"><%%COMBOTEXT(EmployeeID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Order Date -->
+		<div class="form-group orders-OrderDate" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Order Date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(OrderDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Required Date -->
+		<div class="form-group orders-RequiredDate" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Required Date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(RequiredDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Shipped Date -->
+		<div class="form-group orders-ShippedDate" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Shipped Date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(ShippedDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Ship Via -->
+		<div class="form-group orders-ShipVia" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Via</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipVia<%%RND1%%>"><%%COMBOTEXT(ShipVia)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Freight -->
+		<div class="form-group orders-Freight" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Freight</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Freight)%%></div>
+			</div>
+		</div>
+		<!-- Field: Ship Name -->
+		<div class="form-group orders-ShipName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipName<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Ship Address -->
+		<div class="form-group orders-ShipAddress" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Address</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipAddress<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Ship City -->
+		<div class="form-group orders-ShipCity" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship City</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipCity<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Ship Region -->
+		<div class="form-group orders-ShipRegion" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Region</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipRegion<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Ship Postal Code -->
+		<div class="form-group orders-ShipPostalCode" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Postal Code</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipPostalCode<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Ship Country -->
+		<div class="form-group orders-ShipCountry" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Ship Country</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ShipCountry<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Total -->
+		<div class="form-group orders-total" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Total</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(total)%%></div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- child records -->
+<div class="panel-body">
+	<div id="orders-children"></div>
+</div>
+
+<script>
+	$j(function() {
+		/* prevent loading child records in multiple DVP */
+		if($j('[id=orders-children]').length > 1) return;
+
+		post(
+			'parent-children.php', {
+				ParentTable: 'orders',
+				SelectedID: '<%%VALUE(OrderID)%%>',
+				Operation: 'show-children-printable'
+			},
+			'orders-children',
+			'disable-element',
+			'loading-element',
+			apply_persisting_children
+		);
+
+		$j('form').on('click', '#children-tabs button[data-target]', function() {
+			$j(this).toggleClass('active');
+			persist_expanded_child($j(this).attr('id'));
+		});
+	})
+</script>
+

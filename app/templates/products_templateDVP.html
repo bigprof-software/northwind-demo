@@ -1,0 +1,117 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<div class="btn-group">
+			<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-primary"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>
+			<button type="submit" id="back" title="<%%TRANSLATION(Cancel Printing)%%>" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<!-- Field: Product ID -->
+		<div class="form-group products-ProductID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Product ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(ProductID)%%></div>
+			</div>
+		</div>
+		<!-- Field: Product Name -->
+		<div class="form-group products-ProductName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Product Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(ProductName)%%></div>
+			</div>
+		</div>
+		<!-- Field: Supplier -->
+		<div class="form-group products-SupplierID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Supplier</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="SupplierID<%%RND1%%>"><%%COMBOTEXT(SupplierID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Category -->
+		<div class="form-group products-CategoryID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Category</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="CategoryID<%%RND1%%>"><%%COMBOTEXT(CategoryID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Quantity Per Unit -->
+		<div class="form-group products-QuantityPerUnit" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Quantity Per Unit</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(QuantityPerUnit)%%></div>
+			</div>
+		</div>
+		<!-- Field: Unit Price -->
+		<div class="form-group products-UnitPrice" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Unit Price</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(UnitPrice)%%></div>
+			</div>
+		</div>
+		<!-- Field: Units In Stock -->
+		<div class="form-group products-UnitsInStock" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Units In Stock</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(UnitsInStock)%%></div>
+			</div>
+		</div>
+		<!-- Field: Units On Order -->
+		<div class="form-group products-UnitsOnOrder" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Units On Order</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(UnitsOnOrder)%%></div>
+			</div>
+		</div>
+		<!-- Field: Reorder Level -->
+		<div class="form-group products-ReorderLevel" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Reorder Level</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(ReorderLevel)%%></div>
+			</div>
+		</div>
+		<!-- Field: Discontinued -->
+		<div class="form-group products-Discontinued" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Discontinued</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><input type="checkbox" name="Discontinued" id="Discontinued" value="1" <%%CHECKED(Discontinued)%%> readonly></div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- child records -->
+<div class="panel-body">
+	<div id="products-children"></div>
+</div>
+
+<script>
+	$j(function() {
+		/* prevent loading child records in multiple DVP */
+		if($j('[id=products-children]').length > 1) return;
+
+		post(
+			'parent-children.php', {
+				ParentTable: 'products',
+				SelectedID: '<%%VALUE(ProductID)%%>',
+				Operation: 'show-children-printable'
+			},
+			'products-children',
+			'disable-element',
+			'loading-element',
+			apply_persisting_children
+		);
+
+		$j('form').on('click', '#children-tabs button[data-target]', function() {
+			$j(this).toggleClass('active');
+			persist_expanded_child($j(this).attr('id'));
+		});
+	})
+</script>
+

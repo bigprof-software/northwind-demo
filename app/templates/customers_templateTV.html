@@ -1,0 +1,15 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the customers_init() hook (in hooks/customers.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="customers-CustomerID-<%%VALUE(CustomerID)%%>" class="customers-CustomerID"><%%SELECT%%><%%VALUE(CustomerID)%%><%%ENDSELECT%%></td>
+		<td id="customers-CompanyName-<%%VALUE(CustomerID)%%>" class="customers-CompanyName"><%%SELECT%%><%%VALUE(CompanyName)%%><%%ENDSELECT%%></td>
+		<td id="customers-ContactName-<%%VALUE(CustomerID)%%>" class="customers-ContactName"><%%SELECT%%><%%VALUE(ContactName)%%><%%ENDSELECT%%></td>
+		<td id="customers-Address-<%%VALUE(CustomerID)%%>" class="customers-Address"><%%SELECT%%><%%VALUE(Address)%%><%%ENDSELECT%%></td>
+		<td id="customers-City-<%%VALUE(CustomerID)%%>" class="customers-City"><%%SELECT%%><%%VALUE(City)%%><%%ENDSELECT%%></td>
+		<td id="customers-Region-<%%VALUE(CustomerID)%%>" class="customers-Region"><%%SELECT%%><%%VALUE(Region)%%><%%ENDSELECT%%></td>
+		<td id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
+		<td id="customers-TotalSales-<%%VALUE(CustomerID)%%>" class="customers-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>

@@ -1,0 +1,182 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<div class="btn-group">
+			<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-primary"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>
+			<button type="submit" id="back" title="<%%TRANSLATION(Cancel Printing)%%>" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<!-- Field: Employee ID -->
+		<div class="form-group employees-EmployeeID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Employee ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(EmployeeID)%%></div>
+			</div>
+		</div>
+		<!-- Field: Title Of Courtesy -->
+		<div class="form-group employees-TitleOfCourtesy" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Title Of Courtesy</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(TitleOfCourtesy)%%></div>
+			</div>
+		</div>
+		<!-- Field: Photo -->
+		<div class="form-group employees-Photo" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Photo</label>
+			<div class="col-xs-9">
+				<div class="form-control-static">
+<img src="<%%TRANSLATION(ImageFolder)%%><%%VALUE(Photo)%%>" class="img-responsive img-thumbnail">
+</div>
+			</div>
+		</div>
+		<!-- Field: Last Name -->
+		<div class="form-group employees-LastName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Last Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(LastName)%%></div>
+			</div>
+		</div>
+		<!-- Field: First Name -->
+		<div class="form-group employees-FirstName" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">First Name</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(FirstName)%%></div>
+			</div>
+		</div>
+		<!-- Field: Title -->
+		<div class="form-group employees-Title" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Title</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Title)%%></div>
+			</div>
+		</div>
+		<!-- Field: Birth Date -->
+		<div class="form-group employees-BirthDate" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Birth Date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(BirthDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Age -->
+		<div class="form-group employees-Age" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Age</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Age)%%></div>
+			</div>
+		</div>
+		<!-- Field: Hire Date -->
+		<div class="form-group employees-HireDate" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Hire Date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(HireDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Address -->
+		<div class="form-group employees-Address" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Address</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Address)%%></div>
+			</div>
+		</div>
+		<!-- Field: City -->
+		<div class="form-group employees-City" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">City</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(City)%%></div>
+			</div>
+		</div>
+		<!-- Field: Region -->
+		<div class="form-group employees-Region" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Region</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Region)%%></div>
+			</div>
+		</div>
+		<!-- Field: Postal Code -->
+		<div class="form-group employees-PostalCode" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Postal Code</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(PostalCode)%%></div>
+			</div>
+		</div>
+		<!-- Field: Country -->
+		<div class="form-group employees-Country" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Country</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(Country)%%></div>
+			</div>
+		</div>
+		<!-- Field: Home Phone -->
+		<div class="form-group employees-HomePhone" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Home Phone</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(HomePhone)%%></div>
+			</div>
+		</div>
+		<!-- Field: Extension -->
+		<div class="form-group employees-Extension" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Extension</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Extension)%%></div>
+			</div>
+		</div>
+		<!-- Field: Notes -->
+		<div class="form-group employees-Notes" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Notes</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Notes)%%></div>
+			</div>
+		</div>
+		<!-- Field: Reports To -->
+		<div class="form-group employees-ReportsTo" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Reports To</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ReportsTo<%%RND1%%>"><%%COMBOTEXT(ReportsTo)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Total Sales -->
+		<div class="form-group employees-TotalSales" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Total Sales</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(TotalSales)%%></div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- child records -->
+<div class="panel-body">
+	<div id="employees-children"></div>
+</div>
+
+<script>
+	$j(function() {
+		/* prevent loading child records in multiple DVP */
+		if($j('[id=employees-children]').length > 1) return;
+
+		post(
+			'parent-children.php', {
+				ParentTable: 'employees',
+				SelectedID: '<%%VALUE(EmployeeID)%%>',
+				Operation: 'show-children-printable'
+			},
+			'employees-children',
+			'disable-element',
+			'loading-element',
+			apply_persisting_children
+		);
+
+		$j('form').on('click', '#children-tabs button[data-target]', function() {
+			$j(this).toggleClass('active');
+			persist_expanded_child($j(this).attr('id'));
+		});
+	})
+</script>
+

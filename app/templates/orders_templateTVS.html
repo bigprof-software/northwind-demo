@@ -1,0 +1,15 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the  and  formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the orders_init() hook (in hooks/orders.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="orders-OrderID-<%%VALUE(OrderID)%%>" class="orders-OrderID text-right"><%%VALUE(OrderID)%%></td>
+		<td id="orders-status-<%%VALUE(OrderID)%%>" class="orders-status text-center"><%%VALUE(status)%%></td>
+		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID"><%%VALUE(CustomerID)%%></td>
+		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID"><%%VALUE(EmployeeID)%%></td>
+		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate"><%%VALUE(OrderDate)%%></td>
+		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia"><%%VALUE(ShipVia)%%></td>
+		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry"><%%VALUE(ShipCountry)%%></td>
+		<td id="orders-total-<%%VALUE(OrderID)%%>" class="orders-total text-right"><%%VALUE(total)%%></td>

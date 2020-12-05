@@ -1,0 +1,10 @@
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the shippers_init() hook (in hooks/shippers.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="shippers-CompanyName-<%%VALUE(ShipperID)%%>" class="shippers-CompanyName"><%%SELECT%%><%%VALUE(CompanyName)%%><%%ENDSELECT%%></td>
+		<td id="shippers-Phone-<%%VALUE(ShipperID)%%>" class="shippers-Phone"><%%SELECT%%><%%VALUE(Phone)%%><%%ENDSELECT%%></td>
+		<td id="shippers-NumOrders-<%%VALUE(ShipperID)%%>" class="shippers-NumOrders text-right"><%%SELECT%%><%%VALUE(NumOrders)%%><%%ENDSELECT%%></td>

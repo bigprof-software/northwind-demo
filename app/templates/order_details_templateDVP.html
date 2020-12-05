@@ -1,0 +1,88 @@
+<!-- Edit this file to change the layout of the detail view print preview page -->
+
+
+<div class="panel-heading"><h3 class="panel-title">
+	<strong><%%DETAIL_VIEW_TITLE%%></strong>
+	<div class="hidden-print pull-right">
+		<div class="btn-group">
+			<button type="button" id="print" onclick="window.print();" title="<%%TRANSLATION(Print)%%>" class="btn btn-primary"><i class="glyphicon glyphicon-print"></i> <%%TRANSLATION(Print)%%></button>
+			<button type="submit" id="back" title="<%%TRANSLATION(Cancel Printing)%%>" class="btn btn-default"><i class="glyphicon glyphicon-remove-circle"></i> <%%TRANSLATION(Cancel Printing)%%></button>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+</h3></div>
+
+<div class="panel-body">
+	<fieldset class="form-horizontal">
+		<!-- Field: ID -->
+		<div class="form-group order_details-odID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(odID)%%></div>
+			</div>
+		</div>
+		<!-- Field: Order ID -->
+		<div class="form-group order_details-OrderID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Order ID</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="OrderID<%%RND1%%>"><%%COMBOTEXT(OrderID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Product -->
+		<div class="form-group order_details-ProductID" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Product</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="ProductID<%%RND1%%>"><%%COMBOTEXT(ProductID)%%></span></div>
+			</div>
+		</div>
+		<!-- Field: Category -->
+		<div class="form-group order_details-Category" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Category</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="Category<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Catalog Price -->
+		<div class="form-group order_details-CatalogPrice" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Catalog Price</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="CatalogPrice<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Units In Stock -->
+		<div class="form-group order_details-UnitsInStock" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Units In Stock</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><span id="UnitsInStock<%%RND1%%>"></span></div>
+			</div>
+		</div>
+		<!-- Field: Unit Price -->
+		<div class="form-group order_details-UnitPrice" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Unit Price</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(UnitPrice)%%></div>
+			</div>
+		</div>
+		<!-- Field: Quantity -->
+		<div class="form-group order_details-Quantity" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Quantity</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Quantity)%%></div>
+			</div>
+		</div>
+		<!-- Field: Discount -->
+		<div class="form-group order_details-Discount" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Discount</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Discount)%%></div>
+			</div>
+		</div>
+		<!-- Field: Subtotal -->
+		<div class="form-group order_details-Subtotal" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Subtotal</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(Subtotal)%%></div>
+			</div>
+		</div>
+	</fieldset>
+</div>
