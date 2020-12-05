@@ -1225,7 +1225,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
@@ -1302,7 +1302,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
