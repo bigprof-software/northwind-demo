@@ -15,7 +15,7 @@ details or any extra functionality to fit your own requirements.
 Northwind is a responsive, multi-user web-based application that you can access from your PC, tablet, 
 mobile or any other device. 
 
-#### [⇩ Download the latest release](https://github.com/bigprof-software/northwind-demo/releases/latest) ([_Changelog_](https://github.com/bigprof-software/northwind-demo/releases))
+#### [⇩ Download the latest release](https://github.com/bigprof-software/northwind-demo/releases/latest) ([_Changelog_](https://github.com/bigprof-software/northwind-demo/releases)) | [![Buy Me A Coffee!](https://cdn.bigprof.com/appgini-open-source-apps/buy-me-a-coffee-sm.png)](https://www.buymeacoffee.com/genedy)
 
 ## Features
 
