@@ -7,10 +7,10 @@
 	// image paths
 	$p = [
 		'employees' => [
-			'Photo' => $Translation['ImageFolder'],
+			'Photo' => getUploadDir(''),
 		],
 		'categories' => [
-			'Picture' => $Translation['ImageFolder'],
+			'Picture' => getUploadDir(''),
 		],
 	];
 

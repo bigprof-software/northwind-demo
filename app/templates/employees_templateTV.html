@@ -5,7 +5,7 @@
 <!-- add the following to the employees_init() hook (in hooks/employees.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="employees-Photo-<%%VALUE(EmployeeID)%%>" class="employees-Photo"><a href="<%%TRANSLATION(ImageFolder)%%><%%VALUE(Photo)%%>" data-lightbox="employees-Photo"><img src="thumbnail.php?i=<%%VALUE(Photo)%%>&t=employees&f=Photo&v=tv" class="img-thumbnail"></a></td>
+		<td id="employees-Photo-<%%VALUE(EmployeeID)%%>" class="employees-Photo"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Photo)%%>" data-lightbox="employees-Photo"><img src="thumbnail.php?i=<%%VALUE(Photo)%%>&t=employees&f=Photo&v=tv" class="img-thumbnail"></a></td>
 		<td id="employees-LastName-<%%VALUE(EmployeeID)%%>" class="employees-LastName"><%%SELECT%%><%%VALUE(LastName)%%><%%ENDSELECT%%></td>
 		<td id="employees-FirstName-<%%VALUE(EmployeeID)%%>" class="employees-FirstName"><%%VALUE(FirstName)%%></td>
 		<td id="employees-Title-<%%VALUE(EmployeeID)%%>" class="employees-Title"><%%VALUE(Title)%%></td>

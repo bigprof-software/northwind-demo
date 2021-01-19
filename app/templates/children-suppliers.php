@@ -1,8 +1,7 @@
 <?php if(!isset($Translation)) die('No direct access allowed.'); ?>
 <?php $current_table = 'suppliers'; ?>
 <?php
-	$cleaner = new CI_Input();
-	$cleaner->charset = datalist_db_encoding;
+	$cleaner = new CI_Input(datalist_db_encoding);
 ?>
 <script>
 	<?php echo $current_table; ?>GetChildrenRecordsList = function(command) {
@@ -164,7 +163,7 @@
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][8]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[8]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][9]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][9]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[9]); ?></td>
 						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][10]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][10]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php echo safe_html($record[10]); ?></td>
-						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php if($record[11]) { ?><a href="link.php?t=<?php echo $parameters['ChildTable']; ?>&f=HomePage&i=<?php echo urlencode($record[$config['child-primary-key-index']]); ?>" target="_blank" class="btn btn-default" title="<?php echo html_attr($record[11]); ?>"><i class="glyphicon glyphicon-globe text-info"></i></a><?php } ?></td>
+						<td class="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}"; ?>" id="<?php echo "{$parameters['ChildTable']}-{$config['display-field-names'][11]}-" . html_attr($record[$config['child-primary-key-index']]); ?>"><?php if($record[11]) { ?><a href="link.php?t=<?php echo $parameters['ChildTable']; ?>&f=HomePage&i=<?php echo urlencode($record[$config['child-primary-key-index']]); ?>" target="_blank" class="btn btn-default" title="<?php echo html_attr($record[11]); ?>"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a><?php } ?></td>
 					</tr>
 					<?php } ?>
 				</tbody>

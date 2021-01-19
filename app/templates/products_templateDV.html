@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/products-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="products_dv_container">
+<div id="products_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="products_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -23,7 +24,7 @@
 				<!-- Field: Product ID -->
 				<div class="form-group products-ProductID">
 					<hr class="hidden-md hidden-lg">
-					<label for="ProductID" class="control-label col-lg-3">Product ID</label>
+					<label class="control-label col-lg-3" for="ProductID">Product ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ProductID"><%%VALUE(ProductID)%%></div>
 					</div>
@@ -32,7 +33,7 @@
 				<!-- Field: Product Name -->
 				<div class="form-group products-ProductName">
 					<hr class="hidden-md hidden-lg">
-					<label for="ProductName" class="control-label col-lg-3">Product Name</label>
+					<label class="control-label col-lg-3" for="ProductName">Product Name</label>
 					<div class="col-lg-9">
 						<input maxlength="50" type="text" class="form-control" name="ProductName" id="ProductName" value="<%%VALUE(ProductName)%%>">
 					</div>
@@ -41,7 +42,7 @@
 				<!-- Field: Supplier -->
 				<div class="form-group products-SupplierID">
 					<hr class="hidden-md hidden-lg">
-					<label for="SupplierID" class="control-label col-lg-3" data-parent_link="view_parent_modal">Supplier</label>
+					<label class="control-label col-lg-3" for="SupplierID" data-parent_link="view_parent_modal">Supplier</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(SupplierID)%%><%%PLINK(SupplierID)%%><%%ADDNEW(suppliers)%%></div>
 					</div>
@@ -50,7 +51,7 @@
 				<!-- Field: Category -->
 				<div class="form-group products-CategoryID">
 					<hr class="hidden-md hidden-lg">
-					<label for="CategoryID" class="control-label col-lg-3" data-parent_link="view_parent_modal">Category</label>
+					<label class="control-label col-lg-3" for="CategoryID" data-parent_link="view_parent_modal">Category</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(CategoryID)%%><%%PLINK(CategoryID)%%><%%ADDNEW(categories)%%></div>
 					</div>
@@ -59,7 +60,7 @@
 				<!-- Field: Quantity Per Unit -->
 				<div class="form-group products-QuantityPerUnit">
 					<hr class="hidden-md hidden-lg">
-					<label for="QuantityPerUnit" class="control-label col-lg-3">Quantity Per Unit</label>
+					<label class="control-label col-lg-3" for="QuantityPerUnit">Quantity Per Unit</label>
 					<div class="col-lg-9">
 						<input maxlength="50" type="text" class="form-control" name="QuantityPerUnit" id="QuantityPerUnit" value="<%%VALUE(QuantityPerUnit)%%>">
 					</div>
@@ -68,7 +69,7 @@
 				<!-- Field: Unit Price -->
 				<div class="form-group products-UnitPrice">
 					<hr class="hidden-md hidden-lg">
-					<label for="UnitPrice" class="control-label col-lg-3">Unit Price</label>
+					<label class="control-label col-lg-3" for="UnitPrice">Unit Price</label>
 					<div class="col-lg-9">
 						<input maxlength="13" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
 					</div>
@@ -77,16 +78,16 @@
 				<!-- Field: Units In Stock -->
 				<div class="form-group products-UnitsInStock">
 					<hr class="hidden-md hidden-lg">
-					<label for="UnitsInStock" class="control-label col-lg-3">Units In Stock</label>
+					<label class="control-label col-lg-3" for="UnitsInStock">Units In Stock</label>
 					<div class="col-lg-9">
-						<input maxlength="" type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>">
+						<input type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>">
 					</div>
 				</div>
 
 				<!-- Field: Units On Order -->
 				<div class="form-group products-UnitsOnOrder">
 					<hr class="hidden-md hidden-lg">
-					<label for="UnitsOnOrder" class="control-label col-lg-3">Units On Order</label>
+					<label class="control-label col-lg-3" for="UnitsOnOrder">Units On Order</label>
 					<div class="col-lg-9">
 						<input maxlength="6" type="text" class="form-control" name="UnitsOnOrder" id="UnitsOnOrder" value="<%%VALUE(UnitsOnOrder)%%>">
 					</div>
@@ -95,9 +96,9 @@
 				<!-- Field: Reorder Level -->
 				<div class="form-group products-ReorderLevel">
 					<hr class="hidden-md hidden-lg">
-					<label for="ReorderLevel" class="control-label col-lg-3">Reorder Level</label>
+					<label class="control-label col-lg-3" for="ReorderLevel">Reorder Level</label>
 					<div class="col-lg-9">
-						<input maxlength="" type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>">
+						<input type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>">
 					</div>
 				</div>
 
@@ -105,7 +106,8 @@
 				<div class="form-group products-Discontinued">
 					<hr class="hidden-md hidden-lg">
 					<div class="col-lg-offset-3 col-lg-9">
-						<div class="checkbox"><label for="Discontinued"><input type="checkbox" name="Discontinued" id="Discontinued" value="1" <%%CHECKED(Discontinued)%%>> Discontinued</label>
+						<div class="checkbox">
+							<label for="Discontinued"><input type="checkbox" name="Discontinued" id="Discontinued" value="1" <%%CHECKED(Discontinued)%%>> Discontinued</label>
 						</div>
 					</div>
 				</div>
@@ -160,7 +162,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#products_dv_container-loading').addClass('hidden');
+				$j('#products_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('products', 'ProductName');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -168,7 +175,7 @@
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
 				/* hide links to children tables in embedded mode */

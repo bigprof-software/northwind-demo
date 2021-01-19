@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/customers-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="customers_dv_container">
+<div id="customers_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="customers_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -23,7 +24,7 @@
 				<!-- Field: Customer ID -->
 				<div class="form-group customers-CustomerID">
 					<hr class="hidden-md hidden-lg">
-					<label for="CustomerID" class="control-label col-lg-3">Customer ID</label>
+					<label class="control-label col-lg-3" for="CustomerID">Customer ID</label>
 					<div class="col-lg-9">
 						<input maxlength="5" type="text" class="form-control" name="CustomerID" id="CustomerID" value="<%%VALUE(CustomerID)%%>" required>
 					</div>
@@ -32,7 +33,7 @@
 				<!-- Field: Company Name -->
 				<div class="form-group customers-CompanyName">
 					<hr class="hidden-md hidden-lg">
-					<label for="CompanyName" class="control-label col-lg-3">Company Name</label>
+					<label class="control-label col-lg-3" for="CompanyName">Company Name</label>
 					<div class="col-lg-9">
 						<input maxlength="40" type="text" class="form-control" name="CompanyName" id="CompanyName" value="<%%VALUE(CompanyName)%%>">
 					</div>
@@ -41,7 +42,7 @@
 				<!-- Field: Contact Name -->
 				<div class="form-group customers-ContactName">
 					<hr class="hidden-md hidden-lg">
-					<label for="ContactName" class="control-label col-lg-3">Contact Name</label>
+					<label class="control-label col-lg-3" for="ContactName">Contact Name</label>
 					<div class="col-lg-9">
 						<input maxlength="30" type="text" class="form-control" name="ContactName" id="ContactName" value="<%%VALUE(ContactName)%%>">
 					</div>
@@ -50,7 +51,7 @@
 				<!-- Field: Contact Title -->
 				<div class="form-group customers-ContactTitle">
 					<hr class="hidden-md hidden-lg">
-					<label for="ContactTitle" class="control-label col-lg-3">Contact Title</label>
+					<label class="control-label col-lg-3" for="ContactTitle">Contact Title</label>
 					<div class="col-lg-9">
 						<input maxlength="30" type="text" class="form-control" name="ContactTitle" id="ContactTitle" value="<%%VALUE(ContactTitle)%%>">
 					</div>
@@ -59,16 +60,16 @@
 				<!-- Field: Address -->
 				<div class="form-group customers-Address">
 					<hr class="hidden-md hidden-lg">
-					<label for="Address" class="control-label col-lg-3">Address</label>
+					<label class="control-label col-lg-3" for="Address">Address</label>
 					<div class="col-lg-9">
-						<textarea class="form-control" name="Address" id="Address" rows="5"><%%VALUE(Address)%%></textarea>
+						<textarea class="form-control" name="Address" id="Address" rows=" 5"><%%VALUE(Address)%%></textarea>
 					</div>
 				</div>
 
 				<!-- Field: City -->
 				<div class="form-group customers-City">
 					<hr class="hidden-md hidden-lg">
-					<label for="City" class="control-label col-lg-3">City</label>
+					<label class="control-label col-lg-3" for="City">City</label>
 					<div class="col-lg-9">
 						<input maxlength="15" type="text" class="form-control" name="City" id="City" value="<%%VALUE(City)%%>">
 					</div>
@@ -77,7 +78,7 @@
 				<!-- Field: Region -->
 				<div class="form-group customers-Region">
 					<hr class="hidden-md hidden-lg">
-					<label for="Region" class="control-label col-lg-3">Region</label>
+					<label class="control-label col-lg-3" for="Region">Region</label>
 					<div class="col-lg-9">
 						<input maxlength="15" type="text" class="form-control" name="Region" id="Region" value="<%%VALUE(Region)%%>">
 					</div>
@@ -86,7 +87,7 @@
 				<!-- Field: Postal Code -->
 				<div class="form-group customers-PostalCode">
 					<hr class="hidden-md hidden-lg">
-					<label for="PostalCode" class="control-label col-lg-3">Postal Code</label>
+					<label class="control-label col-lg-3" for="PostalCode">Postal Code</label>
 					<div class="col-lg-9">
 						<input maxlength="10" type="text" class="form-control" name="PostalCode" id="PostalCode" value="<%%VALUE(PostalCode)%%>">
 					</div>
@@ -95,7 +96,7 @@
 				<!-- Field: Country -->
 				<div class="form-group customers-Country">
 					<hr class="hidden-md hidden-lg">
-					<label for="Country" class="control-label col-lg-3">Country</label>
+					<label class="control-label col-lg-3" for="Country">Country</label>
 					<div class="col-lg-9">
 						<%%COMBO(Country)%%>
 					</div>
@@ -104,7 +105,7 @@
 				<!-- Field: Phone -->
 				<div class="form-group customers-Phone">
 					<hr class="hidden-md hidden-lg">
-					<label for="Phone" class="control-label col-lg-3">Phone</label>
+					<label class="control-label col-lg-3" for="Phone">Phone</label>
 					<div class="col-lg-9">
 						<input maxlength="24" type="text" class="form-control" name="Phone" id="Phone" value="<%%VALUE(Phone)%%>">
 					</div>
@@ -113,7 +114,7 @@
 				<!-- Field: Fax -->
 				<div class="form-group customers-Fax">
 					<hr class="hidden-md hidden-lg">
-					<label for="Fax" class="control-label col-lg-3">Fax</label>
+					<label class="control-label col-lg-3" for="Fax">Fax</label>
 					<div class="col-lg-9">
 						<input maxlength="24" type="text" class="form-control" name="Fax" id="Fax" value="<%%VALUE(Fax)%%>">
 					</div>
@@ -122,10 +123,9 @@
 				<!-- Field: Total Sales -->
 				<div class="form-group customers-TotalSales">
 					<hr class="hidden-md hidden-lg">
-					<label for="TotalSales" class="control-label col-lg-3">Total Sales <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#TotalSales-description"></i></label>
+					<label class="control-label col-lg-3">Total Sales <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#TotalSales-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="TotalSales-description"><div class="alert alert-info">Total sales made by the current customer. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="TotalSales-description"><div class="alert alert-info bspacer-xs">Total sales made by the current customer. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
 						<div class="form-control-static" id="TotalSales"><%%VALUE(TotalSales)%%></div>
 					</div>
 				</div>
@@ -180,7 +180,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#customers_dv_container-loading').addClass('hidden');
+				$j('#customers_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('customers', 'CustomerID');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -188,7 +193,7 @@
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
 				/* hide links to children tables in embedded mode */

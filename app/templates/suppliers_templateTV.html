@@ -11,7 +11,7 @@
 		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
 		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone"><%%SELECT%%><%%VALUE(Phone)%%><%%ENDSELECT%%></td>
 		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax"><%%SELECT%%><%%VALUE(Fax)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-globe text-info"></i></a></td>
+		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
 		<script>$j(function() {
 			var e_HomePage = '<%%VALUE(HomePage)%%>'; if(e_HomePage == '' || e_HomePage == '&nbsp;') $j(/*<*/ '#suppliers-HomePage-<%%VALUE(SupplierID)%%>' /*>*/).html('');
 		});</script>

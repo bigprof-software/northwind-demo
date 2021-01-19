@@ -5,6 +5,6 @@
 <!-- add the following to the categories_init() hook (in hooks/categories.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="categories-Picture-<%%VALUE(CategoryID)%%>" class="categories-Picture"><a href="<%%TRANSLATION(ImageFolder)%%><%%VALUE(Picture)%%>" data-lightbox="categories-Picture"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=tv" class="img-thumbnail"></a></td>
+		<td id="categories-Picture-<%%VALUE(CategoryID)%%>" class="categories-Picture"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories-Picture"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=tv" class="img-thumbnail"></a></td>
 		<td id="categories-CategoryName-<%%VALUE(CategoryID)%%>" class="categories-CategoryName"><%%VALUE(CategoryName)%%></td>
 		<td id="categories-Description-<%%VALUE(CategoryID)%%>" class="categories-Description"><%%VALUE(Description)%%></td>

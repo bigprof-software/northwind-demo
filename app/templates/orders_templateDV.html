@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/orders-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="orders_dv_container">
+<div id="orders_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="orders_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -23,7 +24,7 @@
 				<!-- Field: Order ID -->
 				<div class="form-group orders-OrderID">
 					<hr class="hidden-md hidden-lg">
-					<label for="OrderID" class="control-label col-lg-3">Order ID</label>
+					<label class="control-label col-lg-3" for="OrderID">Order ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="OrderID"><%%VALUE(OrderID)%%></div>
 					</div>
@@ -32,10 +33,9 @@
 				<!-- Field: Status -->
 				<div class="form-group orders-status">
 					<hr class="hidden-md hidden-lg">
-					<label for="status" class="control-label col-lg-3">Status <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#status-description"></i></label>
+					<label class="control-label col-lg-3">Status <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#status-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="status-description"><div class="alert alert-info">This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="status-description"><div class="alert alert-info bspacer-xs">This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
 						<div class="form-control-static" id="status"><%%VALUE(status)%%></div>
 					</div>
 				</div>
@@ -43,7 +43,7 @@
 				<!-- Field: Customer -->
 				<div class="form-group orders-CustomerID">
 					<hr class="hidden-md hidden-lg">
-					<label for="CustomerID" class="control-label col-lg-3" data-parent_link="view_parent_modal">Customer</label>
+					<label class="control-label col-lg-3" for="CustomerID" data-parent_link="view_parent_modal">Customer</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(CustomerID)%%><%%PLINK(CustomerID)%%><%%ADDNEW(customers)%%><span id="CustomerIDLoading"></span></div>
 					</div>
@@ -52,7 +52,7 @@
 				<!-- Field: Employee -->
 				<div class="form-group orders-EmployeeID">
 					<hr class="hidden-md hidden-lg">
-					<label for="EmployeeID" class="control-label col-lg-3" data-parent_link="view_parent_modal">Employee</label>
+					<label class="control-label col-lg-3" for="EmployeeID" data-parent_link="view_parent_modal">Employee</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(EmployeeID)%%><%%PLINK(EmployeeID)%%><%%ADDNEW(employees)%%></div>
 					</div>
@@ -61,7 +61,7 @@
 				<!-- Field: Order Date -->
 				<div class="form-group orders-OrderDate">
 					<hr class="hidden-md hidden-lg">
-					<label for="OrderDate" class="control-label col-lg-3">Order Date</label>
+					<label class="control-label col-lg-3" for="OrderDate-mm">Order Date</label>
 					<div class="col-lg-9">
 						<%%COMBO(OrderDate)%%>
 					</div>
@@ -70,7 +70,7 @@
 				<!-- Field: Required Date -->
 				<div class="form-group orders-RequiredDate">
 					<hr class="hidden-md hidden-lg">
-					<label for="RequiredDate" class="control-label col-lg-3">Required Date</label>
+					<label class="control-label col-lg-3" for="RequiredDate-mm">Required Date</label>
 					<div class="col-lg-9">
 						<%%COMBO(RequiredDate)%%>
 					</div>
@@ -79,7 +79,7 @@
 				<!-- Field: Shipped Date -->
 				<div class="form-group orders-ShippedDate">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShippedDate" class="control-label col-lg-3">Shipped Date</label>
+					<label class="control-label col-lg-3" for="ShippedDate-mm">Shipped Date</label>
 					<div class="col-lg-9">
 						<%%COMBO(ShippedDate)%%>
 					</div>
@@ -88,7 +88,7 @@
 				<!-- Field: Ship Via -->
 				<div class="form-group orders-ShipVia">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipVia" class="control-label col-lg-3" data-parent_link="view_parent_modal">Ship Via</label>
+					<label class="control-label col-lg-3" for="ShipVia" data-parent_link="view_parent_modal">Ship Via</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" style="white-space: nowrap; overflow-x: hidden;"><%%COMBO(ShipVia)%%><%%PLINK(ShipVia)%%><%%ADDNEW(shippers)%%></div>
 					</div>
@@ -97,7 +97,7 @@
 				<!-- Field: Freight -->
 				<div class="form-group orders-Freight">
 					<hr class="hidden-md hidden-lg">
-					<label for="Freight" class="control-label col-lg-3">Freight</label>
+					<label class="control-label col-lg-3" for="Freight">Freight</label>
 					<div class="col-lg-9">
 						<input maxlength="13" type="text" class="form-control" name="Freight" id="Freight" value="<%%VALUE(Freight)%%>">
 					</div>
@@ -106,7 +106,7 @@
 				<!-- Field: Ship Name -->
 				<div class="form-group orders-ShipName">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipName" class="control-label col-lg-3">Ship Name</label>
+					<label class="control-label col-lg-3">Ship Name</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipName"></div>
 					</div>
@@ -115,7 +115,7 @@
 				<!-- Field: Ship Address -->
 				<div class="form-group orders-ShipAddress">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipAddress" class="control-label col-lg-3">Ship Address</label>
+					<label class="control-label col-lg-3">Ship Address</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipAddress"></div>
 					</div>
@@ -124,7 +124,7 @@
 				<!-- Field: Ship City -->
 				<div class="form-group orders-ShipCity">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipCity" class="control-label col-lg-3">Ship City</label>
+					<label class="control-label col-lg-3">Ship City</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipCity"></div>
 					</div>
@@ -133,7 +133,7 @@
 				<!-- Field: Ship Region -->
 				<div class="form-group orders-ShipRegion">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipRegion" class="control-label col-lg-3">Ship Region</label>
+					<label class="control-label col-lg-3">Ship Region</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipRegion"></div>
 					</div>
@@ -142,7 +142,7 @@
 				<!-- Field: Ship Postal Code -->
 				<div class="form-group orders-ShipPostalCode">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipPostalCode" class="control-label col-lg-3">Ship Postal Code</label>
+					<label class="control-label col-lg-3">Ship Postal Code</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipPostalCode"></div>
 					</div>
@@ -151,7 +151,7 @@
 				<!-- Field: Ship Country -->
 				<div class="form-group orders-ShipCountry">
 					<hr class="hidden-md hidden-lg">
-					<label for="ShipCountry" class="control-label col-lg-3">Ship Country</label>
+					<label class="control-label col-lg-3">Ship Country</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="ShipCountry"></div>
 					</div>
@@ -160,10 +160,9 @@
 				<!-- Field: Total -->
 				<div class="form-group orders-total">
 					<hr class="hidden-md hidden-lg">
-					<label for="total" class="control-label col-lg-3">Total <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#total-description"></i></label>
+					<label class="control-label col-lg-3">Total <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#total-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="total-description"><div class="alert alert-info">This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
-
+						<span class="help-block bspacer-xs collapse" id="total-description"><div class="alert alert-info bspacer-xs">This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.</div></span>
 						<div class="form-control-static" id="total"><%%VALUE(total)%%></div>
 					</div>
 				</div>
@@ -218,7 +217,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#orders_dv_container-loading').addClass('hidden');
+				$j('#orders_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('orders', 'CustomerID');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -226,7 +230,7 @@
 				$j(this).data('already_changed', true);
 			});
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
 				/* hide links to children tables in embedded mode */

@@ -1,9 +1,10 @@
-<!-- Edit this file to change the layout of the detail view form -->
+<!-- To change the layout of the detail view form, we recommend using JS code in hooks/categories-dv.js rather than editing this file -->
 
-<a name="detail-view"></a>
+<div id="detail-view"></div>
 <div class="panel-heading"><h3 class="panel-title"><strong><%%DETAIL_VIEW_TITLE%%></strong></h3></div>
 
-<div class="panel-body" id="categories_dv_container">
+<div id="categories_dv_container-loading" class="text-center text-info text-bold vspacer-lg"><i class="glyphicon glyphicon-refresh loop-rotate"></i> <%%TRANSLATION(Loading ...)%%></div>
+<div class="panel-body hidden" id="categories_dv_container">
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
@@ -23,7 +24,7 @@
 				<!-- Field: Category ID -->
 				<div class="form-group categories-CategoryID">
 					<hr class="hidden-md hidden-lg">
-					<label for="CategoryID" class="control-label col-lg-3">Category ID</label>
+					<label class="control-label col-lg-3" for="CategoryID">Category ID</label>
 					<div class="col-lg-9">
 						<div class="form-control-static" id="CategoryID"><%%VALUE(CategoryID)%%></div>
 					</div>
@@ -34,34 +35,26 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3">Photo <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#Picture-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block collapse" id="Picture-description"><div class="alert alert-info">Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png</div></span>
-
-						<div class="form-control-static well well-sm"><div class="pull-left">
-
-						<a href="<%%TRANSLATION(ImageFolder)%%><%%VALUE(Picture)%%>" data-lightbox="categories_dv"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=dv" class="img-thumbnail" id="Picture-image"></a>
-</div>
-
-												<div class="pull-right well upload-toolbox">
-							<div class="hidden-md hidden-lg vspacer-lg"></div>
-							<%%UPLOADFILE(Picture)%%>
-							<%%REMOVEFILE(Picture)%%>
-							<div class="text-bold text-danger file-type-error hidden">
-								<%%TRANSLATION(invalid file type)%%>
+						<span class="help-block bspacer-xs collapse" id="Picture-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png</div></span>
+						<div class="form-control-static well well-sm">
+							<div class="pull-left"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories_dv"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=dv" class="img-thumbnail" id="Picture-image"></a></div>
+							<div class="pull-right well upload-toolbox">
+								<div class="hidden-md hidden-lg vspacer-lg"></div>
+								<%%UPLOADFILE(Picture)%%>
+								<%%REMOVEFILE(Picture)%%>
+								<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>
+								<div class="text-bold text-danger file-size-error hidden"><%%TRANSLATION(file too large)%%></div>
 							</div>
-							<div class="text-bold text-danger file-size-error hidden">
-								<%%TRANSLATION(file too large)%%>
-							</div>
+							<div class="clearfix"></div>
 						</div>
-						<div class="clearfix"></div>
-					</div>
-
+						<script>/* disable links to empty images */ $j(function() { var e_Picture = '<%%VALUE(Picture)%%>'; if(e_Picture == '' || e_Picture == '&nbsp;' || e_Picture == 'blank.gif') { $j('#Picture-link').hide(); $j('#Picture-image').parents('a').attr('href', '').on('click', function(e) { e.preventDefault(); }); } });</script>
 					</div>
 				</div>
 
 				<!-- Field: Category Name -->
 				<div class="form-group categories-CategoryName">
 					<hr class="hidden-md hidden-lg">
-					<label for="CategoryName" class="control-label col-lg-3">Category Name</label>
+					<label class="control-label col-lg-3" for="CategoryName">Category Name</label>
 					<div class="col-lg-9">
 						<input maxlength="50" type="text" class="form-control" name="CategoryName" id="CategoryName" value="<%%VALUE(CategoryName)%%>"><div class="text-danger vspacer-md" id="CategoryName-uniqueness-note" style="display: none;"><%%TRANSLATION(unique field error)%%></div>
 					</div>
@@ -70,8 +63,8 @@
 				<!-- Field: Description -->
 				<div class="form-group categories-Description">
 					<hr class="hidden-md hidden-lg">
-					<label for="Description" class="control-label col-lg-3">Description</label>
-					<div class="col-lg-9">
+					<label class="control-label col-lg-3" for="Description">Description</label>
+					<div class="col-lg-9 has-nicedit">
 						<%%HTMLAREA(Description)%%>
 					</div>
 				</div>
@@ -132,7 +125,12 @@
 			/* enable DV action buttons to float on scrolling down the form */
 			enable_dvab_floating();
 
-			setTimeout(AppGini.focusFirstFormElement, 100);
+
+			setTimeout(function() {
+				$j('#categories_dv_container-loading').addClass('hidden');
+				$j('#categories_dv_container').removeClass('hidden');
+				AppGini.focusFormElement('categories', 'Picture');
+			}, 1100);
 
 			$j('form').eq(0).change(function() {
 				if($j(this).data('already_changed')) return;
@@ -143,7 +141,7 @@
 			// try to detect rich text changes by adding 'input' handler after nicedit is loaded ...
 			AppGini.detectContentEditableChanges();
 
-			$j('a[href="<%%TRANSLATION(ImageFolder)%%>"]').click(function() { /* */ return false; });
+			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
 				/* hide links to children tables in embedded mode */
