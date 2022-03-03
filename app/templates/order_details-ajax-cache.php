@@ -1,6 +1,6 @@
 <?php
-	$rdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $rdata)));
-	$jdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $jdata)));
+	$rdata = array_map('to_utf8', array_map('safe_html', array_map('html_attr_tags_ok', $rdata)));
+	$jdata = array_map('to_utf8', array_map('safe_html', array_map('html_attr_tags_ok', $jdata)));
 ?>
 <script>
 	$j(function() {
@@ -8,8 +8,8 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			OrderID: <?php echo json_encode(array('id' => $rdata['OrderID'], 'value' => $rdata['OrderID'], 'text' => $jdata['OrderID'])); ?>,
-			ProductID: <?php echo json_encode(array('id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID'])); ?>,
+			OrderID: <?php echo json_encode(['id' => $rdata['OrderID'], 'value' => $rdata['OrderID'], 'text' => $jdata['OrderID']]); ?>,
+			ProductID: <?php echo json_encode(['id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID']]); ?>,
 			Category: <?php echo json_encode($jdata['Category']); ?>,
 			CatalogPrice: <?php echo json_encode($jdata['CatalogPrice']); ?>,
 			UnitsInStock: <?php echo json_encode($jdata['UnitsInStock']); ?>

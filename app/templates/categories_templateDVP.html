@@ -29,7 +29,7 @@
 				var PictureSrc1<%%RND1%%>='<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>';
 				var PictureSrc2<%%RND1%%>='thumbnail.php?t=categories&f=Picture&i=<%%VALUE(Picture)%%>&v=dv'
 			</script>
-			<a href="#" onclick="$('PictureImg<%%RND1%%>').src=($('PictureImg<%%RND1%%>').src.search(/thumbnail\.php/) != -1 && PictureSrc1<%%RND1%%> != '<%%BASE_UPLOAD_PATH%%>' ? PictureSrc1<%%RND1%%> : PictureSrc2<%%RND1%%>); return false;"><img id="PictureImg<%%RND1%%>" src="thumbnail.php?t=categories&f=Picture&i=<%%VALUE(Picture)%%>&v=dv" class="img-thumbnail"></a></div>
+			<a href="#" onclick="$j('#PictureImg<%%RND1%%>').attr('src', ($j('#PictureImg<%%RND1%%>').attr('src').search(/thumbnail\.php/) != -1 && PictureSrc1<%%RND1%%> != '<%%BASE_UPLOAD_PATH%%>' ? PictureSrc1<%%RND1%%> : PictureSrc2<%%RND1%%>)); return false;"><img id="PictureImg<%%RND1%%>" src="thumbnail.php?t=categories&f=Picture&i=<%%VALUE(Picture)%%>&v=dv" class="img-thumbnail"></a></div>
 			</div>
 		</div>
 		<!-- Field: Category Name -->

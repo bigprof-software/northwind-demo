@@ -3,7 +3,7 @@
 	/*
 	~~~~~~ LIST OF FUNCTIONS ~~~~~~
 		set_headers() -- sets HTTP headers (encoding, same-origin frame policy, .. etc)
-		getTableList() -- returns an associative array of all tables in this application in the format tableName=>tableCaption
+		getTableList() -- returns an associative array [tableName => [tableCaption, tableDescription, tableIcon], ...] of tables accessible by current user
 		getThumbnailSpecs($tableName, $fieldName, $view) -- returns an associative array specifying the width, height and identifier of the thumbnail file.
 		createThumbnail($img, $specs) -- $specs is an array as returned by getThumbnailSpecs(). Returns true on success, false on failure.
 		makeSafe($string)
@@ -11,7 +11,6 @@
 		sql($statement, $o)
 		sqlValue($statement)
 		getLoggedAdmin()
-		checkUser($username, $password)
 		logOutUser()
 		getPKFieldName($tn)
 		getCSVData($tn, $pkValue, $stripTag=true)
@@ -32,7 +31,6 @@
 		time12($t) -- return time in 12h format
 		application_url($page) -- return absolute URL of provided page
 		is_ajax() -- return true if this is an ajax request, false otherwise
-		array_trim($arr) -- recursively trim provided value/array
 		is_allowed_username($username, $exception = false) -- returns username if valid and unique, or false otherwise (if exception is provided and same as username, no uniqueness check is performed)
 		csrf_token($validate) -- csrf-proof a form
 		get_plugins() -- scans for installed plugins and returns them in an array ('name', 'title', 'icon' or 'glyphicon', 'admin_path')
@@ -78,6 +76,10 @@
 		userCanImport() -- returns true if user (or his group) can import CSV files (through the permission set in the group page in the admin area).
 		bgStyleToClass($html) -- replaces bg color 'style' attr with a class to prevent style loss on xss cleanup.
 		assocArrFilter($arr, $func) -- filters provided array using provided callback function. The callback receives 2 params ($key, $value) and should return a boolean.
+		array_trim($arr) -- deep trim; trim each element in the array and its sub arrays.
+		request_outside_admin_folder() -- returns true if currently executing script is outside admin folder, false otherwise.
+		breakpoint(__FILE__, __LINE__, $msg) -- if DEBUG_MODE enabled, logs a message to {app_dir}/breakpoint.csv, if $msg is array, it will be converted to str via json_encode
+		denyAccess($msg) -- Send a 403 Access Denied header, with an optional message then die
 	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	*/
 	########################################################################
@@ -94,71 +96,71 @@
 		if(!$skip_authentication && count($accessible_tables)) return $accessible_tables;
 
 		/* table groups */
-		$tg = array(
+		$tg = [
 			'Sales',
 			'Operations',
 			'Catalog'
-		);
+		];
 
-		$all_tables = array(
+		$all_tables = [
 			/* ['table_name' => [table props assoc array] */   
-				'customers' => array(
+				'customers' => [
 					'Caption' => 'Customers',
 					'Description' => 'The customers table contains a list of imaginary customers of the Northwind company.<br><br> You can also access the imaginary orders made by each customer here.',
 					'tableIcon' => 'resources/table_icons/account_balances.png',
 					'group' => $tg[0],
 					'homepageShowCount' => 1
-				),
-				'employees' => array(
+				],
+				'employees' => [
 					'Caption' => 'Employees',
 					'Description' => 'This table lists the employees of \'Northwind\', sorted by last name.<br><br> When you click an employee name to view his/her details, you can also view the orders processed by them. <br><br>And if the selected employee has other employees reporting to him/her, you can view them <br>by clicking the Employees button.',
 					'tableIcon' => 'resources/table_icons/administrator.png',
 					'group' => $tg[1],
 					'homepageShowCount' => 1
-				),
-				'orders' => array(
+				],
+				'orders' => [
 					'Caption' => 'Orders',
 					'Description' => 'Orders placed by customers, with newest orders listed first.<br> Order dates can be specified using<br> a friendly date picker that AppGini automatically generates for date fields.',
 					'tableIcon' => 'resources/table_icons/cash_register.png',
 					'group' => $tg[0],
 					'homepageShowCount' => 1
-				),
-				'order_details' => array(
+				],
+				'order_details' => [
 					'Caption' => 'Order Items',
 					'Description' => 'This table lists the items in each order. It\'s recommended to first select an order from the \'Orders\' <br>table.<br> You can then access that order\'s items from there.',
 					'tableIcon' => 'resources/table_icons/application_form_magnify.png',
 					'group' => $tg[0],
 					'homepageShowCount' => 1
-				),
-				'products' => array(
+				],
+				'products' => [
 					'Caption' => 'Products',
 					'Description' => 'In addition to to accessing product details, you can also access the orders history of each <br>product from here.',
 					'tableIcon' => 'resources/table_icons/handbag.png',
 					'group' => $tg[2],
 					'homepageShowCount' => 1
-				),
-				'categories' => array(
+				],
+				'categories' => [
 					'Caption' => 'Product Categories',
 					'Description' => 'Product categories include photos that have been automatically resized using the <br>thumbnails feature provided by AppGini.<br> Click on a thumbnail to enlarge it. Signed users can upload photos when defining new categories.',
 					'tableIcon' => 'resources/table_icons/award_star_bronze_1.png',
 					'group' => $tg[2],
 					'homepageShowCount' => 1
-				),
-				'suppliers' => array(
+				],
+				'suppliers' => [
 					'Caption' => 'Suppliers',
 					'Description' => 'In addition to to accessing suppliers\' details, you can also view products <br>provided by each supplier.',
 					'tableIcon' => 'resources/table_icons/car.png',
 					'group' => $tg[1],
 					'homepageShowCount' => 1
-				),
-				'shippers' => array(
+				],
+				'shippers' => [
 					'Caption' => 'Shippers',
 					'Description' => 'Here you can access shippers info, and also see orders handled by each shipper.',
 					'tableIcon' => 'resources/table_icons/cart.png',
 					'group' => $tg[1],
 					'homepageShowCount' => 1
-				),
-		);
+				],
+		];
 
 		if($skip_authentication || getLoggedAdmin()) return $all_tables;
 
@@ -170,30 +172,36 @@
 		return $accessible_tables;
 	}
 	#########################################################
-	if(!function_exists('getTableList')) {
-		function getTableList($skip_authentication = false) {
-			$arrTables = array(
-				'customers' => 'Customers',
-				'employees' => 'Employees',
-				'orders' => 'Orders',
-				'order_details' => 'Order Items',
-				'products' => 'Products',
-				'categories' => 'Product Categories',
-				'suppliers' => 'Suppliers',
-				'shippers' => 'Shippers',
-			);
+	function getTableList($skip_authentication = false) {
+		$arrAccessTables = [];
+		$arrTables = [
+			/* 'table_name' => ['table caption', 'homepage description', 'icon', 'table group name'] */   
+			'customers' => ['Customers', 'The customers table contains a list of imaginary customers of the Northwind company.<br><br> You can also access the imaginary orders made by each customer here.', 'resources/table_icons/account_balances.png', 'Sales'],
+			'employees' => ['Employees', 'This table lists the employees of \'Northwind\', sorted by last name.<br><br> When you click an employee name to view his/her details, you can also view the orders processed by them. <br><br>And if the selected employee has other employees reporting to him/her, you can view them <br>by clicking the Employees button.', 'resources/table_icons/administrator.png', 'Operations'],
+			'orders' => ['Orders', 'Orders placed by customers, with newest orders listed first.<br> Order dates can be specified using<br> a friendly date picker that AppGini automatically generates for date fields.', 'resources/table_icons/cash_register.png', 'Sales'],
+			'order_details' => ['Order Items', 'This table lists the items in each order. It\'s recommended to first select an order from the \'Orders\' <br>table.<br> You can then access that order\'s items from there.', 'resources/table_icons/application_form_magnify.png', 'Sales'],
+			'products' => ['Products', 'In addition to to accessing product details, you can also access the orders history of each <br>product from here.', 'resources/table_icons/handbag.png', 'Catalog'],
+			'categories' => ['Product Categories', 'Product categories include photos that have been automatically resized using the <br>thumbnails feature provided by AppGini.<br> Click on a thumbnail to enlarge it. Signed users can upload photos when defining new categories.', 'resources/table_icons/award_star_bronze_1.png', 'Catalog'],
+			'suppliers' => ['Suppliers', 'In addition to to accessing suppliers\' details, you can also view products <br>provided by each supplier.', 'resources/table_icons/car.png', 'Operations'],
+			'shippers' => ['Shippers', 'Here you can access shippers info, and also see orders handled by each shipper.', 'resources/table_icons/cart.png', 'Operations'],
+		];
+		if($skip_authentication || getLoggedAdmin()) return $arrTables;
 
-			return $arrTables;
+		foreach($arrTables as $tn => $tc) {
+			$arrPerm = getTablePermissions($tn);
+			if($arrPerm['access']) $arrAccessTables[$tn] = $tc;
 		}
+
+		return $arrAccessTables;
 	}
 	########################################################################
 	function getThumbnailSpecs($tableName, $fieldName, $view) {
 		if($tableName=='employees' && $fieldName=='Photo' && $view=='tv')
-			return array('width'=>50, 'height'=>50, 'identifier'=>'_tv');
+			return ['width'=>50, 'height'=>50, 'identifier'=>'_tv'];
 		elseif($tableName=='categories' && $fieldName=='Picture' && $view=='tv')
-			return array('width'=>100, 'height'=>100, 'identifier'=>'_tv');
+			return ['width'=>100, 'height'=>100, 'identifier'=>'_tv'];
 		elseif($tableName=='categories' && $fieldName=='Picture' && $view=='dv')
-			return array('width'=>250, 'height'=>250, 'identifier'=>'_dv');
+			return ['width'=>250, 'height'=>250, 'identifier'=>'_dv'];
 		return FALSE;
 	}
 	########################################################################
@@ -267,6 +275,7 @@
 		$thumbData = imagecreatetruecolor($w, $h);
 
 		//preserve transparency of png and gif images
+		$transIndex = null;
 		if($thumbFunc == 'imagepng') {
 			if(($clr = @imagecolorallocate($thumbData, 0, 0, 0)) != -1) {
 				@imagecolortransparent($thumbData, $clr);
@@ -323,8 +332,8 @@
 	function checkPermissionVal($pvn) {
 		// fn to make sure the value in the given POST variable is 0, 1, 2 or 3
 		// if the value is invalid, it default to 0
-		$pvn=intval($_POST[$pvn]);
-		if($pvn!=1 && $pvn!=2 && $pvn!=3) {
+		$pvn = intval(Request::val($pvn));
+		if($pvn != 1 && $pvn != 2 && $pvn != 3) {
 			return 0;
 		} else {
 			return $pvn;
@@ -365,7 +374,7 @@
 		/****** Check that MySQL module is enabled ******/
 		if(!extension_loaded('mysql') && !extension_loaded('mysqli')) {
 			$o['error'] = 'PHP is not configured to connect to MySQL on this machine. Please see <a href="https://www.php.net/manual/en/ref.mysql.php">this page</a> for help on how to configure MySQL.';
-			if($o['silentErrors']) return false;
+			if(!empty($o['silentErrors'])) return false;
 
 			dieErrorPage($o['error']);
 		}
@@ -373,7 +382,7 @@
 		/****** Connect to MySQL ******/
 		if(!($db_link = @db_connect($dbServer, $dbUsername, $dbPassword))) {
 			$o['error'] = db_error($db_link, true);
-			if($o['silentErrors']) return false;
+			if(!empty($o['silentErrors'])) return false;
 
 			dieErrorPage($o['error']);
 		}
@@ -381,7 +390,7 @@
 		/****** Select DB ********/
 		if(!db_select_db($dbDatabase, $db_link)) {
 			$o['error'] = db_error($db_link);
-			if($o['silentErrors']) return false;
+			if(!empty($o['silentErrors'])) return false;
 
 			dieErrorPage($o['error']);
 		}
@@ -416,15 +425,18 @@
 			if(!stristr($statement, "show columns")) {
 				// retrieve error codes
 				$errorNum = db_errno($db_link);
-				$o['error'] = htmlspecialchars(db_error($db_link));
+				$o['error'] = db_error($db_link);
 
 				if(empty($o['noErrorQueryLog']))
 					logErrorQuery($statement, $o['error']);
 
 				if(getLoggedAdmin())
-					$o['error'] .= "<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statement) . "</pre><p><i class=\"text-right\">{$Translation['admin-only info']}</i></p><p>{$Translation['try rebuild fields']}</p>";
+					$o['error'] = htmlspecialchars($o['error']) . 
+						"<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statement) . '</pre>' .
+						"<p><i class=\"text-right\">{$Translation['admin-only info']}</i></p>" .
+						"<p>{$Translation['try rebuild fields']}</p>";
 
-				if($o['silentErrors']) return false;
+				if(!empty($o['silentErrors'])) return false;
 
 				dieErrorPage($o['error']);
 			}
@@ -432,7 +444,7 @@
 
 		/* log slow queries that take more than 1 sec */
 		$t1 = microtime(true);
-		if($t1 - $t0 > 1.0 && empty($o['noSlowQueryLog']))
+		if(($t1 - $t0) > 1.0 && empty($o['noSlowQueryLog']))
 			logSlowQuery($statement, $t1 - $t0);
 
 		return $result;
@@ -446,7 +458,7 @@
 			'noSlowQueryLog' => true,
 			'noErrorQueryLog' => true
 		];
-		$statement = makeSafe($statement);
+		$statement = makeSafe(trim(preg_replace('/^\s+/m', ' ', $statement)));
 		$duration = floatval($duration);
 		$memberID = makeSafe(getLoggedMemberID());
 		$uri = makeSafe($_SERVER['REQUEST_URI']);
@@ -467,7 +479,7 @@
 			'noSlowQueryLog' => true,
 			'noErrorQueryLog' => true
 		];
-		$statement = makeSafe($statement);
+		$statement = makeSafe(trim(preg_replace('/^\s+/m', ' ', $statement)));
 		$error = makeSafe($error);
 		$memberID = makeSafe(getLoggedMemberID());
 		$uri = makeSafe($_SERVER['REQUEST_URI']);
@@ -521,84 +533,29 @@
 	}
 	########################################################################
 	function getLoggedAdmin() {
-		// checks session variables to see whether the admin is logged or not
-		// if not, it returns false
-		// if logged, it returns the user id
-
-		$adminConfig = config('adminConfig');
-		if(empty($_SESSION['memberID'])) return false;
-		if($_SESSION['memberID'] == $adminConfig['adminUsername']) {
-			$_SESSION['adminUsername'] = $_SESSION['memberID'];
-			return $_SESSION['adminUsername'];
-		}
-
-		unset($_SESSION['adminUsername']);
-		return false;
-	}
-	########################################################################
-	function checkUser($username, $password) {
-		// checks given username and password for validity
-		// if valid, registers the username in a session and returns true
-		// else, returns false and destroys session
-
-		$adminConfig = config('adminConfig');
-		if($username != $adminConfig['adminUsername'] || !password_match($password, $adminConfig['adminPassword'])) {
-			return false;
-		}
-
-		$_SESSION['adminUsername'] = $username;
-		$_SESSION['memberGroupID'] = sqlValue("select groupID from membership_users where memberID='" . makeSafe($username) ."'");
-		$_SESSION['memberID'] = $username;
-		return true;
+		return Authentication::getAdmin();
 	}
 	########################################################################
 	function initSession() {
-		$sh = @ini_get('session.save_handler');
-
-		$options = [
-			'name' => 'Northwind',
-			'save_handler' => stripos($sh, 'memcache') === false ? 'files' : $sh,
-			'serialize_handler' => 'php',
-			'cookie_lifetime' => '0',
-			'cookie_path' => '/' . trim(config('appURI'), '/'),
-			'cookie_httponly' => '1',
-			'use_strict_mode' => '1',
-			'use_cookies' => '1',
-			'use_only_cookies' => '1',
-			'cache_limiter' => $_SERVER['REQUEST_METHOD'] == 'POST' ? 'private' : 'nocache',
-			'cache_expire' => '2',
-		];
-
-		// hook: session_options(), if defined, $options is passed to it by reference
-		// to override default session behavior.
-		// should be defined in hooks/bootstrap.php
-		if(function_exists('session_options')) session_options($options);
-
-		// check sessions config
-		$noPathCheck = true; // set to false for debugging session issues
-		$arrPath = explode(';', ini_get('session.save_path'));
-		$save_path = $arrPath[count($arrPath) - 1];
-		if(!$noPathCheck && !is_dir($save_path)) die('Invalid session.save_path in php.ini');
-
-		if(session_id()) { session_write_close(); }
-
-		foreach($options as $key => $value)
-			@ini_set("session.{$key}", $value);
-
-		session_start();
+		Authentication::initSession();
 	}
 	########################################################################
 	function jwt_key() {
-		$config_file = dirname(__FILE__) . '/../config.php';
-		if(!is_file($config_file)) return false;
-		return md5_file($config_file);
+		if(!is_file(configFileName())) return false;
+		return md5_file(configFileName());
 	}
 	########################################################################
 	function jwt_token($user = false) {
-		if($user === false) $user = $_SESSION['memberID'];
+		if($user === false) {
+			$mi = Authentication::getUser();
+			if(!$mi) return false;
+
+			$user = $mi['memberId'];
+		}
+
 		$key = jwt_key();
 		if($key === false) return false;
-		return JWT::encode(array('user' => $user), $key);
+		return JWT::encode(['user' => $user], $key);
 	}
 	########################################################################
 	function jwt_header() {
@@ -640,11 +597,7 @@
 		$payload = JWT::decode($token, $key, $error);
 		if(empty($payload['user'])) return false;
 
-		$_SESSION['memberID'] = $payload['user'];
-		$safe_user = makeSafe($payload['user']);
-		$_SESSION['memberGroupID'] = sqlValue(
-			"SELECT `groupID` FROM `membership_users` WHERE `memberID`='{$safe_user}'" 
-		);
+		Authentication::signInAs($payload['user']);
 
 		// for API calls that just trigger an action and then close connection, 
 		// we need to continue running
@@ -663,16 +616,16 @@
 
 		$url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . config('host') . '/' . application_uri("{$table}_view.php");
 		$token = jwt_token();
-		$options = array(
+		$options = [
 			CURLOPT_URL => $url,
 			CURLOPT_POST => true,
 			CURLOPT_POSTFIELDS => http_build_query($payload),
-			CURLOPT_HTTPHEADER => array(
+			CURLOPT_HTTPHEADER => [
 				"User-Agent: {$_SERVER['HTTP_USER_AGENT']}",
 				"Accept: {$_SERVER['HTTP_ACCEPT']}",
-				"Authorization: Bearer " . $token,
-				"X-Authorization: Bearer " . $token,
-			),
+				"Authorization: Bearer $token",
+				"X-Authorization: Bearer $token",
+			],
 			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_RETURNTRANSFER => true,
 
@@ -683,7 +636,7 @@
 			// closing the connection without waiting for response
 			// see https://stackoverflow.com/a/10895361/1945185
 			CURLOPT_TIMEOUT => 8,
-		);
+		];
 
 		if(defined('CURLOPT_TCP_FASTOPEN')) $options[CURLOPT_TCP_FASTOPEN] = true;
 		if(defined('CURLOPT_SAFE_UPLOAD'))
@@ -696,7 +649,7 @@
 
 		return $ch;
 	}
-########################################################################
+	########################################################################
 	function curl_batch($handlers) {
 		if(!function_exists('curl_init')) return false;
 		if(!is_array($handlers)) return false;
@@ -738,22 +691,21 @@
 		return $pk[$tn] = false;
 	}
 	########################################################################
-	function getCSVData($tn, $pkValue, $stripTags=true) {
+	function getCSVData($tn, $pkValue, $stripTags = true) {
 		// get pk field name for given table
-		if(!$pkField=getPKFieldName($tn)) {
-			return "";
-		}
+		if(!$pkField = getPKFieldName($tn))
+			return '';
 
 		// get a concat string to produce a csv list of field values for given table record
-		if(!$res=sql("show fields from `$tn`", $eo)) {
-			return "";
-		}
-		while($row=db_fetch_assoc($res)) {
-			$csvFieldList.="`{$row['Field']}`,";
-		}
-		$csvFieldList=substr($csvFieldList, 0, -1);
+		if(!$res = sql("SHOW FIELDS FROM `$tn`", $eo))
+			return '';
 
-		$csvData=sqlValue("select CONCAT_WS(', ', $csvFieldList) from `$tn` where `$pkField`='" . makeSafe($pkValue, false) . "'");
+		$csvFieldList = '';
+		while($row = db_fetch_assoc($res))
+			$csvFieldList .= "`{$row['Field']}`,";
+		$csvFieldList = substr($csvFieldList, 0, -1);
+
+		$csvData = sqlValue("SELECT CONCAT_WS(', ', $csvFieldList) FROM `$tn` WHERE `$pkField`='" . makeSafe($pkValue, false) . "'");
 
 		return ($stripTags ? strip_tags($csvData) : $csvData);
 	}
@@ -780,19 +732,18 @@
 			<input type="radio" name="%%NAME%%" id="%%ID%%" value="%%VALUE%%" %%CHECKED%%> %%LABEL%%
 		</label></div>
 		<?php
-		$template = ob_get_contents();
-		ob_end_clean();
+		$template = ob_get_clean();
 
 		$out = '';
 		for($i = 0; $i < count($arrValue); $i++) {
-			$replacements = array(
+			$replacements = [
 				'%%CLASS%%' => html_attr($arrValue[$i] == $selectedValue ? $selClass :$class),
 				'%%NAME%%' => html_attr($name),
 				'%%ID%%' => html_attr($name . $i),
 				'%%VALUE%%' => html_attr($arrValue[$i]),
 				'%%LABEL%%' => $arrCaption[$i],
 				'%%CHECKED%%' => ($arrValue[$i]==$selectedValue ? " checked" : "")
-			);
+			];
 			$out .= str_replace(array_keys($replacements), array_values($replacements), $template);
 		}
 
@@ -800,31 +751,31 @@
 	}
 	########################################################################
 	function htmlSelect($name, $arrValue, $arrCaption, $selectedValue, $class = '', $selectedClass = '') {
-		if($selectedClass == '') {
-			$selectedClass=$class;
-		}
+		if($selectedClass == '')
+			$selectedClass = $class;
+
+		$out = '';
 		if(is_array($arrValue)) {
-			$out="<select name=\"$name\" id=\"$name\">";
-			for($i = 0; $i < count($arrValue); $i++) {
+			$out = "<select name=\"$name\" id=\"$name\">";
+			for($i = 0; $i < count($arrValue); $i++)
 				$out .= '<option value="' . $arrValue[$i] . '"' . ($arrValue[$i] == $selectedValue ? " selected class=\"$class\"" : " class=\"$selectedClass\"") . '>' . $arrCaption[$i] . '</option>';
-			}
 			$out .= '</select>';
 		}
 		return $out;
 	}
 	########################################################################
 	function htmlSQLSelect($name, $sql, $selectedValue, $class = '', $selectedClass = '') {
-		$arrVal[] = '';
-		$arrCap[] = '';
+		$arrVal = [''];
+		$arrCap = [''];
 		if($res = sql($sql, $eo)) {
 			while($row = db_fetch_row($res)) {
 				$arrVal[] = $row[0];
 				$arrCap[] = $row[1];
 			}
 			return htmlSelect($name, $arrVal, $arrCap, $selectedValue, $class, $selectedClass);
-		} else {
-			return "";
 		}
+
+		return '';
 	}
 	########################################################################
 	function bootstrapSelect($name, $arrValue, $arrCaption, $selectedValue, $class = '', $selectedClass = '') {
@@ -844,8 +795,9 @@
 	}
 	########################################################################
 	function bootstrapSQLSelect($name, $sql, $selectedValue, $class = '', $selectedClass = '') {
-		$arrVal[] = '';
-		$arrCap[] = '';
+		$arrVal = [''];
+		$arrCap = [''];
+		$eo = ['silentErrors' => true];
 		if($res = sql($sql, $eo)) {
 			while($row = db_fetch_row($res)) {
 				$arrVal[] = $row[0];
@@ -857,8 +809,11 @@
 		return '';
 	}
 	########################################################################
-	function isEmail($email) {
-		return filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+	function isEmail($email){
+		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
+			return $email;
+
+		return false;
 	}
 	########################################################################
 	function notifyMemberApproval($memberID) {
@@ -867,12 +822,12 @@
 
 		$email = sqlValue("select email from membership_users where lcase(memberID)='{$memberID}'");
 
-		return sendmail(array(
+		return sendmail([
 			'to' => $email,
 			'name' => $memberID,
 			'subject' => $adminConfig['approvalSubject'],
-			'message' => nl2br($adminConfig['approvalMessage'])
-		));
+			'message' => nl2br($adminConfig['approvalMessage']),
+		]);
 	}
 	########################################################################
 	function setupMembership() {
@@ -883,7 +838,7 @@
 		if(isset($_SESSION['setupMembership']) && $num_mem_tables >= count($mem_update_fn)) return;
 
 		/* abort if current page is one of the following exceptions */
-		if(in_array(basename($_SERVER['PHP_SELF']), array(
+		if(in_array(basename($_SERVER['PHP_SELF']), [
 			'pageEditMember.php', 
 			'membership_passwordReset.php', 
 			'membership_profile.php', 
@@ -895,8 +850,8 @@
 			'pageEditMemberPermissions.php', 
 			'pageRebuildFields.php', 
 			'pageSettings.php',
-			'ajax_check_login.php'
-		))) return;
+			'ajax_check_login.php',
+		])) return;
 
 		// call each update_membership function
 		foreach($mem_update_fn as $mem_fn) {
@@ -918,7 +873,7 @@
 	}
 	########################################################################
 	function configure_anonymous_group() {
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		$adminConfig = config('adminConfig');
 		$today = @date('Y-m-d');
@@ -944,7 +899,7 @@
 		if(!$anon_user_db || $anon_user_db != $anon_user) {
 			sql("DELETE FROM `membership_users` WHERE `groupID`='{$anon_group_id}'", $eo);
 			sql("INSERT INTO `membership_users` SET 
-			`memberID`='{$anon_user_safe}', 
+				`memberID`='{$anon_user_safe}', 
 				`signUpDate`='{$today}', 
 				`groupID`='{$anon_group_id}', 
 				`isBanned`=0, 
@@ -955,7 +910,7 @@
 	}
 	########################################################################
 	function configure_admin_group() {
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		$adminConfig = config('adminConfig');
 		$today = @date('Y-m-d');
@@ -1014,107 +969,629 @@
 			/* application schema as created in AppGini */
 			$schema = [
 				'customers' => [
-					'CustomerID' => ['appgini' => "VARCHAR(5) NOT NULL PRIMARY KEY"],
-					'CompanyName' => ['appgini' => "VARCHAR(40) NULL"],
-					'ContactName' => ['appgini' => "VARCHAR(30) NULL"],
-					'ContactTitle' => ['appgini' => "VARCHAR(30) NULL"],
-					'Address' => ['appgini' => "TEXT NULL"],
-					'City' => ['appgini' => "VARCHAR(15) NULL"],
-					'Region' => ['appgini' => "VARCHAR(15) NULL"],
-					'PostalCode' => ['appgini' => "VARCHAR(10) NULL"],
-					'Country' => ['appgini' => "VARCHAR(15) NULL"],
-					'Phone' => ['appgini' => "VARCHAR(24) NULL"],
-					'Fax' => ['appgini' => "VARCHAR(24) NULL"],
-					'TotalSales' => ['appgini' => "DOUBLE(10,2) NULL"],
+					'CustomerID' => [
+						'appgini' => "VARCHAR(5) NOT NULL PRIMARY KEY",
+						'info' => [
+							'caption' => 'Customer ID',
+							'description' => '',
+						],
+					],
+					'CompanyName' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Company Name',
+							'description' => '',
+						],
+					],
+					'ContactName' => [
+						'appgini' => "VARCHAR(30) NULL",
+						'info' => [
+							'caption' => 'Contact Name',
+							'description' => '',
+						],
+					],
+					'ContactTitle' => [
+						'appgini' => "VARCHAR(30) NULL",
+						'info' => [
+							'caption' => 'Contact Title',
+							'description' => '',
+						],
+					],
+					'Address' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Address',
+							'description' => '',
+						],
+					],
+					'City' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'City',
+							'description' => '',
+						],
+					],
+					'Region' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'Region',
+							'description' => '',
+						],
+					],
+					'PostalCode' => [
+						'appgini' => "VARCHAR(10) NULL",
+						'info' => [
+							'caption' => 'Postal Code',
+							'description' => '',
+						],
+					],
+					'Country' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'Country',
+							'description' => '',
+						],
+					],
+					'Phone' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Phone',
+							'description' => '',
+						],
+					],
+					'Fax' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Fax',
+							'description' => '',
+						],
+					],
+					'TotalSales' => [
+						'appgini' => "DOUBLE(10,2) NULL",
+						'info' => [
+							'caption' => 'Total Sales',
+							'description' => 'Total sales made by the current customer. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
 				],
 				'employees' => [
-					'EmployeeID' => ['appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'TitleOfCourtesy' => ['appgini' => "VARCHAR(50) NULL"],
-					'Photo' => ['appgini' => "VARCHAR(40) NULL"],
-					'LastName' => ['appgini' => "VARCHAR(50) NULL"],
-					'FirstName' => ['appgini' => "VARCHAR(10) NULL"],
-					'Title' => ['appgini' => "VARCHAR(30) NULL"],
-					'BirthDate' => ['appgini' => "DATE NULL"],
-					'Age' => ['appgini' => "INT NULL"],
-					'HireDate' => ['appgini' => "DATE NULL"],
-					'Address' => ['appgini' => "VARCHAR(50) NULL"],
-					'City' => ['appgini' => "VARCHAR(15) NULL"],
-					'Region' => ['appgini' => "VARCHAR(15) NULL"],
-					'PostalCode' => ['appgini' => "VARCHAR(10) NULL"],
-					'Country' => ['appgini' => "VARCHAR(15) NULL"],
-					'HomePhone' => ['appgini' => "VARCHAR(24) NULL"],
-					'Extension' => ['appgini' => "VARCHAR(4) NULL"],
-					'Notes' => ['appgini' => "TEXT NULL"],
-					'ReportsTo' => ['appgini' => "INT NULL"],
-					'TotalSales' => ['appgini' => "DOUBLE(10,2) NULL"],
+					'EmployeeID' => [
+						'appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Employee ID',
+							'description' => '',
+						],
+					],
+					'TitleOfCourtesy' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Title Of Courtesy',
+							'description' => '',
+						],
+					],
+					'Photo' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Photo',
+							'description' => 'Maximum file size allowed: 150 KB.<br>Allowed file types: jpg, jpeg, gif, png',
+						],
+					],
+					'LastName' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Last Name',
+							'description' => '',
+						],
+					],
+					'FirstName' => [
+						'appgini' => "VARCHAR(10) NULL",
+						'info' => [
+							'caption' => 'First Name',
+							'description' => '',
+						],
+					],
+					'Title' => [
+						'appgini' => "VARCHAR(30) NULL",
+						'info' => [
+							'caption' => 'Title',
+							'description' => '',
+						],
+					],
+					'BirthDate' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Birth Date',
+							'description' => '',
+						],
+					],
+					'Age' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Age',
+							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
+					'HireDate' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Hire Date',
+							'description' => '',
+						],
+					],
+					'Address' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Address',
+							'description' => '',
+						],
+					],
+					'City' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'City',
+							'description' => '',
+						],
+					],
+					'Region' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'Region',
+							'description' => '',
+						],
+					],
+					'PostalCode' => [
+						'appgini' => "VARCHAR(10) NULL",
+						'info' => [
+							'caption' => 'Postal Code',
+							'description' => '',
+						],
+					],
+					'Country' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'Country',
+							'description' => '',
+						],
+					],
+					'HomePhone' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Home Phone',
+							'description' => '',
+						],
+					],
+					'Extension' => [
+						'appgini' => "VARCHAR(4) NULL",
+						'info' => [
+							'caption' => 'Extension',
+							'description' => '',
+						],
+					],
+					'Notes' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Notes',
+							'description' => '',
+						],
+					],
+					'ReportsTo' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Reports To',
+							'description' => '',
+						],
+					],
+					'TotalSales' => [
+						'appgini' => "DOUBLE(10,2) NULL",
+						'info' => [
+							'caption' => 'Total Sales',
+							'description' => 'Total sales made by the current employee. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
 				],
 				'orders' => [
-					'OrderID' => ['appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'status' => ['appgini' => "VARCHAR(200) NULL"],
-					'CustomerID' => ['appgini' => "VARCHAR(5) NULL"],
-					'EmployeeID' => ['appgini' => "INT NULL"],
-					'OrderDate' => ['appgini' => "DATE NULL"],
-					'RequiredDate' => ['appgini' => "DATE NULL"],
-					'ShippedDate' => ['appgini' => "DATE NULL"],
-					'ShipVia' => ['appgini' => "INT(11) NULL"],
-					'Freight' => ['appgini' => "FLOAT(10,2) NULL DEFAULT '0'"],
-					'ShipName' => ['appgini' => "VARCHAR(5) NULL"],
-					'ShipAddress' => ['appgini' => "VARCHAR(5) NULL"],
-					'ShipCity' => ['appgini' => "VARCHAR(5) NULL"],
-					'ShipRegion' => ['appgini' => "VARCHAR(5) NULL"],
-					'ShipPostalCode' => ['appgini' => "VARCHAR(5) NULL"],
-					'ShipCountry' => ['appgini' => "VARCHAR(5) NULL"],
-					'total' => ['appgini' => "DECIMAL(10,2) NULL"],
+					'OrderID' => [
+						'appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Order ID',
+							'description' => '',
+						],
+					],
+					'status' => [
+						'appgini' => "VARCHAR(200) NULL",
+						'info' => [
+							'caption' => 'Status',
+							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
+					'CustomerID' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Customer',
+							'description' => '',
+						],
+					],
+					'EmployeeID' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Employee',
+							'description' => '',
+						],
+					],
+					'OrderDate' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Order Date',
+							'description' => '',
+						],
+					],
+					'RequiredDate' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Required Date',
+							'description' => '',
+						],
+					],
+					'ShippedDate' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Shipped Date',
+							'description' => '',
+						],
+					],
+					'ShipVia' => [
+						'appgini' => "INT(11) NULL",
+						'info' => [
+							'caption' => 'Ship Via',
+							'description' => '',
+						],
+					],
+					'Freight' => [
+						'appgini' => "FLOAT(10,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Freight',
+							'description' => '',
+						],
+					],
+					'ShipName' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship Name',
+							'description' => '',
+						],
+					],
+					'ShipAddress' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship Address',
+							'description' => '',
+						],
+					],
+					'ShipCity' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship City',
+							'description' => '',
+						],
+					],
+					'ShipRegion' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship Region',
+							'description' => '',
+						],
+					],
+					'ShipPostalCode' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship Postal Code',
+							'description' => '',
+						],
+					],
+					'ShipCountry' => [
+						'appgini' => "VARCHAR(5) NULL",
+						'info' => [
+							'caption' => 'Ship Country',
+							'description' => '',
+						],
+					],
+					'total' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Total',
+							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
 				],
 				'order_details' => [
-					'odID' => ['appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'OrderID' => ['appgini' => "INT NULL DEFAULT '0'"],
-					'ProductID' => ['appgini' => "INT NULL DEFAULT '0'"],
-					'Category' => ['appgini' => "INT NULL"],
-					'CatalogPrice' => ['appgini' => "INT NULL"],
-					'UnitsInStock' => ['appgini' => "INT NULL"],
-					'UnitPrice' => ['appgini' => "FLOAT(10,2) NULL DEFAULT '0'"],
-					'Quantity' => ['appgini' => "SMALLINT NULL DEFAULT '1'"],
-					'Discount' => ['appgini' => "FLOAT(10,2) NULL DEFAULT '0'"],
-					'Subtotal' => ['appgini' => "DOUBLE(10,2) NULL"],
+					'odID' => [
+						'appgini' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'ID',
+							'description' => '',
+						],
+					],
+					'OrderID' => [
+						'appgini' => "INT NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Order ID',
+							'description' => 'This field is a lookup field that gets its data from the Orders table. Since the Orders table has a large number of orders, AppGini automatically displays this lookup field as an<br />auto-complete. Type part of the order number to see a list of matching orders to choose from.',
+						],
+					],
+					'ProductID' => [
+						'appgini' => "INT NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Product',
+							'description' => '',
+						],
+					],
+					'Category' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Category',
+							'description' => '',
+						],
+					],
+					'CatalogPrice' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Catalog Price',
+							'description' => 'This is the price of the product as specified in the products table. You could use that in the unit price field or specify another price.',
+						],
+					],
+					'UnitsInStock' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Units In Stock',
+							'description' => 'Units remaining in stock. You shouldn\'t exceed that amount in the quantity field unless you know an incoming shipment will cover the missing quantity before the order required date.',
+						],
+					],
+					'UnitPrice' => [
+						'appgini' => "FLOAT(10,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Unit Price',
+							'description' => 'This field will appear formatted as US currency in the table view.',
+						],
+					],
+					'Quantity' => [
+						'appgini' => "SMALLINT NULL DEFAULT '1'",
+						'info' => [
+							'caption' => 'Quantity',
+							'description' => 'The table view displays the sum of all item quantities below the quantity column. Although meaningless, this just shows the sum feature provided by AppGini.',
+						],
+					],
+					'Discount' => [
+						'appgini' => "FLOAT(10,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Discount',
+							'description' => 'Enter a discount amount here rather than a percentage or ratio. This field will appear formatted as US currency in the table view.',
+						],
+					],
+					'Subtotal' => [
+						'appgini' => "DOUBLE(10,2) NULL",
+						'info' => [
+							'caption' => 'Subtotal',
+							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
 				],
 				'products' => [
-					'ProductID' => ['appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'ProductName' => ['appgini' => "VARCHAR(50) NULL"],
-					'SupplierID' => ['appgini' => "INT(11) NULL"],
-					'CategoryID' => ['appgini' => "INT NULL"],
-					'QuantityPerUnit' => ['appgini' => "VARCHAR(50) NULL"],
-					'UnitPrice' => ['appgini' => "FLOAT(10,2) NULL DEFAULT '0'"],
-					'UnitsInStock' => ['appgini' => "SMALLINT NULL DEFAULT '0'"],
-					'UnitsOnOrder' => ['appgini' => "SMALLINT(6) NULL DEFAULT '0'"],
-					'ReorderLevel' => ['appgini' => "SMALLINT NULL DEFAULT '0'"],
-					'Discontinued' => ['appgini' => "TINYINT NULL DEFAULT '0'"],
+					'ProductID' => [
+						'appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Product ID',
+							'description' => '',
+						],
+					],
+					'ProductName' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Product Name',
+							'description' => '',
+						],
+					],
+					'SupplierID' => [
+						'appgini' => "INT(11) NULL",
+						'info' => [
+							'caption' => 'Supplier',
+							'description' => '',
+						],
+					],
+					'CategoryID' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Category',
+							'description' => '',
+						],
+					],
+					'QuantityPerUnit' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Quantity Per Unit',
+							'description' => '',
+						],
+					],
+					'UnitPrice' => [
+						'appgini' => "FLOAT(10,2) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Unit Price',
+							'description' => '',
+						],
+					],
+					'UnitsInStock' => [
+						'appgini' => "SMALLINT NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Units In Stock',
+							'description' => '',
+						],
+					],
+					'UnitsOnOrder' => [
+						'appgini' => "SMALLINT(6) NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Units On Order',
+							'description' => '',
+						],
+					],
+					'ReorderLevel' => [
+						'appgini' => "SMALLINT NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Reorder Level',
+							'description' => '',
+						],
+					],
+					'Discontinued' => [
+						'appgini' => "TINYINT NULL DEFAULT '0'",
+						'info' => [
+							'caption' => 'Discontinued',
+							'description' => '',
+						],
+					],
 				],
 				'categories' => [
-					'CategoryID' => ['appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'Picture' => ['appgini' => "VARCHAR(40) NULL"],
-					'CategoryName' => ['appgini' => "VARCHAR(50) NULL UNIQUE"],
-					'Description' => ['appgini' => "TEXT NULL"],
+					'CategoryID' => [
+						'appgini' => "INT NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Category ID',
+							'description' => '',
+						],
+					],
+					'Picture' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Photo',
+							'description' => 'Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png',
+						],
+					],
+					'CategoryName' => [
+						'appgini' => "VARCHAR(50) NULL UNIQUE",
+						'info' => [
+							'caption' => 'Category Name',
+							'description' => '',
+						],
+					],
+					'Description' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Description',
+							'description' => '',
+						],
+					],
 				],
 				'suppliers' => [
-					'SupplierID' => ['appgini' => "INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'CompanyName' => ['appgini' => "VARCHAR(50) NULL"],
-					'ContactName' => ['appgini' => "VARCHAR(30) NULL"],
-					'ContactTitle' => ['appgini' => "VARCHAR(30) NULL"],
-					'Address' => ['appgini' => "VARCHAR(50) NULL"],
-					'City' => ['appgini' => "VARCHAR(15) NULL"],
-					'Region' => ['appgini' => "VARCHAR(15) NULL"],
-					'PostalCode' => ['appgini' => "VARCHAR(10) NULL"],
-					'Country' => ['appgini' => "VARCHAR(50) NULL"],
-					'Phone' => ['appgini' => "VARCHAR(24) NULL"],
-					'Fax' => ['appgini' => "VARCHAR(24) NULL"],
-					'HomePage' => ['appgini' => "TEXT NULL"],
+					'SupplierID' => [
+						'appgini' => "INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Supplier ID',
+							'description' => '',
+						],
+					],
+					'CompanyName' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Company Name',
+							'description' => '',
+						],
+					],
+					'ContactName' => [
+						'appgini' => "VARCHAR(30) NULL",
+						'info' => [
+							'caption' => 'Contact Name',
+							'description' => '',
+						],
+					],
+					'ContactTitle' => [
+						'appgini' => "VARCHAR(30) NULL",
+						'info' => [
+							'caption' => 'Contact Title',
+							'description' => '',
+						],
+					],
+					'Address' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Address',
+							'description' => '',
+						],
+					],
+					'City' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'City',
+							'description' => '',
+						],
+					],
+					'Region' => [
+						'appgini' => "VARCHAR(15) NULL",
+						'info' => [
+							'caption' => 'Region',
+							'description' => '',
+						],
+					],
+					'PostalCode' => [
+						'appgini' => "VARCHAR(10) NULL",
+						'info' => [
+							'caption' => 'Postal Code',
+							'description' => '',
+						],
+					],
+					'Country' => [
+						'appgini' => "VARCHAR(50) NULL",
+						'info' => [
+							'caption' => 'Country',
+							'description' => '',
+						],
+					],
+					'Phone' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Phone',
+							'description' => '',
+						],
+					],
+					'Fax' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Fax',
+							'description' => '',
+						],
+					],
+					'HomePage' => [
+						'appgini' => "TEXT NULL",
+						'info' => [
+							'caption' => 'Home Page',
+							'description' => 'Include <code>http://</code> or <code>https://</code> before the link to make sure it works correctly.',
+						],
+					],
 				],
 				'shippers' => [
-					'ShipperID' => ['appgini' => "INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT"],
-					'CompanyName' => ['appgini' => "VARCHAR(40) NOT NULL"],
-					'Phone' => ['appgini' => "VARCHAR(24) NULL"],
-					'NumOrders' => ['appgini' => "INT NULL"],
+					'ShipperID' => [
+						'appgini' => "INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT",
+						'info' => [
+							'caption' => 'Shipper ID',
+							'description' => '',
+						],
+					],
+					'CompanyName' => [
+						'appgini' => "VARCHAR(40) NOT NULL",
+						'info' => [
+							'caption' => 'Company Name',
+							'description' => '',
+						],
+					],
+					'Phone' => [
+						'appgini' => "VARCHAR(24) NULL",
+						'info' => [
+							'caption' => 'Phone',
+							'description' => '',
+						],
+					],
+					'NumOrders' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Number of orders shipped',
+							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+						],
+					],
 				],
 			];
 		}
@@ -1126,7 +1603,7 @@
 	########################################################################
 	function update_membership_groups() {
 		$tn = 'membership_groups';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1147,7 +1624,7 @@
 	########################################################################
 	function update_membership_users() {
 		$tn = 'membership_users';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1165,7 +1642,9 @@
 				`comments` TEXT, 
 				`pass_reset_key` VARCHAR(100),
 				`pass_reset_expiry` INT UNSIGNED,
+				`flags` TEXT,
 				`allowCSVImport` TINYINT NOT NULL DEFAULT '0', 
+				`data` LONGTEXT,
 				PRIMARY KEY (`memberID`),
 				INDEX `groupID` (`groupID`)
 			) CHARSET " . mysql_charset,
@@ -1178,11 +1657,12 @@
 		sql("ALTER TABLE `{$tn}` ADD INDEX `groupID` (`groupID`)", $eo);
 		sql("ALTER TABLE `{$tn}` ADD COLUMN `flags` TEXT", $eo);
 		sql("ALTER TABLE `{$tn}` ADD COLUMN `allowCSVImport` TINYINT NOT NULL DEFAULT '0'", $eo);
+		sql("ALTER TABLE `{$tn}` ADD COLUMN `data` LONGTEXT", $eo);
 	}
 	########################################################################
 	function update_membership_userrecords() {
 		$tn = 'membership_userrecords';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1212,7 +1692,7 @@
 	########################################################################
 	function update_membership_grouppermissions() {
 		$tn = 'membership_grouppermissions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1232,7 +1712,7 @@
 	########################################################################
 	function update_membership_userpermissions() {
 		$tn = 'membership_userpermissions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `{$tn}` (
@@ -1253,7 +1733,7 @@
 	########################################################################
 	function update_membership_usersessions() {
 		$tn = 'membership_usersessions';
-		$eo = ['silentErrors' => true];
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
 
 		sql(
 			"CREATE TABLE IF NOT EXISTS `membership_usersessions` (
@@ -1272,28 +1752,24 @@
 		return ($this_val != '' ? $this_val : $or);
 	}
 	########################################################################
-	function getUploadedFile($FieldName, $MaxSize=0, $FileTypes='csv|txt', $NoRename=false, $dir='') {
-		$currDir=dirname(__FILE__);
-		if(is_array($_FILES)) {
-			$f = $_FILES[$FieldName];
-		} else {
+	function getUploadedFile($FieldName, $MaxSize = 0, $FileTypes = 'csv|txt', $NoRename = false, $dir = '') {
+		if(empty($_FILES) || empty($_FILES[$FieldName]))
 			return 'Your php settings don\'t allow file uploads.';
-		}
 
-		if(!$MaxSize) {
-			$MaxSize=toBytes(ini_get('upload_max_filesize'));
-		}
+		$f = $_FILES[$FieldName];
 
-		if(!is_dir("$currDir/csv")) {
-			@mkdir("$currDir/csv");
-		}
+		if(!$MaxSize)
+			$MaxSize = toBytes(ini_get('upload_max_filesize'));
 
-		$dir=(is_dir($dir) && is_writable($dir) ? $dir : "$currDir/csv/");
+		@mkdir(__DIR__ . '/csv');
 
-		if($f['error']!=4 && $f['name']!='') {
-			if($f['size']>$MaxSize || $f['error']) {
+		$dir = (is_dir($dir) && is_writable($dir) ? $dir : __DIR__ . '/csv/');
+
+		if($f['error'] != 4 && $f['name'] != '') {
+			if($f['size'] > $MaxSize || $f['error']) {
 				return 'File size exceeds maximum allowed of '.intval($MaxSize / 1024).'KB';
 			}
+
 			if(!preg_match('/\.('.$FileTypes.')$/i', $f['name'], $ft)) {
 				return 'File type not allowed. Only these file types are allowed: '.str_replace('|', ', ', $FileTypes);
 			}
@@ -1314,14 +1790,15 @@
 				return $dir.$n;
 			}
 		}
-		return 'An error occured while uploading the file. Please try again.';
+		return 'An error occurred while uploading the file. Please try again.';
 	}
 	########################################################################
 	function toBytes($val) {
 		$val = trim($val);
-		$last = strtolower($val[strlen($val)-1]);
+		$last = strtolower($val[strlen($val) - 1]);
+
+		$val = intval($val);
 		switch($last) {
-			 // The 'G' modifier is available since PHP 5.1.0
 			 case 'g':
 					$val *= 1024;
 			 case 'm':
@@ -1415,11 +1892,6 @@
 		return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	}
 	########################################################################
-	function array_trim($arr) {
-		if(!is_array($arr)) return trim($arr);
-		return array_map('array_trim', $arr);
-	}
-	########################################################################
 	function is_allowed_username($username, $exception = false) {
 		$username = trim(strtolower($username));
 		if(!preg_match('/^[a-z0-9][a-z0-9 _.@]{3,100}$/', $username) || preg_match('/(@@|  |\.\.|___)/', $username)) return false;
@@ -1444,7 +1916,10 @@
 			2. when validating a submitted form: if(!csrf_token(true)) { reject_submission_somehow(); }
 	*/
 	function csrf_token($validate = false, $token_only = false) {
-		$token_age = 60 * 60;
+		// a long token age is better for UX with SPA and browser back/forward buttons
+		// and it would expire when the session ends anyway
+		$token_age = 86400 * 2;
+
 		/* retrieve token from session */
 		$csrf_token = (isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : false);
 		$csrf_token_expiry = (isset($_SESSION['csrf_token_expiry']) ? $_SESSION['csrf_token_expiry'] : false);
@@ -1452,7 +1927,7 @@
 		if(!$validate) {
 			/* create a new token if necessary */
 			if($csrf_token_expiry < time() || !$csrf_token) {
-				$csrf_token = md5(uniqid(rand(), true));
+				$csrf_token = bin2hex(random_bytes(16));
 				$csrf_token_expiry = time() + $token_age;
 				$_SESSION['csrf_token'] = $csrf_token;
 				$_SESSION['csrf_token_expiry'] = $csrf_token_expiry;
@@ -1463,7 +1938,7 @@
 		}
 
 		/* validate submitted token */
-		$user_token = (isset($_REQUEST['csrf_token']) ? $_REQUEST['csrf_token'] : false);
+		$user_token = Request::val('csrf_token', false);
 		if($csrf_token_expiry < time() || !$user_token || $user_token != $csrf_token) {
 			return false;
 		}
@@ -1473,13 +1948,13 @@
 	########################################################################
 	function get_plugins() {
 		$plugins = [];
-		$plugins_path = dirname(__FILE__) . '/../plugins/';
+		$plugins_path = __DIR__ . '/../plugins/';
 
 		if(!is_dir($plugins_path)) return $plugins;
 
 		$pd = dir($plugins_path);
 		while(false !== ($plugin = $pd->read())) {
-			if(!is_dir($plugins_path . $plugin) || in_array($plugin, array('projects', 'plugins-resources', '.', '..'))) continue;
+			if(!is_dir($plugins_path . $plugin) || in_array($plugin, ['projects', 'plugins-resources', '.', '..'])) continue;
 
 			$info_file = "{$plugins_path}{$plugin}/plugin-info.json";
 			if(!is_file($info_file)) continue;
@@ -1493,7 +1968,7 @@
 	}
 	########################################################################
 	function maintenance_mode($new_status = '') {
-		$maintenance_file = dirname(__FILE__) . '/.maintenance';
+		$maintenance_file = __DIR__ . '/.maintenance';
 
 		if($new_status === true) {
 			/* turn on maintenance mode */
@@ -1531,7 +2006,7 @@
 	function html_attr_tags_ok($str) {
 		// use this instead of html_attr() if you don't want html tags to be escaped
 		$new_str = html_attr($str);
-		return str_replace(array('&lt;', '&gt;'), array('<', '>'), $new_str);
+		return str_replace(['&lt;', '&gt;'], ['<', '>'], $new_str);
 	}
 	#########################################################
 	class Notification{
@@ -1540,14 +2015,14 @@
 			* in the main document, initiate notifications support using this PHP code:
 				echo Notification::placeholder();
 
-			* whenever you want to show a notifcation, use this PHP code:
-				echo Notification::show(array(
+			* whenever you want to show a notifcation, use this PHP code inside a script tag:
+				echo Notification::show([
 					'message' => 'Notification text to display',
 					'class' => 'danger', // or other bootstrap state cues, 'default' if not provided
 					'dismiss_seconds' => 5, // optional auto-dismiss after x seconds
 					'dismiss_days' => 7, // optional dismiss for x days if closed by user -- must provide an id
 					'id' => 'xyz' // optional string to identify the notification -- must use for 'dismiss_days' to work
-				));
+				]);
 		*/
 		protected static $placeholder_id; /* to force a single notifcation placeholder */
 
@@ -1617,10 +2092,8 @@
 			</script>
 
 			<?php
-			$html = ob_get_contents();
-			ob_end_clean();
 
-			return $html;            
+			return ob_get_clean();
 		}
 
 		protected static function default_options(&$options) {
@@ -1655,15 +2128,15 @@
 				})
 			</script>
 			<?php
-			$html = ob_get_contents();
-			ob_end_clean();
 
-			return $html;
+			return ob_get_clean();
 		}
 	}
 	#########################################################
 	function addMailRecipients(&$pm, $recipients, $type = 'to') {
 		if(empty($recipients)) return;
+
+		$func = [];
 
 		switch(strtolower($type)) {
 			case 'cc':
@@ -1673,6 +2146,7 @@
 				$func = [$pm, 'addBCC'];
 				break;
 			case 'to':
+			default:
 				$func = [$pm, 'addAddress'];
 				break;
 		}
@@ -1711,9 +2185,8 @@
 		$smtp = ($cfg['mail_function'] == 'smtp');
 
 		if(!class_exists('PHPMailer', false)) {
-			$curr_dir = dirname(__FILE__);
-			include_once("{$curr_dir}/../resources/PHPMailer/class.phpmailer.php");
-			if($smtp) include_once("{$curr_dir}/../resources/PHPMailer/class.smtp.php");
+			include_once(__DIR__ . '/../resources/PHPMailer/class.phpmailer.php');
+			if($smtp) include_once(__DIR__ . '/../resources/PHPMailer/class.smtp.php');
 		}
 
 		$pm = new PHPMailer;
@@ -1725,8 +2198,9 @@
 			$pm->Debugoutput = 'html';
 			$pm->Host = $cfg['smtp_server'];
 			$pm->Port = $cfg['smtp_port'];
-			$pm->SMTPAuth = true;
+			$pm->SMTPAuth = !empty($cfg['smtp_user']) || !empty($cfg['smtp_pass']);
 			$pm->SMTPSecure = $cfg['smtp_encryption'];
+			$pm->SMTPAutoTLS = $cfg['smtp_encryption'] ? true : false;
 			$pm->Username = $cfg['smtp_user'];
 			$pm->Password = $cfg['smtp_pass'];
 		}
@@ -1744,7 +2218,7 @@
 		if($mail['message'] == strip_tags($mail['message']))
 			$mail['message'] = nl2br($mail['message']);
 
-		$pm->msgHTML($mail['message'], realpath("{$curr_dir}/.."));
+		$pm->msgHTML($mail['message'], realpath(__DIR__ . '/..'));
 
 		/*
 		 * pass 'tag' as-is if provided in $mail .. 
@@ -1765,93 +2239,39 @@
 		if($str == strip_tags($str)) return $noBr ? $str : nl2br($str);
 
 		$hc = new CI_Input(datalist_db_encoding);
-		return $hc->xss_clean(bgStyleToClass($str));
+		$str = $hc->xss_clean(bgStyleToClass($str));
+
+		// sandbox iframes
+		$str = preg_replace('/(<|&lt;)iframe(.*?)(>|&gt;)/i', '$1iframe sandbox $2$3', $str);
+
+		return $str;
 	}
 	#########################################################
 	function getLoggedGroupID() {
-		if($_SESSION['memberGroupID'] != '') {
-			return $_SESSION['memberGroupID'];
-		} else {
-			if(!setAnonymousAccess()) return false;
-			return getLoggedGroupID();
-		}
+		return Authentication::getLoggedGroupId();
 	}
 	#########################################################
 	function getLoggedMemberID() {
-		if($_SESSION['memberID']!='') {
-			return strtolower($_SESSION['memberID']);
-		} else {
-			if(!setAnonymousAccess()) return false;
-			return getLoggedMemberID();
-		}
+		$u = Authentication::getUser();
+		return $u ? $u['username'] : false;
 	}
 	#########################################################
 	function setAnonymousAccess() {
-		$adminConfig = config('adminConfig');
-		$anon_group_safe = addslashes($adminConfig['anonymousGroup']);
-		$anon_user_safe = strtolower(addslashes($adminConfig['anonymousMember']));
-
-		$eo = ['silentErrors' => true];
-
-		$res = sql("select groupID from membership_groups where name='{$anon_group_safe}'", $eo);
-		if(!$res) { return false; }
-		$row = db_fetch_array($res); $anonGroupID = $row[0];
-
-		$_SESSION['memberGroupID'] = ($anonGroupID ? $anonGroupID : 0);
-
-		$res = sql("select lcase(memberID) from membership_users where lcase(memberID)='{$anon_user_safe}' and groupID='{$anonGroupID}'", $eo);
-		if(!$res) { return false; }
-		$row = db_fetch_array($res); $anonMemberID = $row[0];
-
-		$_SESSION['memberID'] = ($anonMemberID ? $anonMemberID : 0);
-
-		return true;
+		return Authentication::setAnonymousAccess();
 	}
 	#########################################################
-	function getMemberInfo($memberID = '') {
-		static $member_info = [];
+	function getMemberInfo($memberID = null) {
+		if($memberID === null) {
+			$u = Authentication::getUser();
+			if(!$u) return [];
 
-		if(!$memberID) {
-			$memberID = getLoggedMemberID();
+			$memberID = $u['username'];
 		}
 
-		// return cached results, if present
-		if(isset($member_info[$memberID])) return $member_info[$memberID];
-
-		$adminConfig = config('adminConfig');
-		$mi = [];
-
-		if($memberID) {
-			$res = sql("select * from membership_users where memberID='" . makeSafe($memberID) . "'", $eo);
-			if($row = db_fetch_assoc($res)) {
-				$mi = array(
-					'username' => $memberID,
-					'groupID' => $row['groupID'],
-					'group' => sqlValue("select name from membership_groups where groupID='{$row['groupID']}'"),
-					'admin' => ($adminConfig['adminUsername'] == $memberID ? true : false),
-					'email' => $row['email'],
-					'custom' => array(
-						$row['custom1'], 
-						$row['custom2'], 
-						$row['custom3'], 
-						$row['custom4']
-					),
-					'banned' => ($row['isBanned'] ? true : false),
-					'approved' => ($row['isApproved'] ? true : false),
-					'signupDate' => @date('n/j/Y', @strtotime($row['signupDate'])),
-					'comments' => $row['comments'],
-					'IP' => $_SERVER['REMOTE_ADDR']
-				);
-
-				// cache results
-				$member_info[$memberID] = $mi;
-			}
-		}
-
-		return $mi;
+		return Authentication::getMemberInfo($memberID);
 	}
 	#########################################################
-	function get_group_id($user = '') {
+	function get_group_id($user = null) {
 		$mi = getMemberInfo($user);
 		return $mi['groupID'];
 	}
@@ -1973,6 +2393,10 @@
 				$date = 'MM/DD/YYYY';
 				$time = 'hh:mm:ss A';
 				break;
+			case 'phps': // php short format
+				$date = 'n/j/Y';
+				$time = 'h:i:s a';
+				break;
 			default: // php
 				$date = 'm/d/Y';
 				$time = 'h:i:s A';
@@ -1981,7 +2405,7 @@
 		$datetime = strtolower($datetime);
 		if($datetime == 'dt' || $datetime == 'td') return "{$date} {$time}";
 		if($datetime == 't') return $time;
-		return $date;
+		return $date; // default case of 'd'
 	}
 	#########################################################
 	/**
@@ -2087,9 +2511,9 @@
 			$time_format
 		);
 		if(stripos($time_regex, ' a'))
-			$time_regex = str_replace(array(' a', ' A'), '\s*(am|pm|a|p)?', $time_regex);
+			$time_regex = str_ireplace(' a', '\s*(am|pm|a|p)?', $time_regex);
 		else
-			$time_regex = str_replace(array('a', 'A'), '\s*(am|pm|a|p)?', $time_regex);
+			$time_regex = str_ireplace( 'a', '\s*(am|pm|a|p)?', $time_regex);
 
 		// extract date and time
 		$time = '';
@@ -2135,13 +2559,13 @@
 		// strtotime handles dates between 1902 and 2037 only
 		// so we need a temp date for dates outside this range ...
 		if($myear < 1902 || $myear > 2037) $pyear = 2000;
-		$mysql_datetime = str_replace($myear, $pyear, $mysql_datetime);
+		$mysql_datetime = str_replace("$myear", "$pyear", $mysql_datetime);
 
 		$ts = strtotime($mysql_datetime);
 		if(!$ts) return '';
 
 		$pdate = date(app_datetime_format('php', $datetime), $ts);
-		return str_replace($pyear, $myear, $pdate);
+		return str_replace("$pyear", "$myear", $pdate);
 	}
 	#########################################################
 	/**
@@ -2167,9 +2591,20 @@
 	 *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned
 	 */
 	function from_utf8($str) {
+		if(!strlen($str)) return $str;
 		if(!defined('datalist_db_encoding')) return $str;
 		if(datalist_db_encoding == 'UTF-8') return $str;
 		return iconv('UTF-8', datalist_db_encoding, $str);
+	}
+	#########################################################
+	/* deep trimmer function */
+	function array_trim($arr) {
+		if(!is_array($arr)) return trim($arr);
+		return array_map('array_trim', $arr);
+	}
+	#########################################################
+	function request_outside_admin_folder() {
+		return (realpath(__DIR__) != realpath(dirname($_SERVER['SCRIPT_FILENAME'])));
 	}
 	#########################################################
 	function get_parent_tables($table) {
@@ -2219,56 +2654,56 @@
 		 *         where calculated fields:
 		 *             field => query, ...
 		 */
-		return array(
-			'customers' => array(
+		return [
+			'customers' => [
 				'TotalSales' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount`) FROM `customers` 
-LEFT JOIN `orders` ON `orders`.`CustomerID`=`customers`.`CustomerID` 
-LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
-WHERE `customers`.`CustomerID`=\'%ID%\'',
-			),
-			'employees' => array(
+					LEFT JOIN `orders` ON `orders`.`CustomerID`=`customers`.`CustomerID` 
+					LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
+					WHERE `customers`.`CustomerID`=\'%ID%\'',
+			],
+			'employees' => [
 				'Age' => 'SELECT FLOOR(DATEDIFF(NOW(), `employees`.`BirthDate`) / 365) FROM `employees` 
-WHERE `employees`.`EmployeeID`=\'%ID%\'',
+					WHERE `employees`.`EmployeeID`=\'%ID%\'',
 				'TotalSales' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount`) FROM `employees` 
-LEFT JOIN `orders` ON `orders`.`EmployeeID`=`employees`.`EmployeeID` 
-LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
-WHERE `employees`.`EmployeeID`=\'%ID%\'',
-			),
-			'orders' => array(
+					LEFT JOIN `orders` ON `orders`.`EmployeeID`=`employees`.`EmployeeID` 
+					LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
+					WHERE `employees`.`EmployeeID`=\'%ID%\'',
+			],
+			'orders' => [
 				'status' => 'SELECT
-IF(
-    `orders`.`ShippedDate`, 
-        \'<span class="text-success">Shipped</span>\', 
-        /* else */
-        IF(
-           `orders`.`RequiredDate` < now(), 
-                \'<span class="text-danger">Late</span>\', 
-                /* else */
-                \'<span class="text-warning">Pending</span>\'
-        )
-) 
-FROM `orders` 
-WHERE `orders`.`OrderID`=\'%ID%\'',
+					IF(
+					    `orders`.`ShippedDate`, 
+					        \'<span class="text-success">Shipped</span>\', 
+					        /* else */
+					        IF(
+					           `orders`.`RequiredDate` < now(), 
+					                \'<span class="text-danger">Late</span>\', 
+					                /* else */
+					                \'<span class="text-warning">Pending</span>\'
+					        )
+					) 
+					FROM `orders` 
+					WHERE `orders`.`OrderID`=\'%ID%\'',
 				'total' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity`) + `orders`.`Freight` FROM `orders` 
-LEFT JOIN `order_details` ON `order_details`.`OrderID`=`orders`.`OrderID` 
-WHERE `orders`.`OrderID`=\'%ID%\'',
-			),
-			'order_details' => array(
+					LEFT JOIN `order_details` ON `order_details`.`OrderID`=`orders`.`OrderID` 
+					WHERE `orders`.`OrderID`=\'%ID%\'',
+			],
+			'order_details' => [
 				'Subtotal' => 'SELECT `order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount` FROM `order_details` 
-WHERE `order_details`.`odID`=\'%ID%\'',
-			),
-			'products' => array(
-			),
-			'categories' => array(
-			),
-			'suppliers' => array(
-			),
-			'shippers' => array(
+					WHERE `order_details`.`odID`=\'%ID%\'',
+			],
+			'products' => [
+			],
+			'categories' => [
+			],
+			'suppliers' => [
+			],
+			'shippers' => [
 				'NumOrders' => 'SELECT COUNT(1) FROM `shippers` 
-LEFT JOIN `orders` ON `orders`.`ShipVia`=`shippers`.`ShipperID` 
-WHERE `shippers`.`ShipperID`=\'%ID%\'',
-			),
-		);
+					LEFT JOIN `orders` ON `orders`.`ShipVia`=`shippers`.`ShipperID` 
+					WHERE `shippers`.`ShipperID`=\'%ID%\'',
+			],
+		];
 	}
 	#########################################################
 	function update_calc_fields($table, $id, $formulas, $mi = false) {
@@ -2277,14 +2712,14 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 		$safe_id = makeSafe($id);
 		$eo = ['silentErrors' => true];
 		$caluclations_made = [];
-		$replace = array(
+		$replace = [
 			'%ID%' => $safe_id,
 			'%USERNAME%' => makeSafe($mi['username']),
 			'%GROUPID%' => makeSafe($mi['groupID']),
 			'%GROUP%' => makeSafe($mi['group']),
 			'%TABLENAME%' => makeSafe($table),
 			'%PKFIELD%' => makeSafe($pk),
-		);
+		];
 
 		foreach($formulas as $field => $query) {
 			// for queries that include unicode entities, replace them with actual unicode characters
@@ -2299,19 +2734,19 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 			$update_query = "UPDATE `{$table}` SET `{$field}`='{$safe_calc_value}' " .
 				"WHERE `{$pk}`='{$safe_id}'";
 			$res = sql($update_query, $eo);
-			if($res) $caluclations_made[] = array(
+			if($res) $caluclations_made[] = [
 				'table' => $table,
 				'id' => $id,
 				'field' => $field,
-				'value' => $calc_value
-			);
+				'value' => $calc_value,
+			];
 		}
 
 		return $caluclations_made;
 	}
 	#########################################################
 	function latest_jquery() {
-		$jquery_dir = dirname(__FILE__) . '/../resources/jquery/js';
+		$jquery_dir = __DIR__ . '/../resources/jquery/js';
 
 		$files = scandir($jquery_dir, SCANDIR_SORT_DESCENDING);
 		foreach($files as $entry) {
@@ -2341,12 +2776,13 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 		global $Translation;
 
 		$reqErrors = [];
-		$minPHP = '5.6.0';
+		$minPHP = '7.0';
+		$phpVersion = floatval(phpversion());
 
-		if(version_compare(PHP_VERSION, $minPHP) == -1)
+		if($phpVersion < $minPHP)
 			$reqErrors[] = str_replace(
 				['<PHP_VERSION>', '<minPHP>'], 
-				[PHP_VERSION, $minPHP], 
+				[$phpVersion, $minPHP], 
 				$Translation['old php version']
 			);
 
@@ -2355,6 +2791,9 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 
 		if(!function_exists('mb_convert_encoding'))
 			$reqErrors[] = str_replace('<EXTENSION>', 'mbstring', $Translation['extension not enabled']);
+
+		if(!function_exists('iconv'))
+			$reqErrors[] = str_replace('<EXTENSION>', 'iconv', $Translation['extension not enabled']);
 
 		// end of checks
 
@@ -2522,7 +2961,7 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 		return $template;
 	}
 	#########################################################
-	function getUploadDir($dir) {
+	function getUploadDir($dir = '') {
 		if($dir == '') $dir = config('adminConfig')['baseUploadPath'];
 
 		return rtrim($dir, '\\/') . '/';
@@ -2546,4 +2985,79 @@ WHERE `shippers`.`ShipperID`=\'%ID%\'',
 				$filtered[$key] = $value;
 
 		return $filtered;
+	}
+	#########################################################
+	function setUserData($key, $value = null) {
+		$data = [];
+
+		$user = makeSafe(getMemberInfo()['username']);
+		if(!$user) return false;
+
+		$dataJson = sqlValue("SELECT `data` FROM `membership_users` WHERE `memberID`='$user'");
+		if($dataJson) {
+			$data = @json_decode($dataJson, true);
+			if(!$data) $data = [];
+		}
+
+		$data[$key] = $value;
+
+		return update(
+			'membership_users', 
+			['data' => @json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR)], 
+			['memberID' => $user]
+		);
+	}
+	#########################################################
+	function getUserData($key) {
+		$user = makeSafe(getMemberInfo()['username']);
+		if(!$user) return null;
+
+		$dataJson = sqlValue("SELECT `data` FROM `membership_users` WHERE `memberID`='$user'");
+		if(!$dataJson) return null;
+
+		$data = @json_decode($dataJson, true);
+		if(!$data) return null;
+
+		if(!isset($data[$key])) return null;
+
+		return $data[$key];
+	}
+	#########################################################
+	/*
+	 Usage:
+	 breakpoint(__FILE__, __LINE__, 'message here');
+	 */
+	function breakpoint($file, $line, $msg) {
+		if(!DEBUG_MODE) return;
+		if(strpos($_SERVER['PHP_SELF'], 'ajax_check_login.php') !== false) return;
+		static $startTs = null;
+		static $fp = null;
+		if(!$startTs) $startTs = microtime(true);
+		if(!$fp) {
+			$logFile = __DIR__ . '/breakpoint.csv';
+			$isNew = !is_file($logFile);
+			$fp = fopen($logFile, 'a');
+			if($isNew) fputcsv($fp, [
+				'Time offset',
+				'Requested script',
+				'Running script',
+				'Line #',
+				'Message',
+			]);
+
+			fputcsv($fp, [date('Y-m-d H:i:s'), $_SERVER['REQUEST_URI'], '', '', '']);
+		}
+
+		fputcsv($fp, [
+			number_format(microtime(true) - $startTs, 3),
+			basename($_SERVER['PHP_SELF']),
+			str_replace(__DIR__, '', $file),
+			$line,
+			is_array($msg) ? json_encode($msg) : $msg,
+		]);
+	}
+	#########################################################
+	function denyAccess($msg = null) {
+		@header($_SERVER['SERVER_PROTOCOL'] . ' 403 Access Denied');
+		die($msg);
 	}

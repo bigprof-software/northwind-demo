@@ -1,6 +1,6 @@
 <?php
-	$rdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $rdata)));
-	$jdata = array_map('to_utf8', array_map('nl2br', array_map('html_attr_tags_ok', $jdata)));
+	$rdata = array_map('to_utf8', array_map('safe_html', array_map('html_attr_tags_ok', $rdata)));
+	$jdata = array_map('to_utf8', array_map('safe_html', array_map('html_attr_tags_ok', $jdata)));
 ?>
 <script>
 	$j(function() {
@@ -8,9 +8,9 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			CustomerID: <?php echo json_encode(array('id' => $rdata['CustomerID'], 'value' => $rdata['CustomerID'], 'text' => $jdata['CustomerID'])); ?>,
-			EmployeeID: <?php echo json_encode(array('id' => $rdata['EmployeeID'], 'value' => $rdata['EmployeeID'], 'text' => $jdata['EmployeeID'])); ?>,
-			ShipVia: <?php echo json_encode(array('id' => $rdata['ShipVia'], 'value' => $rdata['ShipVia'], 'text' => $jdata['ShipVia'])); ?>,
+			CustomerID: <?php echo json_encode(['id' => $rdata['CustomerID'], 'value' => $rdata['CustomerID'], 'text' => $jdata['CustomerID']]); ?>,
+			EmployeeID: <?php echo json_encode(['id' => $rdata['EmployeeID'], 'value' => $rdata['EmployeeID'], 'text' => $jdata['EmployeeID']]); ?>,
+			ShipVia: <?php echo json_encode(['id' => $rdata['ShipVia'], 'value' => $rdata['ShipVia'], 'text' => $jdata['ShipVia']]); ?>,
 			ShipName: <?php echo json_encode($jdata['ShipName']); ?>,
 			ShipAddress: <?php echo json_encode($jdata['ShipAddress']); ?>,
 			ShipCity: <?php echo json_encode($jdata['ShipCity']); ?>,
