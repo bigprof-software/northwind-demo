@@ -9,5 +9,6 @@ app/images
 *.log
 *.cache
 *.zip
+!images.zip
 *.bat
 *.sh
