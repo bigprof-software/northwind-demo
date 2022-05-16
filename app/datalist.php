@@ -263,13 +263,19 @@ class DataList {
 				/* if designer specified a redirect-after-insert url */
 				$url .= (strpos($url, '?') !== false ? '&' : '?') . $insert_status;
 				$url .= (strpos($url, $this->ScriptFileName) !== false ? "&{$filtersGET}" : '');
-				$url = str_replace("#ID#", urlencode($SelectedID), $url);
+				$url = str_replace(
+					"#ID#",
+					urlencode($SelectedID),
+					$url
+				);
 			} else {
 				/* if no redirect-after-insert url, use default */
 				$url = "{$this->ScriptFileName}?{$insert_status}&{$filtersGET}";
 
-				/* if DV and TV in same page, select new record */
-				if(!$this->SeparateDV) $url .= '&SelectedID=' . urlencode($SelectedID);
+				// if user has view access
+				// select new record
+				if($this->Permissions['view'])
+					$url .= '&SelectedID=' . urlencode($SelectedID);
 			}
 
 			@header('Location: ' . $url);

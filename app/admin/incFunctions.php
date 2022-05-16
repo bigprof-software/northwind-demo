@@ -212,6 +212,7 @@
 		$path = dirname($img);
 
 		// image doesn't exist or inaccessible?
+		// known issue: for webp files, requires PHP 7.1+
 		if(!$size = @getimagesize($img)) return false;
 
 		// calculate thumbnail size to maintain aspect ratio
@@ -252,6 +253,9 @@
 		} elseif($ext == '.png') {
 			if(!$gd['PNG Support'])  return false;
 			$thumbFunc = 'imagepng';
+		} elseif($ext == '.webp') {
+			if(!$gd['WebP Support'] && !$gd['WEBP Support'])  return false;
+			$thumbFunc = 'imagewebp';
 		} elseif($ext == '.jpg' || $ext == '.jpe' || $ext == '.jpeg') {
 			if(!$gd['JPG Support'] && !$gd['JPEG Support'])  return false;
 			$thumbFunc = 'imagejpeg';
@@ -269,14 +273,20 @@
 		}
 
 		// get image data
-		if(!$imgData = imagecreatefromstring(implode('', file($img)))) return false;
+		if(
+			$thumbFunc == 'imagewebp'
+			&& !$imgData = imagecreatefromwebp($img)
+		)
+			return false;
+		elseif(!$imgData = imagecreatefromstring(file_get_contents($img)))
+			return false;
 
 		// finally, create thumbnail
 		$thumbData = imagecreatetruecolor($w, $h);
 
 		//preserve transparency of png and gif images
 		$transIndex = null;
-		if($thumbFunc == 'imagepng') {
+		if($thumbFunc == 'imagepng' || $thumbFunc == 'imagewebp') {
 			if(($clr = @imagecolorallocate($thumbData, 0, 0, 0)) != -1) {
 				@imagecolortransparent($thumbData, $clr);
 				@imagealphablending($thumbData, false);
@@ -831,6 +841,8 @@
 	}
 	########################################################################
 	function setupMembership() {
+		if(empty($_SESSION) || empty($_SESSION['memberID'])) return;
+
 		// run once per session, but force proceeding if not all mem tables created
 		$res = sql("show tables like 'membership_%'", $eo);
 		$num_mem_tables = db_num_rows($res);
@@ -851,6 +863,7 @@
 			'pageRebuildFields.php', 
 			'pageSettings.php',
 			'ajax_check_login.php',
+			'ajax-update-calculated-fields.php',
 		])) return;
 
 		// call each update_membership function
@@ -2241,8 +2254,8 @@
 		$hc = new CI_Input(datalist_db_encoding);
 		$str = $hc->xss_clean(bgStyleToClass($str));
 
-		// sandbox iframes
-		$str = preg_replace('/(<|&lt;)iframe(.*?)(>|&gt;)/i', '$1iframe sandbox $2$3', $str);
+		// sandbox iframes if they aren't already
+		$str = preg_replace('/(<|&lt;)iframe(\s+sandbox)*(.*?)(>|&gt;)/i', '$1iframe sandbox$3$4', $str);
 
 		return $str;
 	}

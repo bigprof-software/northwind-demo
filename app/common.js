@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 22.12;
+AppGini.version = 22.13;
 
 /* initials and fixes */
 jQuery(function() {
@@ -352,7 +352,7 @@ function employees_validateData() {
 	var errors = false;
 
 	// check file uploads (file type and size)
-	if($j('#Photo').val() && !AppGini.checkFileUpload('Photo', 'jpg|jpeg|gif|png', 153600)) {
+	if($j('#Photo').val() && !AppGini.checkFileUpload('Photo', 'jpg|jpeg|gif|png|webp', 153600)) {
 		AppGini.scrollTo('Photo');
 		return false;
 	}
@@ -382,7 +382,7 @@ function categories_validateData() {
 	var errors = false;
 
 	// check file uploads (file type and size)
-	if($j('#Picture').val() && !AppGini.checkFileUpload('Picture', 'jpg|jpeg|gif|png', 204800)) {
+	if($j('#Picture').val() && !AppGini.checkFileUpload('Picture', 'jpg|jpeg|gif|png|webp', 204800)) {
 		AppGini.scrollTo('Picture');
 		return false;
 	}
@@ -1829,6 +1829,9 @@ AppGini.lockUpdatesOnUserRequest = function() {
 AppGini.focusFormElement = function(tn, fn) {
 	if(AppGini.mobileDevice()) return;
 
+	// if we have a visible alert, don't scroll to focused element
+	const doScroll = ($j('.alert:visible').length == 0);
+
 	var inputElem = $j([
 		'select[id=' + fn + '-mm]',
 		'select[id=' + fn + ']',
@@ -1842,7 +1845,7 @@ AppGini.focusFormElement = function(tn, fn) {
 
 	if(inputElem.length) {
 		inputElem.focus();
-		AppGini.scrollToDOMElement(inputElem[0], -100);
+		if(doScroll) AppGini.scrollToDOMElement(inputElem[0], -100);
 		return;
 	}
 
@@ -1850,7 +1853,7 @@ AppGini.focusFormElement = function(tn, fn) {
 	var linker = $j('[id=' + fn + '-edit-link]');
 	if(linker.length) {
 		linker.click();
-		AppGini.scrollToDOMElement(linker[0], -100);
+		if(doScroll) AppGini.scrollToDOMElement(linker[0], -100);
 		return;
 	}
 
@@ -1858,7 +1861,7 @@ AppGini.focusFormElement = function(tn, fn) {
 	var s2 = $j('[id=' + fn + '-container], [id=s2id_' + fn + ']');
 	if(s2.length) {
 		s2.select2('focus');
-		AppGini.scrollToDOMElement(s2[0], -100);
+		if(doScroll) AppGini.scrollToDOMElement(s2[0], -100);
 		return;
 	}
 }
@@ -1991,7 +1994,7 @@ AppGini.newRecord = function(callback, params) {
 
 AppGini.updateKeyboardShortcutsStatus = function() {
 	var shortcutsEnabled = JSON.parse(localStorage.getItem('AppGini.shortcutKeysEnabled')) || false;
-	var img = $j('nav .help-shortcuts-launcher');
+	var img = $j('nav .help-shortcuts-launcher img');
 
 	img.length ? img.attr('src', img.attr('src').replace(/\/keyboard.*/, '/keyboard' + (shortcutsEnabled ? '' : '-disabled') + '.png')) : null;
 }
@@ -2077,7 +2080,8 @@ AppGini.handleKeyboardShortcuts = function() {
 	AppGini._handleKeyboardShortcutsApplied = true;
 }
 
-AppGini.showKeyboardShortcuts = function() {
+AppGini.showKeyboardShortcuts = (e) => {
+	if(e) e.preventDefault();
 	if(AppGini.modalOpen()) return;
 
 	var kmap = AppGini.shortcutKeyMap, keys = [], $t = AppGini.Translate._map;
@@ -2119,7 +2123,7 @@ AppGini.showKeyboardShortcuts = function() {
 
 	var title = '<img style="$style" src="$src"> <span class="text-$color">$title</span> $toggler'
 				.replace('$style', 'height: 1.75em; vertical-align: bottom;')
-				.replace('$src', $j('.help-shortcuts-launcher').attr('src'))
+				.replace('$src', $j('.help-shortcuts-launcher img').attr('src'))
 				.replace('$color', shortcutsEnabled ? 'success' : 'danger')
 				.replace('$title', shortcutsEnabled ? $t['keyboard shortcuts enabled'] : $t['keyboard shortcuts disabled'])
 				.replace('$toggler', toggler)
