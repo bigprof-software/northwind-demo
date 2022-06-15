@@ -813,4 +813,10 @@ $TranslationEn = [
 	'unicode fix details' => 'Tables encoded using the utf8 encoding will be adjusted to the more superior utf8mb4 encoding, which supports all unicode character sets.',
 	'fix unicode' => 'Fix unicode',
 	'Messages' => 'Messages',
+
+	// Added in 22.14
+	'mysql port' => 'MySQL port',
+	'db_port help' => 'If MySQL is using a different port than the default %s, enter it above.',
+	'checking database info' => 'Checking database info ...',
+	'if error persists check query log' => 'If the error persists below, please check the query error log for more details',
 ];

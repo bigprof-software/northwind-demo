@@ -1390,7 +1390,7 @@ class DataList {
 			</div>
 		<?php } ?>
 
-		<div class="pull-right flip btn-group vspacer-md hspacer-md tv-tools">
+		<div class="pull-right flip btn-group vspacer-md hspacer-md tv-tools" style="display: none;">
 			<button title="<?php echo html_attr($this->translation['previous column']); ?>" type="button" class="btn btn-default tv-scroll" onclick="AppGini.TVScroll().less()"><i class="glyphicon glyphicon-step-backward"></i></button>
 			<button title="<?php echo html_attr($this->translation['next column']); ?>" type="button" class="btn btn-default tv-scroll" onclick="AppGini.TVScroll().more()"><i class="glyphicon glyphicon-step-forward"></i></button>
 		</div>

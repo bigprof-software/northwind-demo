@@ -987,9 +987,7 @@ EOT;
 		$css_links = <<<EOT
 
 			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap.css">
-			<!--[if gt IE 8]><!-->
-				<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap-theme.css">
-			<!--<![endif]-->';
+			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap-theme.css">
 			<link rel="stylesheet" href="{$prepend_path}resources/lightbox/css/lightbox.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/select2/select2.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/timepicker/bootstrap-timepicker.min.css" media="screen">
