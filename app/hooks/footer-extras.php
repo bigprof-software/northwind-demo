@@ -1,4 +1,4 @@
-<?php if(!$_GET['Embedded']){ ?>
+<?php if(!$_REQUEST['Embedded']) { ?>
 	<div id="more-info-demo" class="hidden">
 		<div id="more-info-demo-icon" class="pull-left text-success"><i class="glyphicon glyphicon-info-sign"></i></div>
 		<p>This is a demo application created using <a href="https://bigprof.com/appgini/">AppGini</a>.
@@ -25,6 +25,8 @@
 				<span class="badge" id="demo-theme-name">Bootstrap</span>
 			</button>
 			<button type="button" class="btn btn-default" id="next-theme" title="Next theme" style="width: 5%"><i class="glyphicon glyphicon-triangle-right"></i></button>
+
+			<button type="button" class="btn btn-default" id="compact-toggle" title="Compact/Large" style="width: 5%"><i class="glyphicon glyphicon-resize-full"></i></button>
 			
 			<button type="button" class="btn btn-default" id="show-more-info" style="width: 18%">
 				<i class="glyphicon glyphicon-info-sign"></i>
@@ -72,30 +74,12 @@
 	</style>
 	
 	<script>
-		$j(function(){
-			/* list of available themes */
-			var themes = [
-				'bootstrap.css',
-				'cerulean.css',
-				'cosmo.css',
-				'cyborg.css',
-				'darkly.css',
-				'flatly.css',
-				'journal.css',
-				'paper.css',
-				'readable.css',
-				'sandstone.css',
-				'simplex.css',
-				'slate.css',
-				'spacelab.css',
-				'superhero.css',
-				'united.css',
-				'yeti.css'
-			];
+		var notEmbedded = true;
 
+		$j(function(){
 			/* Get AppGini version */
-			var appgini_version = $j('.navbar-fixed-bottom small a').text().replace(/[a-z ]*/i, '');
-			$j('.appgini-version').html(appgini_version);
+			var appginiVersion = $j('.navbar-fixed-bottom small a').text().replace(/[a-z ]*/i, '');
+			$j('.appgini-version').html(appginiVersion);
 			
 			/* Remove the bottom nav */
 			$j('.navbar-fixed-bottom').remove();
@@ -135,9 +119,15 @@
 				}
 
 				cookie('theme', themes[themeIndex]);
-				apply_theme(themes[themeIndex]);
+				applyTheme(themes[themeIndex]);
 				demoToolsSameHeight();
 			});
+
+			$j('#compact-toggle').click(function() {
+				compact(
+					$j(this).children('.glyphicon').hasClass('glyphicon-resize-small')
+				);
+			})
 			
 			$j('#hide-demo-tools').click(function() {
 				applyDemoToolsVisibility('off');
@@ -151,7 +141,30 @@
 <?php } ?>
 
 <script>
+	/* list of available themes */
+	var themes = [
+		'bootstrap.css',
+		'cerulean.css',
+		'cosmo.css',
+		'cyborg.css',
+		'darkly.css',
+		'flatly.css',
+		'journal.css',
+		'paper.css',
+		'readable.css',
+		'sandstone.css',
+		'simplex.css',
+		'slate.css',
+		'spacelab.css',
+		'superhero.css',
+		'united.css',
+		'yeti.css'
+	];
+
+	if(typeof(notEmbedded) == 'undefined') var notEmbedded = false;
+
 	function applyDemoToolsVisibility(viz) {
+		if(notEmbedded === undefined) return;
 		if(viz === undefined) viz = cookie('displayDemoTools');
 		if(viz === 'null') viz = 'on';
 
@@ -162,34 +175,52 @@
 		cookie('displayDemoTools', viz);
 	}
 
-	function apply_theme(new_theme){
+	function applyTheme(new_theme){
 		/* get configured theme */
 		var theme = new_theme;
 		var pre_path = <?php echo json_encode(PREPEND_PATH); ?>;
 		theme = theme || cookie('theme');
 		theme = theme || 'bootstrap.css'; // default theme if no cookie and no theme passed
 		
-		if(theme.match(/.*?\.css$/)){
-			/* remove default theme */
-			$j('link[rel=stylesheet][href*="initializr/css/"]').remove();
-			$j('link[rel=stylesheet][href="dynamic.css.php"]').remove();
+		if(!theme.match(/.*?\.css$/)) return;
 
-			/* apply configured theme */
-			$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/' + theme + '">');
-			if(theme == 'bootstrap.css' && !$j('html').hasClass('lt-ie9')){
-				$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/bootstrap-theme.css">');
-			}
-			$j('head').append('<link rel="stylesheet" href="' + pre_path + 'dynamic.css.php">');
-			
-			/* update displayed theme name */
-			$j('#demo-theme-name').html(ucfirst(theme.replace(/\.css$/, '')));
+		/* remove current theme */
+		$j('link[rel=stylesheet][href*="initializr/css/"]').remove();
+		$j('link[rel=stylesheet][href="dynamic.css"]').remove();
+		$j('body > div.users-area')
+			.toggleClass('theme-3d', theme == 'bootstrap.css')
+			.removeClass(themes.map((theme) => 'theme-' + theme.replace(/\.css$/, '')).join(' '))
+			.addClass(`theme-${theme.replace(/\.css$/, '')}`);
+
+		/* apply configured theme */
+		$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/' + theme + '">');
+		if(theme == 'bootstrap.css' && !$j('html').hasClass('lt-ie9')){
+			$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/bootstrap-theme.css">');
+		}
+		$j('head').append('<link rel="stylesheet" href="' + pre_path + 'dynamic.css">');
 		
-			/* Apply navbar color, bgcolor and border styles to #demo-tools */
-			$j('#demo-tools').css({
-				'border': $j('.navbar').css('border'),
-				'background-color': $j('.navbar').css('background-color')
-			});
-		}			
+		/* update displayed theme name */
+		$j('#demo-theme-name').html(ucfirst(theme.replace(/\.css$/, '')));
+	
+		/* Apply navbar color, bgcolor and border styles to #demo-tools */
+		$j('#demo-tools').css({
+			'border': $j('.navbar').css('border'),
+			'background-color': $j('.navbar').css('background-color')
+		});
+	}
+
+	function compact(turnOn) {
+		// on by default
+		if(turnOn === undefined)
+			turnOn = (cookie('compactMode') != 'false');
+
+		if(notEmbedded !== undefined)
+			$j('#compact-toggle > .glyphicon')
+				.toggleClass('glyphicon-resize-small', !turnOn)
+				.toggleClass('glyphicon-resize-full', turnOn);
+
+		$j('body > div.users-area').toggleClass('theme-compact', turnOn);
+		cookie('compactMode', turnOn);
 	}
 	
 	function cookie(name, val){
@@ -232,6 +263,7 @@
 	}
 
 	function demoToolsSameHeight() {
+		if(notEmbedded === undefined) return;
 		var max_height = 30;
 		$j('#demo-tools .btn').each(function(){
 			var bh = $j(this).height();
@@ -241,6 +273,7 @@
 	};
 
 	function showDemoInfoOnce() {
+		if(notEmbedded === undefined) return;
 		if(cookie('demoInfoShownBefore') === 'yes') return;
 
 		cookie('demoInfoShownBefore', 'yes');
@@ -255,10 +288,20 @@
 		);
 	}
 
+	function getThemeFromUrl() {
+		if(!/\btheme=\w+/.test(location.search)) return;
+		let theme = location.search.match(/\btheme=(\w+)/)[1] + '.css';
+		if(themes.indexOf(theme) < 0) return;
+
+		cookie('theme', theme);
+	}
+
 	// startup
-	$j(function(){
-		apply_theme();
+	$j(function() {
+		getThemeFromUrl();
+		applyTheme();
 		applyDemoToolsVisibility();
+		compact();
 		showDemoInfoOnce();
 		showInfoInLoginPage();
 	});
