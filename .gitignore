@@ -12,3 +12,4 @@ app/images
 !images.zip
 *.bat
 *.sh
+file-uploader.php
