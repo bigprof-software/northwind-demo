@@ -188,15 +188,11 @@
 		$j('link[rel=stylesheet][href*="initializr/css/"]').remove();
 		$j('link[rel=stylesheet][href="dynamic.css"]').remove();
 		$j('body > div.users-area')
-			.toggleClass('theme-3d', theme == 'bootstrap.css')
 			.removeClass(themes.map((theme) => 'theme-' + theme.replace(/\.css$/, '')).join(' '))
 			.addClass(`theme-${theme.replace(/\.css$/, '')}`);
 
 		/* apply configured theme */
 		$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/' + theme + '">');
-		if(theme == 'bootstrap.css' && !$j('html').hasClass('lt-ie9')){
-			$j('head').append('<link rel="stylesheet" href="' + pre_path + 'resources/initializr/css/bootstrap-theme.css">');
-		}
 		$j('head').append('<link rel="stylesheet" href="' + pre_path + 'dynamic.css">');
 		
 		/* update displayed theme name */
