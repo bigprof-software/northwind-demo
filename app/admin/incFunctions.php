@@ -2700,7 +2700,7 @@
 					WHERE `customers`.`CustomerID`=\'%ID%\'',
 			],
 			'employees' => [
-				'Age' => 'SELECT TIMESTAMPDIFF(YEAR, `employees`.`Age`, CURDATE()) FROM `employees` 
+				'Age' => 'SELECT TIMESTAMPDIFF(YEAR, `employees`.`BirthDate`, CURDATE()) FROM `employees` 
 					WHERE `employees`.`EmployeeID`=\'%ID%\'',
 				'TotalSales' => 'SELECT SUM(`orders`.`Total`) FROM `employees`
 					LEFT JOIN `orders` ON `orders`.`EmployeeID`=`employees`.`EmployeeID`
@@ -2712,7 +2712,7 @@
 					    WHEN `ShippedDate` IS NOT NULL THEN \'Shipped\'
 					    WHEN `ShippedDate` IS NULL AND `RequiredDate` < CURRENT_DATE THEN \'Late\'
 					    ELSE `Status` -- Preserve the existing status if none of the conditions match
-					  END;
+					  END
 					FROM `orders` 
 					WHERE `OrderID`=\'%ID%\'',
 				'Total' => 'SELECT COALESCE(SUM(`order_details`.`Subtotal`), 0.0) FROM `orders`
