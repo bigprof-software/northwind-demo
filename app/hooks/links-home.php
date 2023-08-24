@@ -29,9 +29,11 @@
 		];
 
 		$homeLinks[] = [
-			'url' => 'nwdemo.zip', 
+			'url' => 'https://github.com/bigprof-software/northwind-demo/releases/latest', 
 			'title' => 'Want to try this demo on your own server? Download it now!', 
-			'description' => 'Download all the files of this demo application, including the AppGini project file, the generated files and the SQL dump of data. To set up the demo either on your own PC or on a web server, please refer to the included README.txt file.',
+			'description' => 'Download all the files of this demo application, including the AppGini project file, ' .
+								'the generated files and the SQL dump of data. To set up the demo either on your own PC or on a web server, ' .
+								'please refer to the included <a href="https://github.com/bigprof-software/northwind-demo/blob/master/README.md">README.md file</a>.',
 			'groups' => ['*'], // groups allowed to see this link
 			'grid_column_classes' => 'col-sm-8 col-md-8 col-lg-6',
 			'panel_classes' => 'panel-primary',
