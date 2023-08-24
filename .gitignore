@@ -13,3 +13,4 @@ app/images
 *.bat
 *.sh
 file-uploader.php
+test*

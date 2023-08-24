@@ -15,8 +15,8 @@
 	 */
 
 		$homeLinks[] = array(
-			'url' => '//bigprof.com/appgini/', 
-			'icon' => '//bigprof.com/appgini3D.png', 
+			'url' => 'https://bigprof.com/appgini/', 
+			'icon' => 'https://cdn.bigprof.com/images/appgini/logo-flat-xs.png', 
 			'title' => 'AppGini homepage', 
 			'description' => 'You can add your own links to the homepage like this one by adding an entry for each link in the generated "hooks/links-home.php" file.',
 			'groups' => array('*'), // groups allowed to see this link
