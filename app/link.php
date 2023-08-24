@@ -7,6 +7,10 @@
 			'Photo' => getUploadDir(''),
 			'primary key' => 'EmployeeID'
 		],
+		'products' => [
+			'TechSheet' => getUploadDir(''),
+			'primary key' => 'ProductID'
+		],
 		'categories' => [
 			'Picture' => getUploadDir(''),
 			'primary key' => 'CategoryID'

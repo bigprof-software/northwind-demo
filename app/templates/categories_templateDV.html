@@ -31,24 +31,25 @@
 					</div>
 				</div>
 
-				<!-- Field: Photo -->
+				<!-- Field: Picture -->
 				<div class="form-group categories-Picture">
 					<hr class="hidden-md hidden-lg">
-					<label class="control-label col-lg-3">Photo <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#Picture-description"></i></label>
+					<label class="control-label col-lg-3">Picture <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#Picture-description"></i></label>
 					<div class="col-lg-9">
-						<span class="help-block bspacer-xs collapse" id="Picture-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png</div></span>
+						<span class="help-block bspacer-xs collapse" id="Picture-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png, webp</div></span>
 						<div class="form-control-static well well-sm">
-							<div class="pull-left"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories_dv"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=dv" class="img-thumbnail" id="Picture-image"></a></div>
-							<div class="pull-right well upload-toolbox">
+							<div class="row" style="margin-right: 0; margin-left: 0;">
+								<div class="col-lg-8 col-md-6" style="padding-left: 0;"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories_dv"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=dv" class="img-thumbnail" id="Picture-image"></a></div>
 								<div class="hidden-md hidden-lg vspacer-lg"></div>
-								<%%UPLOADFILE(Picture)%%>
-								<%%REMOVEFILE(Picture)%%>
-								<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>
-								<div class="text-bold text-danger file-size-error hidden"><%%TRANSLATION(file too large)%%></div>
+								<div class="col-lg-4 col-md-6 well upload-toolbox">
+									<%%REMOVEFILE(Picture)%%>
+									<%%UPLOADFILE(Picture)%%>
+									<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>
+									<div class="text-bold text-danger file-size-error hidden"><%%TRANSLATION(file too large)%%></div>
+								</div>
 							</div>
-							<div class="clearfix"></div>
 						</div>
-						<script>/* disable links to empty images */ $j(function() { var e_Picture = '<%%VALUE(Picture)%%>'; if(e_Picture == '' || e_Picture == '&nbsp;' || e_Picture == 'blank.gif') { $j('#Picture-link').hide(); $j('#Picture-image').parents('a').attr('href', '').on('click', function(e) { e.preventDefault(); }); } });</script>
+						<script>/* disable empty links */ $j(() => { const e_Picture = '<%%VALUE(Picture)%%>'; if(e_Picture == '' || e_Picture == '&nbsp;' || e_Picture == 'blank.gif') { $j('#Picture-link').hide(); $j('#Picture-image').parents('a').attr('href', '').on('click', (e) => e.preventDefault()); } });</script>
 					</div>
 				</div>
 
@@ -123,9 +124,6 @@
 					if($j('textarea#Description').length) new nicEditor({ fullPanel : true }).panelInstance('Description');
 				}
 			});
-
-			/* enable DV action buttons to float on scrolling down the form */
-			enable_dvab_floating();
 
 			$j('#categories_dv_container-loading').addClass('hidden');
 			$j('#categories_dv_container').removeClass('hidden');

@@ -22,6 +22,7 @@
 			if(isset($data['RequiredDate'])) $data['RequiredDate'] = guessMySQLDateTime($data['RequiredDate']);
 			if(isset($data['ShippedDate'])) $data['ShippedDate'] = guessMySQLDateTime($data['ShippedDate']);
 			if(isset($data['ShipVia'])) $data['ShipVia'] = pkGivenLookupText($data['ShipVia'], 'orders', 'ShipVia');
+			if(isset($data['added_date'])) $data['added_date'] = guessMySQLDateTime($data['added_date']);
 			if(isset($data['ShipName'])) $data['ShipName'] = thisOr($data['CustomerID'], pkGivenLookupText($data['ShipName'], 'orders', 'ShipName'));
 			if(isset($data['ShipAddress'])) $data['ShipAddress'] = thisOr($data['CustomerID'], pkGivenLookupText($data['ShipAddress'], 'orders', 'ShipAddress'));
 			if(isset($data['ShipCity'])) $data['ShipCity'] = thisOr($data['CustomerID'], pkGivenLookupText($data['ShipCity'], 'orders', 'ShipCity'));
@@ -37,8 +38,6 @@
 			if(isset($data['UnitPrice'])) $data['UnitPrice'] = preg_replace('/[^\d\.]/', '', $data['UnitPrice']);
 			if(isset($data['Discount'])) $data['Discount'] = preg_replace('/[^\d\.]/', '', $data['Discount']);
 			if(isset($data['Category'])) $data['Category'] = thisOr($data['ProductID'], pkGivenLookupText($data['Category'], 'order_details', 'Category'));
-			if(isset($data['CatalogPrice'])) $data['CatalogPrice'] = thisOr($data['ProductID'], pkGivenLookupText($data['CatalogPrice'], 'order_details', 'CatalogPrice'));
-			if(isset($data['UnitsInStock'])) $data['UnitsInStock'] = thisOr($data['ProductID'], pkGivenLookupText($data['UnitsInStock'], 'order_details', 'UnitsInStock'));
 
 			return $data;
 		},

@@ -7,6 +7,7 @@
 		getThumbnailSpecs($tableName, $fieldName, $view) -- returns an associative array specifying the width, height and identifier of the thumbnail file.
 		createThumbnail($img, $specs) -- $specs is an array as returned by getThumbnailSpecs(). Returns true on success, false on failure.
 		makeSafe($string)
+		formatUri($uri) -- convert \ to / and strip slashes from uri start/end
 		checkPermissionVal($pvn)
 		sql($statement, $o)
 		sqlValue($statement)
@@ -98,8 +99,7 @@
 		/* table groups */
 		$tg = [
 			'Sales',
-			'Operations',
-			'Catalog'
+			'Operations'
 		];
 
 		$all_tables = [
@@ -136,14 +136,14 @@
 					'Caption' => 'Products',
 					'Description' => 'In addition to to accessing product details, you can also access the orders history of each <br>product from here.',
 					'tableIcon' => 'resources/table_icons/handbag.png',
-					'group' => $tg[2],
+					'group' => $tg[1],
 					'homepageShowCount' => 1
 				],
 				'categories' => [
 					'Caption' => 'Product Categories',
 					'Description' => 'Product categories include photos that have been automatically resized using the <br>thumbnails feature provided by AppGini.<br> Click on a thumbnail to enlarge it. Signed users can upload photos when defining new categories.',
 					'tableIcon' => 'resources/table_icons/award_star_bronze_1.png',
-					'group' => $tg[2],
+					'group' => $tg[1],
 					'homepageShowCount' => 1
 				],
 				'suppliers' => [
@@ -166,7 +166,7 @@
 
 		foreach($all_tables as $tn => $ti) {
 			$arrPerm = getTablePermissions($tn);
-			if($arrPerm['access']) $accessible_tables[$tn] = $ti;
+			if(!empty($arrPerm['access'])) $accessible_tables[$tn] = $ti;
 		}
 
 		return $accessible_tables;
@@ -180,8 +180,8 @@
 			'employees' => ['Employees', 'This table lists the employees of \'Northwind\', sorted by last name.<br><br> When you click an employee name to view his/her details, you can also view the orders processed by them. <br><br>And if the selected employee has other employees reporting to him/her, you can view them <br>by clicking the Employees button.', 'resources/table_icons/administrator.png', 'Operations'],
 			'orders' => ['Orders', 'Orders placed by customers, with newest orders listed first.<br> Order dates can be specified using<br> a friendly date picker that AppGini automatically generates for date fields.', 'resources/table_icons/cash_register.png', 'Sales'],
 			'order_details' => ['Order Items', 'This table lists the items in each order. It\'s recommended to first select an order from the \'Orders\' <br>table.<br> You can then access that order\'s items from there.', 'resources/table_icons/application_form_magnify.png', 'Sales'],
-			'products' => ['Products', 'In addition to to accessing product details, you can also access the orders history of each <br>product from here.', 'resources/table_icons/handbag.png', 'Catalog'],
-			'categories' => ['Product Categories', 'Product categories include photos that have been automatically resized using the <br>thumbnails feature provided by AppGini.<br> Click on a thumbnail to enlarge it. Signed users can upload photos when defining new categories.', 'resources/table_icons/award_star_bronze_1.png', 'Catalog'],
+			'products' => ['Products', 'In addition to to accessing product details, you can also access the orders history of each <br>product from here.', 'resources/table_icons/handbag.png', 'Operations'],
+			'categories' => ['Product Categories', 'Product categories include photos that have been automatically resized using the <br>thumbnails feature provided by AppGini.<br> Click on a thumbnail to enlarge it. Signed users can upload photos when defining new categories.', 'resources/table_icons/award_star_bronze_1.png', 'Operations'],
 			'suppliers' => ['Suppliers', 'In addition to to accessing suppliers\' details, you can also view products <br>provided by each supplier.', 'resources/table_icons/car.png', 'Operations'],
 			'shippers' => ['Shippers', 'Here you can access shippers info, and also see orders handled by each shipper.', 'resources/table_icons/cart.png', 'Operations'],
 		];
@@ -189,7 +189,7 @@
 
 		foreach($arrTables as $tn => $tc) {
 			$arrPerm = getTablePermissions($tn);
-			if($arrPerm['access']) $arrAccessTables[$tn] = $tc;
+			if(!empty($arrPerm['access'])) $arrAccessTables[$tn] = $tc;
 		}
 
 		return $arrAccessTables;
@@ -320,6 +320,11 @@
 		unset($thumbData);
 
 		return true;
+	}
+	########################################################################
+	function formatUri($uri) {
+		$uri = str_replace('\\', '/', $uri);
+		return trim($uri, '/');
 	}
 	########################################################################
 	function makeSafe($string, $is_gpc = true) {
@@ -844,12 +849,6 @@
 	function setupMembership() {
 		if(empty($_SESSION) || empty($_SESSION['memberID'])) return;
 
-		// run once per session, but force proceeding if not all mem tables created
-		$res = sql("show tables like 'membership_%'", $eo);
-		$num_mem_tables = db_num_rows($res);
-		$mem_update_fn = membership_table_functions();
-		if(isset($_SESSION['setupMembership']) && $num_mem_tables >= count($mem_update_fn)) return;
-
 		/* abort if current page is one of the following exceptions */
 		if(in_array(basename($_SERVER['PHP_SELF']), [
 			'pageEditMember.php', 
@@ -866,6 +865,12 @@
 			'ajax_check_login.php',
 			'ajax-update-calculated-fields.php',
 		])) return;
+
+		// run once per session, but force proceeding if not all mem tables created
+		$res = sql("show tables like 'membership_%'", $eo);
+		$num_mem_tables = db_num_rows($res);
+		$mem_update_fn = membership_table_functions();
+		if(isset($_SESSION['setupMembership']) && $num_mem_tables >= count($mem_update_fn)) return;
 
 		// call each update_membership function
 		foreach($mem_update_fn as $mem_fn) {
@@ -983,17 +988,17 @@
 			/* application schema as created in AppGini */
 			$schema = [
 				'customers' => [
+					'CompanyName' => [
+						'appgini' => "VARCHAR(40) NOT NULL",
+						'info' => [
+							'caption' => 'Company Name',
+							'description' => '',
+						],
+					],
 					'CustomerID' => [
 						'appgini' => "VARCHAR(5) NOT NULL PRIMARY KEY",
 						'info' => [
 							'caption' => 'Customer ID',
-							'description' => '',
-						],
-					],
-					'CompanyName' => [
-						'appgini' => "VARCHAR(40) NULL",
-						'info' => [
-							'caption' => 'Company Name',
 							'description' => '',
 						],
 					],
@@ -1061,10 +1066,10 @@
 						],
 					],
 					'TotalSales' => [
-						'appgini' => "DOUBLE(10,2) NULL",
+						'appgini' => "DECIMAL(10,2) NULL",
 						'info' => [
 							'caption' => 'Total Sales',
-							'description' => 'Total sales made by the current customer. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+							'description' => '',
 						],
 					],
 				],
@@ -1087,7 +1092,7 @@
 						'appgini' => "VARCHAR(40) NULL",
 						'info' => [
 							'caption' => 'Photo',
-							'description' => 'Maximum file size allowed: 150 KB.<br>Allowed file types: jpg, jpeg, gif, png',
+							'description' => 'Maximum file size allowed: 15000 KB.<br>Allowed file types: jpg, jpeg, gif, png, webp',
 						],
 					],
 					'LastName' => [
@@ -1116,13 +1121,6 @@
 						'info' => [
 							'caption' => 'Birth Date',
 							'description' => '',
-						],
-					],
-					'Age' => [
-						'appgini' => "INT NULL",
-						'info' => [
-							'caption' => 'Age',
-							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
 						],
 					],
 					'HireDate' => [
@@ -1191,15 +1189,22 @@
 					'ReportsTo' => [
 						'appgini' => "INT NULL",
 						'info' => [
-							'caption' => 'Reports To',
+							'caption' => 'ReportsTo',
+							'description' => '',
+						],
+					],
+					'Age' => [
+						'appgini' => "INT NULL",
+						'info' => [
+							'caption' => 'Age',
 							'description' => '',
 						],
 					],
 					'TotalSales' => [
-						'appgini' => "DOUBLE(10,2) NULL",
+						'appgini' => "DECIMAL(10,2) NULL",
 						'info' => [
 							'caption' => 'Total Sales',
-							'description' => 'Total sales made by the current employee. This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+							'description' => '',
 						],
 					],
 				],
@@ -1211,11 +1216,11 @@
 							'description' => '',
 						],
 					],
-					'status' => [
+					'Status' => [
 						'appgini' => "VARCHAR(200) NULL",
 						'info' => [
 							'caption' => 'Status',
-							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+							'description' => '',
 						],
 					],
 					'CustomerID' => [
@@ -1236,6 +1241,13 @@
 						'appgini' => "DATE NULL",
 						'info' => [
 							'caption' => 'Order Date',
+							'description' => '',
+						],
+					],
+					'OrderTime' => [
+						'appgini' => "TIME NULL",
+						'info' => [
+							'caption' => 'Order Time',
 							'description' => '',
 						],
 					],
@@ -1309,11 +1321,25 @@
 							'description' => '',
 						],
 					],
-					'total' => [
+					'added_by' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Added by',
+							'description' => '',
+						],
+					],
+					'added_date' => [
+						'appgini' => "DATE NULL",
+						'info' => [
+							'caption' => 'Added date',
+							'description' => '',
+						],
+					],
+					'Total' => [
 						'appgini' => "DECIMAL(10,2) NULL",
 						'info' => [
 							'caption' => 'Total',
-							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+							'description' => '',
 						],
 					],
 				],
@@ -1332,13 +1358,6 @@
 							'description' => 'This field is a lookup field that gets its data from the Orders table. Since the Orders table has a large number of orders, AppGini automatically displays this lookup field as an<br />auto-complete. Type part of the order number to see a list of matching orders to choose from.',
 						],
 					],
-					'ProductID' => [
-						'appgini' => "INT NULL DEFAULT '0'",
-						'info' => [
-							'caption' => 'Product',
-							'description' => '',
-						],
-					],
 					'Category' => [
 						'appgini' => "INT NULL",
 						'info' => [
@@ -1346,18 +1365,11 @@
 							'description' => '',
 						],
 					],
-					'CatalogPrice' => [
-						'appgini' => "INT NULL",
+					'ProductID' => [
+						'appgini' => "INT NULL DEFAULT '0'",
 						'info' => [
-							'caption' => 'Catalog Price',
-							'description' => 'This is the price of the product as specified in the products table. You could use that in the unit price field or specify another price.',
-						],
-					],
-					'UnitsInStock' => [
-						'appgini' => "INT NULL",
-						'info' => [
-							'caption' => 'Units In Stock',
-							'description' => 'Units remaining in stock. You shouldn\'t exceed that amount in the quantity field unless you know an incoming shipment will cover the missing quantity before the order required date.',
+							'caption' => 'Product',
+							'description' => '',
 						],
 					],
 					'UnitPrice' => [
@@ -1382,10 +1394,10 @@
 						],
 					],
 					'Subtotal' => [
-						'appgini' => "DOUBLE(10,2) NULL",
+						'appgini' => "DECIMAL(10,2) NULL",
 						'info' => [
 							'caption' => 'Subtotal',
-							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
+							'description' => '',
 						],
 					],
 				],
@@ -1460,6 +1472,20 @@
 							'description' => '',
 						],
 					],
+					'TotalSales' => [
+						'appgini' => "DECIMAL(10,2) NULL",
+						'info' => [
+							'caption' => 'Total Sales',
+							'description' => '',
+						],
+					],
+					'TechSheet' => [
+						'appgini' => "VARCHAR(40) NULL",
+						'info' => [
+							'caption' => 'Technical Sheet',
+							'description' => 'Maximum file size allowed: 2000 KB.<br>Allowed file types: txt, doc, docx, docm, odt, pdf, rtf',
+						],
+					],
 				],
 				'categories' => [
 					'CategoryID' => [
@@ -1472,8 +1498,8 @@
 					'Picture' => [
 						'appgini' => "VARCHAR(40) NULL",
 						'info' => [
-							'caption' => 'Photo',
-							'description' => 'Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png',
+							'caption' => 'Picture',
+							'description' => 'Maximum file size allowed: 200 KB.<br>Allowed file types: jpg, jpeg, gif, png, webp',
 						],
 					],
 					'CategoryName' => [
@@ -1572,8 +1598,8 @@
 					'HomePage' => [
 						'appgini' => "TEXT NULL",
 						'info' => [
-							'caption' => 'Home Page',
-							'description' => 'Include <code>http://</code> or <code>https://</code> before the link to make sure it works correctly.',
+							'caption' => 'HomePage',
+							'description' => '',
 						],
 					],
 				],
@@ -1586,7 +1612,7 @@
 						],
 					],
 					'CompanyName' => [
-						'appgini' => "VARCHAR(40) NOT NULL",
+						'appgini' => "VARCHAR(40) NOT NULL UNIQUE",
 						'info' => [
 							'caption' => 'Company Name',
 							'description' => '',
@@ -1597,13 +1623,6 @@
 						'info' => [
 							'caption' => 'Phone',
 							'description' => '',
-						],
-					],
-					'NumOrders' => [
-						'appgini' => "INT NULL",
-						'info' => [
-							'caption' => 'Number of orders shipped',
-							'description' => 'This field is <a href="https://bigprof.com/appgini/help/calculated-fields">Automatically calculated</a>.',
 						],
 					],
 				],
@@ -2676,53 +2695,42 @@
 		 */
 		return [
 			'customers' => [
-				'TotalSales' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount`) FROM `customers` 
-					LEFT JOIN `orders` ON `orders`.`CustomerID`=`customers`.`CustomerID` 
-					LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
+				'TotalSales' => 'SELECT COALESCE(SUM(`orders`.`Total`), 0.0) FROM `customers`
+					LEFT JOIN `orders` ON `orders`.`CustomerID`=`customers`.`CustomerID`
 					WHERE `customers`.`CustomerID`=\'%ID%\'',
 			],
 			'employees' => [
-				'Age' => 'SELECT FLOOR(DATEDIFF(NOW(), `employees`.`BirthDate`) / 365) FROM `employees` 
+				'Age' => 'SELECT TIMESTAMPDIFF(YEAR, `employees`.`Age`, CURDATE()) FROM `employees` 
 					WHERE `employees`.`EmployeeID`=\'%ID%\'',
-				'TotalSales' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount`) FROM `employees` 
-					LEFT JOIN `orders` ON `orders`.`EmployeeID`=`employees`.`EmployeeID` 
-					LEFT JOIN `order_details` ON `orders`.`OrderID`=`order_details`.`OrderID` 
+				'TotalSales' => 'SELECT SUM(`orders`.`Total`) FROM `employees`
+					LEFT JOIN `orders` ON `orders`.`EmployeeID`=`employees`.`EmployeeID`
 					WHERE `employees`.`EmployeeID`=\'%ID%\'',
 			],
 			'orders' => [
-				'status' => 'SELECT
-					IF(
-					    `orders`.`ShippedDate`, 
-					        \'<span class="text-success">Shipped</span>\', 
-					        /* else */
-					        IF(
-					           `orders`.`RequiredDate` < now(), 
-					                \'<span class="text-danger">Late</span>\', 
-					                /* else */
-					                \'<span class="text-warning">Pending</span>\'
-					        )
-					) 
+				'Status' => 'SELECT  CASE
+					    WHEN `ShippedDate` IS NULL AND `RequiredDate` >= CURRENT_DATE THEN \'New\'
+					    WHEN `ShippedDate` IS NOT NULL THEN \'Shipped\'
+					    WHEN `ShippedDate` IS NULL AND `RequiredDate` < CURRENT_DATE THEN \'Late\'
+					    ELSE `Status` -- Preserve the existing status if none of the conditions match
+					  END;
 					FROM `orders` 
-					WHERE `orders`.`OrderID`=\'%ID%\'',
-				'total' => 'SELECT SUM(`order_details`.`UnitPrice` * `order_details`.`Quantity`) + `orders`.`Freight` FROM `orders` 
-					LEFT JOIN `order_details` ON `order_details`.`OrderID`=`orders`.`OrderID` 
+					WHERE `OrderID`=\'%ID%\'',
+				'Total' => 'SELECT COALESCE(SUM(`order_details`.`Subtotal`), 0.0) FROM `orders`
+					LEFT JOIN `order_details` ON `order_details`.`OrderID`=`orders`.`OrderID`
 					WHERE `orders`.`OrderID`=\'%ID%\'',
 			],
 			'order_details' => [
-				'Subtotal' => 'SELECT `order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount` FROM `order_details` 
+				'Subtotal' => 'SELECT COALESCE(`order_details`.`UnitPrice` * `order_details`.`Quantity` - `order_details`.`Discount`, 0.0) FROM `order_details` 
 					WHERE `order_details`.`odID`=\'%ID%\'',
 			],
 			'products' => [
+				'TotalSales' => 'SELECT COALESCE(SUM(`order_details`.`Subtotal`), 0.0) FROM `products`
+					LEFT JOIN `order_details` ON `order_details`.`ProductID`=`products`.`ProductID`
+					WHERE `products`.`ProductID`=\'%ID%\'',
 			],
-			'categories' => [
-			],
-			'suppliers' => [
-			],
-			'shippers' => [
-				'NumOrders' => 'SELECT COUNT(1) FROM `shippers` 
-					LEFT JOIN `orders` ON `orders`.`ShipVia`=`shippers`.`ShipperID` 
-					WHERE `shippers`.`ShipperID`=\'%ID%\'',
-			],
+			'categories' => [],
+			'suppliers' => [],
+			'shippers' => [],
 		];
 	}
 	#########################################################
@@ -2763,18 +2771,6 @@
 		}
 
 		return $caluclations_made;
-	}
-	#########################################################
-	function latest_jquery() {
-		$jquery_dir = __DIR__ . '/../resources/jquery/js';
-
-		$files = scandir($jquery_dir, SCANDIR_SORT_DESCENDING);
-		foreach($files as $entry) {
-			if(preg_match('/^jquery[-0-9\.]*\.min\.js$/i', $entry))
-				return $entry;
-		}
-
-		return '';
 	}
 	#########################################################
 	function existing_value($tn, $fn, $id, $cache = true) {
@@ -2882,10 +2878,8 @@
 			],
 			'order_details' => [
 				'OrderID' => 'SELECT `orders`.`OrderID`, `orders`.`OrderID` FROM `orders` LEFT JOIN `customers` as customers1 ON `customers1`.`CustomerID`=`orders`.`CustomerID` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`orders`.`EmployeeID` LEFT JOIN `shippers` as shippers1 ON `shippers1`.`ShipperID`=`orders`.`ShipVia` ORDER BY 2',
-				'ProductID' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
 				'Category' => 'SELECT `products`.`ProductID`, IF(CHAR_LENGTH(`products`.`CategoryID`) || CHAR_LENGTH(`products`.`SupplierID`), CONCAT_WS(\'\', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS(\'\',   `categories1`.`CategoryName`), \'\'), \' / \', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS(\'\',   `suppliers1`.`CompanyName`), \'\')), \'\') FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
-				'CatalogPrice' => 'SELECT `products`.`ProductID`, `products`.`UnitPrice` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
-				'UnitsInStock' => 'SELECT `products`.`ProductID`, `products`.`UnitsInStock` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
+				'ProductID' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
 			],
 			'products' => [
 				'SupplierID' => 'SELECT `suppliers`.`SupplierID`, `suppliers`.`CompanyName` FROM `suppliers` ORDER BY 2',
@@ -3080,4 +3074,8 @@
 	function denyAccess($msg = null) {
 		@header($_SERVER['SERVER_PROTOCOL'] . ' 403 Access Denied');
 		die($msg);
+	}
+	#########################################################
+	function is_xhr() {
+		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 	}

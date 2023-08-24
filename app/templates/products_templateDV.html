@@ -113,6 +113,37 @@
 					</div>
 				</div>
 
+				<!-- Field: Total Sales -->
+				<div class="form-group products-TotalSales">
+					<hr class="hidden-md hidden-lg">
+					<label class="control-label col-lg-3">Total Sales</label>
+					<div class="col-lg-9">
+						<div class="form-control-static" id="TotalSales"><%%VALUE(TotalSales)%%></div>
+					</div>
+				</div>
+
+				<!-- Field: Technical Sheet -->
+				<div class="form-group products-TechSheet">
+					<hr class="hidden-md hidden-lg">
+					<label class="control-label col-lg-3">Technical Sheet <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#TechSheet-description"></i></label>
+					<div class="col-lg-9">
+						<span class="help-block bspacer-xs collapse" id="TechSheet-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 2000 KB.<br>Allowed file types: txt, doc, docx, docm, odt, pdf, rtf</div></span>
+						<div class="form-control-static well well-sm">
+							<div class="row" style="margin-right: 0; margin-left: 0;">
+								<div class="col-lg-8 col-md-6" style="padding-left: 0;"><a id="TechSheet-link" href="link.php?t=products&f=TechSheet&i=<%%VALUE(ProductID)%%>" target="_blank" class="rspacer-lg"><i class="glyphicon glyphicon-file" title="<%%VALUE(TechSheet)%%>" style="font-size: 4em;"></i></a></div>
+								<div class="hidden-md hidden-lg vspacer-lg"></div>
+								<div class="col-lg-4 col-md-6 well upload-toolbox">
+									<%%REMOVEFILE(TechSheet)%%>
+									<%%UPLOADFILE(TechSheet)%%>
+									<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>
+									<div class="text-bold text-danger file-size-error hidden"><%%TRANSLATION(file too large)%%></div>
+								</div>
+							</div>
+						</div>
+						<script>/* disable empty links */ $j(() => { const e_TechSheet = '<%%VALUE(TechSheet)%%>'; if(e_TechSheet == '' || e_TechSheet == '&nbsp;' || e_TechSheet == 'blank.gif') { $j('#TechSheet-link').hide(); $j('#TechSheet-image').parents('a').attr('href', '').on('click', (e) => e.preventDefault()); } });</script>
+					</div>
+				</div>
+
 			</fieldset>
 		</div>
 
@@ -160,9 +191,6 @@
 				setTimeout(AppGini.closeParentModal, 2000);
 			}
 
-
-			/* enable DV action buttons to float on scrolling down the form */
-			enable_dvab_floating();
 
 			$j('#products_dv_container-loading').addClass('hidden');
 			$j('#products_dv_container').removeClass('hidden');

@@ -1,15 +1,15 @@
 <?php
-	// For help on using hooks, please refer to http://bigprof.com/appgini/help/working-with-generated-web-database-application/hooks
+	// For help on using hooks, please refer to https://bigprof.com/appgini/help/working-with-generated-web-database-application/hooks
 
-	function customers_init(&$options, $memberInfo, &$args){
+	function customers_init(&$options, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_header($contentType, $memberInfo, &$args){
+	function customers_header($contentType, $memberInfo, &$args) {
 		$header='';
 
-		switch($contentType){
+		switch($contentType) {
 			case 'tableview':
 				$header='';
 				break;
@@ -38,10 +38,10 @@
 		return $header;
 	}
 
-	function customers_footer($contentType, $memberInfo, &$args){
+	function customers_footer($contentType, $memberInfo, &$args) {
 		$footer='';
 
-		switch($contentType){
+		switch($contentType) {
 			case 'tableview':
 				$footer='';
 				break;
@@ -70,44 +70,44 @@
 		return $footer;
 	}
 
-	function customers_before_insert(&$data, $memberInfo, &$args){
+	function customers_before_insert(&$data, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_after_insert($data, $memberInfo, &$args){
+	function customers_after_insert($data, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_before_update(&$data, $memberInfo, &$args){
+	function customers_before_update(&$data, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_after_update($data, $memberInfo, &$args){
+	function customers_after_update($data, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_before_delete($selectedID, &$skipChecks, $memberInfo, &$args){
+	function customers_before_delete($selectedID, &$skipChecks, $memberInfo, &$args) {
 
 		return TRUE;
 	}
 
-	function customers_after_delete($selectedID, $memberInfo, &$args){
+	function customers_after_delete($selectedID, $memberInfo, &$args) {
 
 	}
 
-	function customers_dv($selectedID, $memberInfo, &$html, &$args){
+	function customers_dv($selectedID, $memberInfo, &$html, &$args) {
 
 	}
 
-	function customers_csv($query, $memberInfo, &$args){
+	function customers_csv($query, $memberInfo, &$args) {
 
 		return $query;
 	}
-	function customers_batch_actions(&$args){
+	function customers_batch_actions(&$args) {
 
-		return array();
+		return [];
 	}

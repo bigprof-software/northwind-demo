@@ -12,9 +12,9 @@
 		setupTable(
 			'customers', " 
 			CREATE TABLE IF NOT EXISTS `customers` ( 
+				`CompanyName` VARCHAR(40) NOT NULL,
 				`CustomerID` VARCHAR(5) NOT NULL,
 				PRIMARY KEY (`CustomerID`),
-				`CompanyName` VARCHAR(40) NULL,
 				`ContactName` VARCHAR(30) NULL,
 				`ContactTitle` VARCHAR(30) NULL,
 				`Address` TEXT NULL,
@@ -24,8 +24,8 @@
 				`Country` VARCHAR(15) NULL,
 				`Phone` VARCHAR(24) NULL,
 				`Fax` VARCHAR(24) NULL,
-				`TotalSales` DOUBLE(10,2) NULL
-			) CHARSET utf8"
+				`TotalSales` DECIMAL(10,2) NULL
+			) CHARSET utf8mb4"
 		);
 
 		setupTable(
@@ -39,7 +39,6 @@
 				`FirstName` VARCHAR(10) NULL,
 				`Title` VARCHAR(30) NULL,
 				`BirthDate` DATE NULL,
-				`Age` INT NULL,
 				`HireDate` DATE NULL,
 				`Address` VARCHAR(50) NULL,
 				`City` VARCHAR(15) NULL,
@@ -50,8 +49,9 @@
 				`Extension` VARCHAR(4) NULL,
 				`Notes` TEXT NULL,
 				`ReportsTo` INT NULL,
-				`TotalSales` DOUBLE(10,2) NULL
-			) CHARSET utf8"
+				`Age` INT NULL,
+				`TotalSales` DECIMAL(10,2) NULL
+			) CHARSET utf8mb4"
 		);
 		setupIndexes('employees', ['ReportsTo',]);
 
@@ -60,10 +60,11 @@
 			CREATE TABLE IF NOT EXISTS `orders` ( 
 				`OrderID` INT NOT NULL AUTO_INCREMENT,
 				PRIMARY KEY (`OrderID`),
-				`status` VARCHAR(200) NULL,
+				`Status` VARCHAR(200) NULL,
 				`CustomerID` VARCHAR(5) NULL,
 				`EmployeeID` INT NULL,
 				`OrderDate` DATE NULL,
+				`OrderTime` TIME NULL,
 				`RequiredDate` DATE NULL,
 				`ShippedDate` DATE NULL,
 				`ShipVia` INT(11) NULL,
@@ -74,8 +75,10 @@
 				`ShipRegion` VARCHAR(5) NULL,
 				`ShipPostalCode` VARCHAR(5) NULL,
 				`ShipCountry` VARCHAR(5) NULL,
-				`total` DECIMAL(10,2) NULL
-			) CHARSET utf8"
+				`added_by` VARCHAR(40) NULL,
+				`added_date` DATE NULL,
+				`Total` DECIMAL(10,2) NULL
+			) CHARSET utf8mb4"
 		);
 		setupIndexes('orders', ['CustomerID','EmployeeID','ShipVia',]);
 
@@ -85,15 +88,13 @@
 				`odID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 				PRIMARY KEY (`odID`),
 				`OrderID` INT NULL DEFAULT '0',
-				`ProductID` INT NULL DEFAULT '0',
 				`Category` INT NULL,
-				`CatalogPrice` INT NULL,
-				`UnitsInStock` INT NULL,
+				`ProductID` INT NULL DEFAULT '0',
 				`UnitPrice` FLOAT(10,2) NULL DEFAULT '0',
 				`Quantity` SMALLINT NULL DEFAULT '1',
 				`Discount` FLOAT(10,2) NULL DEFAULT '0',
-				`Subtotal` DOUBLE(10,2) NULL
-			) CHARSET utf8"
+				`Subtotal` DECIMAL(10,2) NULL
+			) CHARSET utf8mb4"
 		);
 		setupIndexes('order_details', ['OrderID','ProductID',]);
 
@@ -110,8 +111,10 @@
 				`UnitsInStock` SMALLINT NULL DEFAULT '0',
 				`UnitsOnOrder` SMALLINT(6) NULL DEFAULT '0',
 				`ReorderLevel` SMALLINT NULL DEFAULT '0',
-				`Discontinued` TINYINT NULL DEFAULT '0'
-			) CHARSET utf8"
+				`Discontinued` TINYINT NULL DEFAULT '0',
+				`TotalSales` DECIMAL(10,2) NULL,
+				`TechSheet` VARCHAR(40) NULL
+			) CHARSET utf8mb4"
 		);
 		setupIndexes('products', ['SupplierID','CategoryID',]);
 
@@ -124,7 +127,7 @@
 				`CategoryName` VARCHAR(50) NULL,
 				UNIQUE `CategoryName_unique` (`CategoryName`),
 				`Description` TEXT NULL
-			) CHARSET utf8"
+			) CHARSET utf8mb4"
 		);
 
 		setupTable(
@@ -143,7 +146,7 @@
 				`Phone` VARCHAR(24) NULL,
 				`Fax` VARCHAR(24) NULL,
 				`HomePage` TEXT NULL
-			) CHARSET utf8"
+			) CHARSET utf8mb4"
 		);
 
 		setupTable(
@@ -152,9 +155,9 @@
 				`ShipperID` INT(11) NOT NULL AUTO_INCREMENT,
 				PRIMARY KEY (`ShipperID`),
 				`CompanyName` VARCHAR(40) NOT NULL,
-				`Phone` VARCHAR(24) NULL,
-				`NumOrders` INT NULL
-			) CHARSET utf8"
+				UNIQUE `CompanyName_unique` (`CompanyName`),
+				`Phone` VARCHAR(24) NULL
+			) CHARSET utf8mb4"
 		);
 
 

@@ -9,10 +9,8 @@
 		/* data for selected record, or defaults if none is selected */
 		var data = {
 			OrderID: <?php echo json_encode(['id' => $rdata['OrderID'], 'value' => $rdata['OrderID'], 'text' => $jdata['OrderID']]); ?>,
-			ProductID: <?php echo json_encode(['id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID']]); ?>,
 			Category: <?php echo json_encode($jdata['Category']); ?>,
-			CatalogPrice: <?php echo json_encode($jdata['CatalogPrice']); ?>,
-			UnitsInStock: <?php echo json_encode($jdata['UnitsInStock']); ?>
+			ProductID: <?php echo json_encode(['id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID']]); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */
@@ -44,8 +42,6 @@
 
 			if(d.mfk == 'ProductID' && d.id == data.ProductID.id) {
 				$j('#Category' + d[rnd]).html(data.Category);
-				$j('#CatalogPrice' + d[rnd]).html(data.CatalogPrice);
-				$j('#UnitsInStock' + d[rnd]).html(data.UnitsInStock);
 				return true;
 			}
 

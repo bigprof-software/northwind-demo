@@ -3,13 +3,13 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '22.14');
+	@define('APP_VERSION', '23.14');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);
 
 	@define('DATABASE', 'mysqli');
-	@define('mysql_charset', 'utf8');
+	@define('mysql_charset', 'utf8mb4');
 
 	@define('TIMEZONE', 'America/New_York');
 
@@ -41,3 +41,4 @@
 	$GLOBALS['filter_operators'] = FILTER_OPERATORS;
 
 	@define('MULTI_TENANTS', false);
+	@define('FORCE_SETUP_CAPTCHA', true);

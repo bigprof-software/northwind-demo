@@ -14,3 +14,4 @@ app/images
 *.sh
 file-uploader.php
 test*
+app/Northwind.axp

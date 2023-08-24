@@ -39,7 +39,7 @@
 
 	function get_table_groups($skip_authentication = false) {
 		$tables = getTableList($skip_authentication);
-		$all_groups = ['Sales', 'Operations', 'Catalog'];
+		$all_groups = ['Sales', 'Operations'];
 
 		$groups = [];
 		foreach($all_groups as $grp) {
@@ -99,21 +99,21 @@
 			}
 		}
 
-		return $table_permissions[$tn];
+		return $table_permissions[$tn] ?? [];
 	}
 
 	#########################################################
 
 	function get_sql_fields($table_name) {
 		$sql_fields = [
-			'customers' => "`customers`.`CustomerID` as 'CustomerID', `customers`.`CompanyName` as 'CompanyName', `customers`.`ContactName` as 'ContactName', `customers`.`ContactTitle` as 'ContactTitle', `customers`.`Address` as 'Address', `customers`.`City` as 'City', `customers`.`Region` as 'Region', `customers`.`PostalCode` as 'PostalCode', `customers`.`Country` as 'Country', `customers`.`Phone` as 'Phone', `customers`.`Fax` as 'Fax', `customers`.`TotalSales` as 'TotalSales'",
-			'employees' => "`employees`.`EmployeeID` as 'EmployeeID', `employees`.`TitleOfCourtesy` as 'TitleOfCourtesy', `employees`.`Photo` as 'Photo', `employees`.`LastName` as 'LastName', `employees`.`FirstName` as 'FirstName', `employees`.`Title` as 'Title', if(`employees`.`BirthDate`,date_format(`employees`.`BirthDate`,'%m/%d/%Y'),'') as 'BirthDate', `employees`.`Age` as 'Age', if(`employees`.`HireDate`,date_format(`employees`.`HireDate`,'%m/%d/%Y'),'') as 'HireDate', `employees`.`Address` as 'Address', `employees`.`City` as 'City', `employees`.`Region` as 'Region', `employees`.`PostalCode` as 'PostalCode', `employees`.`Country` as 'Country', `employees`.`HomePhone` as 'HomePhone', `employees`.`Extension` as 'Extension', `employees`.`Notes` as 'Notes', IF(    CHAR_LENGTH(`employees1`.`LastName`) || CHAR_LENGTH(`employees1`.`FirstName`), CONCAT_WS('',   `employees1`.`LastName`, ', ', `employees1`.`FirstName`), '') as 'ReportsTo', `employees`.`TotalSales` as 'TotalSales'",
-			'orders' => "`orders`.`OrderID` as 'OrderID', `orders`.`status` as 'status', IF(    CHAR_LENGTH(`customers1`.`CompanyName`), CONCAT_WS('',   `customers1`.`CompanyName`), '') as 'CustomerID', IF(    CHAR_LENGTH(`employees1`.`LastName`) || CHAR_LENGTH(`employees1`.`FirstName`), CONCAT_WS('',   `employees1`.`LastName`, ', ', `employees1`.`FirstName`), '') as 'EmployeeID', if(`orders`.`OrderDate`,date_format(`orders`.`OrderDate`,'%m/%d/%Y'),'') as 'OrderDate', if(`orders`.`RequiredDate`,date_format(`orders`.`RequiredDate`,'%m/%d/%Y'),'') as 'RequiredDate', if(`orders`.`ShippedDate`,date_format(`orders`.`ShippedDate`,'%m/%d/%Y'),'') as 'ShippedDate', IF(    CHAR_LENGTH(`shippers1`.`CompanyName`), CONCAT_WS('',   `shippers1`.`CompanyName`), '') as 'ShipVia', `orders`.`Freight` as 'Freight', IF(    CHAR_LENGTH(`customers1`.`CompanyName`), CONCAT_WS('',   `customers1`.`CompanyName`), '') as 'ShipName', IF(    CHAR_LENGTH(`customers1`.`Address`), CONCAT_WS('',   `customers1`.`Address`), '') as 'ShipAddress', IF(    CHAR_LENGTH(`customers1`.`City`), CONCAT_WS('',   `customers1`.`City`), '') as 'ShipCity', IF(    CHAR_LENGTH(`customers1`.`Region`), CONCAT_WS('',   `customers1`.`Region`), '') as 'ShipRegion', IF(    CHAR_LENGTH(`customers1`.`PostalCode`), CONCAT_WS('',   `customers1`.`PostalCode`), '') as 'ShipPostalCode', IF(    CHAR_LENGTH(`customers1`.`Country`), CONCAT_WS('',   `customers1`.`Country`), '') as 'ShipCountry', `orders`.`total` as 'total'",
-			'order_details' => "`order_details`.`odID` as 'odID', IF(    CHAR_LENGTH(`orders1`.`OrderID`), CONCAT_WS('',   `orders1`.`OrderID`), '') as 'OrderID', IF(    CHAR_LENGTH(`products1`.`ProductName`), CONCAT_WS('',   `products1`.`ProductName`), '') as 'ProductID', IF(    CHAR_LENGTH(`categories1`.`CategoryName`) || CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS('',   `categories1`.`CategoryName`, ' / ', `suppliers1`.`CompanyName`), '') as 'Category', IF(    CHAR_LENGTH(`products1`.`UnitPrice`), CONCAT_WS('',   `products1`.`UnitPrice`), '') as 'CatalogPrice', IF(    CHAR_LENGTH(`products1`.`UnitsInStock`), CONCAT_WS('',   `products1`.`UnitsInStock`), '') as 'UnitsInStock', CONCAT('$', FORMAT(`order_details`.`UnitPrice`, 2)) as 'UnitPrice', `order_details`.`Quantity` as 'Quantity', CONCAT('$', FORMAT(`order_details`.`Discount`, 2)) as 'Discount', `order_details`.`Subtotal` as 'Subtotal'",
-			'products' => "`products`.`ProductID` as 'ProductID', `products`.`ProductName` as 'ProductName', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS('',   `suppliers1`.`CompanyName`), '') as 'SupplierID', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS('',   `categories1`.`CategoryName`), '') as 'CategoryID', `products`.`QuantityPerUnit` as 'QuantityPerUnit', CONCAT('$', FORMAT(`products`.`UnitPrice`, 2)) as 'UnitPrice', `products`.`UnitsInStock` as 'UnitsInStock', `products`.`UnitsOnOrder` as 'UnitsOnOrder', `products`.`ReorderLevel` as 'ReorderLevel', `products`.`Discontinued` as 'Discontinued'",
+			'customers' => "`customers`.`CompanyName` as 'CompanyName', `customers`.`CustomerID` as 'CustomerID', `customers`.`ContactName` as 'ContactName', `customers`.`ContactTitle` as 'ContactTitle', `customers`.`Address` as 'Address', `customers`.`City` as 'City', `customers`.`Region` as 'Region', `customers`.`PostalCode` as 'PostalCode', `customers`.`Country` as 'Country', `customers`.`Phone` as 'Phone', `customers`.`Fax` as 'Fax', `customers`.`TotalSales` as 'TotalSales'",
+			'employees' => "`employees`.`EmployeeID` as 'EmployeeID', `employees`.`TitleOfCourtesy` as 'TitleOfCourtesy', `employees`.`Photo` as 'Photo', `employees`.`LastName` as 'LastName', `employees`.`FirstName` as 'FirstName', `employees`.`Title` as 'Title', if(`employees`.`BirthDate`,date_format(`employees`.`BirthDate`,'%m/%d/%Y'),'') as 'BirthDate', if(`employees`.`HireDate`,date_format(`employees`.`HireDate`,'%m/%d/%Y'),'') as 'HireDate', `employees`.`Address` as 'Address', `employees`.`City` as 'City', `employees`.`Region` as 'Region', `employees`.`PostalCode` as 'PostalCode', `employees`.`Country` as 'Country', `employees`.`HomePhone` as 'HomePhone', `employees`.`Extension` as 'Extension', `employees`.`Notes` as 'Notes', IF(    CHAR_LENGTH(`employees1`.`LastName`) || CHAR_LENGTH(`employees1`.`FirstName`), CONCAT_WS('',   `employees1`.`LastName`, ', ', `employees1`.`FirstName`), '') as 'ReportsTo', `employees`.`Age` as 'Age', `employees`.`TotalSales` as 'TotalSales'",
+			'orders' => "`orders`.`OrderID` as 'OrderID', `orders`.`Status` as 'Status', IF(    CHAR_LENGTH(`customers1`.`CompanyName`), CONCAT_WS('',   `customers1`.`CompanyName`), '') as 'CustomerID', IF(    CHAR_LENGTH(`employees1`.`LastName`) || CHAR_LENGTH(`employees1`.`FirstName`), CONCAT_WS('',   `employees1`.`LastName`, ', ', `employees1`.`FirstName`), '') as 'EmployeeID', if(`orders`.`OrderDate`,date_format(`orders`.`OrderDate`,'%m/%d/%Y'),'') as 'OrderDate', TIME_FORMAT(`orders`.`OrderTime`, '%r') as 'OrderTime', if(`orders`.`RequiredDate`,date_format(`orders`.`RequiredDate`,'%m/%d/%Y'),'') as 'RequiredDate', if(`orders`.`ShippedDate`,date_format(`orders`.`ShippedDate`,'%m/%d/%Y'),'') as 'ShippedDate', IF(    CHAR_LENGTH(`shippers1`.`CompanyName`), CONCAT_WS('',   `shippers1`.`CompanyName`), '') as 'ShipVia', `orders`.`Freight` as 'Freight', IF(    CHAR_LENGTH(`customers1`.`CompanyName`), CONCAT_WS('',   `customers1`.`CompanyName`), '') as 'ShipName', IF(    CHAR_LENGTH(`customers1`.`Address`), CONCAT_WS('',   `customers1`.`Address`), '') as 'ShipAddress', IF(    CHAR_LENGTH(`customers1`.`City`), CONCAT_WS('',   `customers1`.`City`), '') as 'ShipCity', IF(    CHAR_LENGTH(`customers1`.`Region`), CONCAT_WS('',   `customers1`.`Region`), '') as 'ShipRegion', IF(    CHAR_LENGTH(`customers1`.`PostalCode`), CONCAT_WS('',   `customers1`.`PostalCode`), '') as 'ShipPostalCode', IF(    CHAR_LENGTH(`customers1`.`Country`), CONCAT_WS('',   `customers1`.`Country`), '') as 'ShipCountry', `orders`.`added_by` as 'added_by', if(`orders`.`added_date`,date_format(`orders`.`added_date`,'%m/%d/%Y'),'') as 'added_date', `orders`.`Total` as 'Total'",
+			'order_details' => "`order_details`.`odID` as 'odID', IF(    CHAR_LENGTH(`orders1`.`OrderID`), CONCAT_WS('',   `orders1`.`OrderID`), '') as 'OrderID', IF(    CHAR_LENGTH(`categories1`.`CategoryName`) || CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS('',   `categories1`.`CategoryName`, ' / ', `suppliers1`.`CompanyName`), '') as 'Category', IF(    CHAR_LENGTH(`products1`.`ProductName`), CONCAT_WS('',   `products1`.`ProductName`), '') as 'ProductID', CONCAT('$', FORMAT(`order_details`.`UnitPrice`, 2)) as 'UnitPrice', `order_details`.`Quantity` as 'Quantity', CONCAT('$', FORMAT(`order_details`.`Discount`, 2)) as 'Discount', `order_details`.`Subtotal` as 'Subtotal'",
+			'products' => "`products`.`ProductID` as 'ProductID', `products`.`ProductName` as 'ProductName', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS('',   `suppliers1`.`CompanyName`), '') as 'SupplierID', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS('',   `categories1`.`CategoryName`), '') as 'CategoryID', `products`.`QuantityPerUnit` as 'QuantityPerUnit', CONCAT('$', FORMAT(`products`.`UnitPrice`, 2)) as 'UnitPrice', `products`.`UnitsInStock` as 'UnitsInStock', `products`.`UnitsOnOrder` as 'UnitsOnOrder', `products`.`ReorderLevel` as 'ReorderLevel', `products`.`Discontinued` as 'Discontinued', `products`.`TotalSales` as 'TotalSales', `products`.`TechSheet` as 'TechSheet'",
 			'categories' => "`categories`.`CategoryID` as 'CategoryID', `categories`.`Picture` as 'Picture', `categories`.`CategoryName` as 'CategoryName', `categories`.`Description` as 'Description'",
 			'suppliers' => "`suppliers`.`SupplierID` as 'SupplierID', `suppliers`.`CompanyName` as 'CompanyName', `suppliers`.`ContactName` as 'ContactName', `suppliers`.`ContactTitle` as 'ContactTitle', `suppliers`.`Address` as 'Address', `suppliers`.`City` as 'City', `suppliers`.`Region` as 'Region', `suppliers`.`PostalCode` as 'PostalCode', `suppliers`.`Country` as 'Country', `suppliers`.`Phone` as 'Phone', `suppliers`.`Fax` as 'Fax', `suppliers`.`HomePage` as 'HomePage'",
-			'shippers' => "`shippers`.`ShipperID` as 'ShipperID', `shippers`.`CompanyName` as 'CompanyName', `shippers`.`Phone` as 'Phone', `shippers`.`NumOrders` as 'NumOrders'",
+			'shippers' => "`shippers`.`ShipperID` as 'ShipperID', `shippers`.`CompanyName` as 'CompanyName', `shippers`.`Phone` as 'Phone'",
 		];
 
 		if(isset($sql_fields[$table_name])) return $sql_fields[$table_name];
@@ -194,8 +194,8 @@
 		/* array of tables and their fields, with default values (or empty), excluding automatic values */
 		$defaults = [
 			'customers' => [
-				'CustomerID' => '',
 				'CompanyName' => '',
+				'CustomerID' => '',
 				'ContactName' => '',
 				'ContactTitle' => '',
 				'Address' => '',
@@ -215,7 +215,6 @@
 				'FirstName' => '',
 				'Title' => '',
 				'BirthDate' => '',
-				'Age' => '',
 				'HireDate' => '1',
 				'Address' => '',
 				'City' => '',
@@ -226,17 +225,19 @@
 				'Extension' => '',
 				'Notes' => '',
 				'ReportsTo' => '',
+				'Age' => '',
 				'TotalSales' => '',
 			],
 			'orders' => [
 				'OrderID' => '',
-				'status' => '',
+				'Status' => '',
 				'CustomerID' => '',
 				'EmployeeID' => '',
 				'OrderDate' => '1',
+				'OrderTime' => '',
 				'RequiredDate' => '1',
 				'ShippedDate' => '',
-				'ShipVia' => '',
+				'ShipVia' => 'Federal Shipping',
 				'Freight' => '0',
 				'ShipName' => '',
 				'ShipAddress' => '',
@@ -244,15 +245,15 @@
 				'ShipRegion' => '',
 				'ShipPostalCode' => '',
 				'ShipCountry' => '',
-				'total' => '',
+				'added_by' => '',
+				'added_date' => '',
+				'Total' => '',
 			],
 			'order_details' => [
 				'odID' => '',
 				'OrderID' => '0',
-				'ProductID' => '0',
 				'Category' => '',
-				'CatalogPrice' => '',
-				'UnitsInStock' => '',
+				'ProductID' => '0',
 				'UnitPrice' => '0',
 				'Quantity' => '1',
 				'Discount' => '0',
@@ -269,6 +270,8 @@
 				'UnitsOnOrder' => '0',
 				'ReorderLevel' => '0',
 				'Discontinued' => '0',
+				'TotalSales' => '',
+				'TechSheet' => '',
 			],
 			'categories' => [
 				'CategoryID' => '',
@@ -294,7 +297,6 @@
 				'ShipperID' => '',
 				'CompanyName' => '',
 				'Phone' => '',
-				'NumOrders' => '',
 			],
 		];
 
@@ -357,7 +359,7 @@
 						<ul class="nav navbar-nav navbar-right hidden-xs">
 							<!-- logged user profile menu -->
 							<li class="dropdown" title="<?php echo html_attr("{$Translation['signed as']} {$mi['username']}"); ?>">
-								<a href="#" class="dropdown-toggle profile-menu-icon" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i></a>
+								<a href="#" class="dropdown-toggle profile-menu-icon" data-toggle="dropdown"><i class="glyphicon glyphicon-user icon"></i><span class="profile-menu-text"><?php echo $mi['username']; ?></span><b class="caret"></b></a>
 								<ul class="dropdown-menu profile-menu">
 									<li class="user-profile-menu-item" title="<?php echo html_attr("{$Translation['Your info']}"); ?>">
 										<a href="<?php echo PREPEND_PATH; ?>membership_profile.php"><i class="glyphicon glyphicon-user"></i> <span class="username"><?php echo $mi['username']; ?></span></a>
@@ -889,13 +891,16 @@
 		$safe_id = makeSafe($id);
 		$safe_table = makeSafe($table);
 
+		// fix for zero-fill: quote id only if not numeric
+		if(!is_numeric($safe_id)) $safe_id = "'$safe_id'";
+
 		if($perms[$perm] == 1) { // own records only
 			$username = getLoggedMemberID();
-			$owner = sqlValue("select memberID from membership_userrecords where tableName='{$safe_table}' and pkValue='{$safe_id}'");
+			$owner = sqlValue("select memberID from membership_userrecords where tableName='{$safe_table}' and pkValue={$safe_id}");
 			if($owner == $username) return true;
 		} elseif($perms[$perm] == 2) { // group records
 			$group_id = getLoggedGroupID();
-			$owner_group_id = sqlValue("select groupID from membership_userrecords where tableName='{$safe_table}' and pkValue='{$safe_id}'");
+			$owner_group_id = sqlValue("select groupID from membership_userrecords where tableName='{$safe_table}' and pkValue={$safe_id}");
 			if($owner_group_id == $group_id) return true;
 		} elseif($perms[$perm] == 3) { // all records
 			return true;
@@ -982,16 +987,15 @@ EOT;
 	function StyleSheet() {
 		if(!defined('PREPEND_PATH')) define('PREPEND_PATH', '');
 		$prepend_path = PREPEND_PATH;
-		$appVersion = (defined('APP_VERSION') ? APP_VERSION : rand());
+		$mtime = filemtime( __DIR__ . '/dynamic.css');
 
 		$css_links = <<<EOT
 
 			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap.css">
-			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/bootstrap-theme.css">
 			<link rel="stylesheet" href="{$prepend_path}resources/lightbox/css/lightbox.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/select2/select2.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/timepicker/bootstrap-timepicker.min.css" media="screen">
-			<link rel="stylesheet" href="{$prepend_path}dynamic.css?{$appVersion}">
+			<link rel="stylesheet" href="{$prepend_path}dynamic.css?{$mtime}">
 EOT;
 
 		return $css_links;

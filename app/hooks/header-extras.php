@@ -1,0 +1,1 @@
+<style>.profile-menu-text { display: inline; }</style>

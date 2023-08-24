@@ -121,17 +121,17 @@
 					</div>
 				</div>
 
-				<!-- Field: Home Page -->
+				<!-- Field: HomePage -->
 				<div class="form-group suppliers-HomePage">
 					<hr class="hidden-md hidden-lg">
-					<label class="control-label col-lg-3" for="HomePage-edit-link">Home Page <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#HomePage-description"></i></label>
+					<label class="control-label col-lg-3" for="HomePage-edit-link">HomePage</label>
 					<div class="col-lg-9">
-						<span class="help-block bspacer-xs collapse" id="HomePage-description"><div class="alert alert-info bspacer-xs">Include <code>http://</code> or <code>https://</code> before the link to make sure it works correctly.</div></span>
 						<div>
 							<a id="HomePage-link" href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" class="rspacer-lg"><i class="glyphicon glyphicon-lg glyphicon-globe" title="<%%VALUE(HomePage)%%>"></i></a>
 							<label for="HomePage"><button type="button" id="HomePage-edit-link" class="btn btn-default vspacer-sm" data-toggle="collapse" data-target="#HomePage" title="<%%TRANSLATION(Edit)%%>"><i class="glyphicon glyphicon-pencil"></i></button></label>
 							<input type="text" class="form-control collapse" name="HomePage" id="HomePage" value="<%%VALUE(HomePage)%%>">
-						</div><script>jQuery(function() { var e_HomePage = '<%%VALUE(HomePage)%%>'; if(e_HomePage == '' || e_HomePage == '&nbsp;' || e_HomePage == 'blank.gif') jQuery('#HomePage-link').hide(); });</script>
+						</div>
+						<script>/* disable empty links */ $j(() => { const e_HomePage = '<%%VALUE(HomePage)%%>'; if(e_HomePage == '' || e_HomePage == '&nbsp;' || e_HomePage == 'blank.gif') { $j('#HomePage-link').hide(); $j('#HomePage-image').parents('a').attr('href', '').on('click', (e) => e.preventDefault()); } });</script>
 					</div>
 				</div>
 
@@ -182,9 +182,6 @@
 				setTimeout(AppGini.closeParentModal, 2000);
 			}
 
-
-			/* enable DV action buttons to float on scrolling down the form */
-			enable_dvab_floating();
 
 			$j('#suppliers_dv_container-loading').addClass('hidden');
 			$j('#suppliers_dv_container').removeClass('hidden');

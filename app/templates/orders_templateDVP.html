@@ -22,10 +22,10 @@
 			</div>
 		</div>
 		<!-- Field: Status -->
-		<div class="form-group orders-status" style="border-bottom: dotted 1px #DDD;">
+		<div class="form-group orders-Status" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Status</label>
 			<div class="col-xs-9">
-				<div class="form-control-static"><%%VALUE(status)%%></div>
+				<div class="form-control-static"><%%VALUE(Status)%%></div>
 			</div>
 		</div>
 		<!-- Field: Customer -->
@@ -47,6 +47,13 @@
 			<label class="col-xs-3 control-label">Order Date</label>
 			<div class="col-xs-9">
 				<div class="form-control-static"><%%COMBOTEXT(OrderDate)%%></div>
+			</div>
+		</div>
+		<!-- Field: Order Time -->
+		<div class="form-group orders-OrderTime" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Order Time</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(OrderTime)%%></div>
 			</div>
 		</div>
 		<!-- Field: Required Date -->
@@ -119,11 +126,25 @@
 				<div class="form-control-static"><span id="ShipCountry<%%RND1%%>"></span></div>
 			</div>
 		</div>
+		<!-- Field: Added by -->
+		<div class="form-group orders-added_by" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Added by</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%VALUE(added_by)%%></div>
+			</div>
+		</div>
+		<!-- Field: Added date -->
+		<div class="form-group orders-added_date" style="border-bottom: dotted 1px #DDD;">
+			<label class="col-xs-3 control-label">Added date</label>
+			<div class="col-xs-9">
+				<div class="form-control-static"><%%COMBOTEXT(added_date)%%></div>
+			</div>
+		</div>
 		<!-- Field: Total -->
-		<div class="form-group orders-total" style="border-bottom: dotted 1px #DDD;">
+		<div class="form-group orders-Total" style="border-bottom: dotted 1px #DDD;">
 			<label class="col-xs-3 control-label">Total</label>
 			<div class="col-xs-9">
-				<div class="form-control-static"><%%VALUE(total)%%></div>
+				<div class="form-control-static"><%%VALUE(Total)%%></div>
 			</div>
 		</div>
 	</fieldset>
