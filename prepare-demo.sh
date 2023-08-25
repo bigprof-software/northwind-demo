@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script prepares the demo for deployment.
+# This script prepares the demo for deployment after using the app uploader in AppGini
 
 # get script dir
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
