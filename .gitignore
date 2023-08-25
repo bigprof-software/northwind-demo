@@ -15,3 +15,5 @@ file-uploader.php
 test*
 app/Northwind.axp
 app/admin/backups/*
+*.sql
+!northwind.sql
