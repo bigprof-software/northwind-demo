@@ -276,9 +276,9 @@
 	$SortDirection = strtolower(Request::val('SortDirection'));
 		if(!in_array($SortDirection, ['asc', 'desc']))
 			$SortDirection = $currentConfig['default-sort-direction'];
-	$Operation = strtolower(Request::val('Operation'));
-		if(!in_array($Operation, ['get-records', 'show-children', 'get-records-printable', 'show-children-printable']))
-			$Operation = 'get-records';
+	$Operation = Request::oneOf('Operation', ['get-records', 'show-children', 'get-records-printable', 'show-children-printable', 'get-count'], 'get-records');
+
+	$eo = ['silentErrors' => true];
 
 	/* process requested operation */
 	switch($Operation) {
@@ -415,6 +415,40 @@
 			break;
 
 		/************************************************/
+		case 'get-count':
+			$permSQL = permissions_sql($ChildTable);
+
+			// if we have a SelectedIDs input array, use it
+			// otherwise, populate it with the single SelectedID
+			$SelectedIDs = Request::array('SelectedIDs');
+			if(empty($SelectedIDs)) $SelectedIDs = [$SelectedID];
+
+			// convert SelectedIDs to a comma-separated list of safe quoted values
+			$SelectedIDs = "'" . implode("','", array_map('makeSafe', $SelectedIDs)) . "'";
+
+			// build the user permissions limiter
+			$permissionsWhere = $permSQL['where'] ?? '';
+			$permissionsJoin = $permSQL['from'] ?? '';
+			if($permissionsJoin) $permissionsJoin = ", $permissionsJoin";
+
+			// build the count query
+			$forcedWhere = $currentConfig['forced-where'];
+			$query = 
+				preg_replace('/^select .* from /i', "SELECT `$ChildTable`.`$ChildLookupField`, COUNT(1) FROM ", $currentConfig['query']) .
+				$permissionsJoin . " WHERE " .
+				($permissionsWhere ? "( $permissionsWhere )" : "( 1=1 )") . " AND " .
+				($forcedWhere ? "( $forcedWhere )" : "( 2=2 )") . " AND " .
+				"`$ChildTable`.`$ChildLookupField` IN ($SelectedIDs) " .
+				"GROUP BY `$ChildTable`.`$ChildLookupField`";
+			$res = sql($query, $eo);
+			$data = [];
+			while($row = db_fetch_row($res)) {
+				$data[$row[0]] = intval($row[1]);
+			}
+
+			json_response($data); // this returns the count and exits
+			break;
+		/************************************************/
 		case 'get-records-printable':
 		default: /* default is 'get-records' */
 
@@ -422,17 +456,12 @@
 				$currentConfig['records-per-page'] = 2000;
 			}
 
+			$permSQL = permissions_sql($ChildTable);
+
 			// build the user permissions limiter
-			$permissionsWhere = $permissionsJoin = '';
-			$permChild = getTablePermissions($ChildTable);
-			if($permChild['view'] == 1) { // user can view only his own records
-				$permissionsWhere = "`$ChildTable`.`{$currentConfig['child-primary-key']}`=`membership_userrecords`.`pkValue` AND `membership_userrecords`.`tableName`='$ChildTable' AND LCASE(`membership_userrecords`.`memberID`)='" . getLoggedMemberID() . "'";
-			} elseif($permChild['view'] == 2) { // user can view only his group's records
-				$permissionsWhere = "`$ChildTable`.`{$currentConfig['child-primary-key']}`=`membership_userrecords`.`pkValue` AND `membership_userrecords`.`tableName`='$ChildTable' AND `membership_userrecords`.`groupID`='" . getLoggedGroupID() . "'";
-			} elseif($permChild['view'] == 3) { // user can view all records
-				/* that's the only case remaining ... no need to modify the query in this case */
-			}
-			$permissionsJoin = ($permissionsWhere ? ", `membership_userrecords`" : '');
+			$permissionsWhere = $permSQL['where'] ?? '';
+			$permissionsJoin = $permSQL['from'] ?? '';
+			if($permissionsJoin) $permissionsJoin = ", $permissionsJoin";
 
 			// build the count query
 			$forcedWhere = $currentConfig['forced-where'];
@@ -442,7 +471,7 @@
 				($permissionsWhere ? "( $permissionsWhere )" : "( 1=1 )") . " AND " .
 				($forcedWhere ? "( $forcedWhere )" : "( 2=2 )") . " AND " .
 				"`$ChildTable`.`$ChildLookupField`='" . makeSafe($SelectedID) . "'";
-			$totalMatches = sqlValue($query);
+			$totalMatches = intval(sqlValue($query));
 
 			// make sure $Page is <= max pages
 			$maxPage = ceil($totalMatches / $currentConfig['records-per-page']);

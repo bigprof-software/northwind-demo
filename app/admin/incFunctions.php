@@ -826,7 +826,7 @@
 	}
 	########################################################################
 	function isEmail($email){
-		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
+		if(preg_match('/^([*+!.&#$ï¿½\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
 			return $email;
 
 		return false;
@@ -3078,4 +3078,35 @@
 	#########################################################
 	function is_xhr() {
 		return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
+	}
+
+	/**
+	 * @brief send a json response to the client and terminate
+	 * 
+	 * @param [in] $dataOrMsg mixed, either an array of data to send, or a string error message
+	 * @param [in] $isError bool, true if $dataOrMsg is an error message, false if it's data
+	 * @param [in] $errorStatusCode int, HTTP status code to send
+	 * 
+	 * @details if $isError is true, $dataOrMsg is assumed to be an error message and $errorStatusCode is sent as the HTTP status code
+	 *  	example error response: `{"status":"error","message":"Access denied"}`
+	 * 		if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
+	 * 		example success response: `{"status":"success","data":{"id":1,"name":"John Doe"}}`
+	 */
+	function json_response($dataOrMsg, $isError = false, $errorStatusCode = 400) {
+		@header('Content-type: application/json');
+
+		if($isError) {
+			@header($_SERVER['SERVER_PROTOCOL'] . ' ' . $errorStatusCode . ' Internal Server Error');
+			@header('Status: ' . $errorStatusCode . ' Bad Request');
+
+			die(json_encode([
+				'status' => 'error',
+				'message' => $dataOrMsg,
+			]));
+		}
+
+		die(json_encode([
+			'status' => 'success',
+			'data' => $dataOrMsg,
+		]));
 	}

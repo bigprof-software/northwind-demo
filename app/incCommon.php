@@ -614,7 +614,7 @@
 	* Loads a given view from the templates folder, passing the given data to it
 	* @param $view the name of a php file (without extension) to be loaded from the 'templates' folder
 	* @param $the_data_to_pass_to_the_view (optional) associative array containing the data to pass to the view
-	* @return the output of the parsed view as a string
+	* @return string the output of the parsed view
 	*/
 	function loadView($view, $the_data_to_pass_to_the_view = false) {
 		global $Translation;
