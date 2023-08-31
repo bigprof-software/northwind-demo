@@ -826,7 +826,7 @@
 	}
 	########################################################################
 	function isEmail($email){
-		if(preg_match('/^([*+!.&#$ï¿½\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
+		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
 			return $email;
 
 		return false;
@@ -3088,9 +3088,9 @@
 	 * @param [in] $errorStatusCode int, HTTP status code to send
 	 * 
 	 * @details if $isError is true, $dataOrMsg is assumed to be an error message and $errorStatusCode is sent as the HTTP status code
-	 *  	example error response: `{"status":"error","message":"Access denied"}`
-	 * 		if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
-	 * 		example success response: `{"status":"success","data":{"id":1,"name":"John Doe"}}`
+	 *     example error response: `{"status":"error","message":"Access denied"}`
+	 *             if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
+	 *             example success response: `{"status":"success","data":{"id":1,"name":"John Doe"}}`
 	 */
 	function json_response($dataOrMsg, $isError = false, $errorStatusCode = 400) {
 		@header('Content-type: application/json');
