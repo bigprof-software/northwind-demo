@@ -128,7 +128,7 @@ jQuery(function() {
 	update_action_buttons();
 
 	/* remove empty images and links */
-	$j('.table a[href="' + AppGini.imgFolder + '"], img[src="' + AppGini.imgFolder + '"]').remove();
+	$j(`.table a[href="${AppGini.config.imgFolder}"], img[src="${AppGini.config.imgFolder}"]`).remove();
 
 	/* remove empty email links */
 	$j('a[href="mailto:"]').remove();
@@ -280,6 +280,27 @@ jQuery(function() {
 		const input = $j(e.currentTarget).find('input[type=file]');
 		input[0].files = fileList;
 		input.trigger('change');
+	})
+
+	// open links that have a .modal-link class in a modal window
+	$j('body').on('click', 'a[href].modal-link', function(e) {
+		e.preventDefault();
+		modal_window({
+			url: $j(this).attr('href'),
+			title: $j(this).attr('title') || $j(this).text(),
+			size: 'full',
+		});
+	})
+
+	// update child counts
+	AppGini.updateChildrenCount();
+
+	// update calculated fields if childrenCountChanged event is triggered
+	$j(document).on('childrenCountChanged', () => AppGini.calculatedFields.init());
+
+	// trigger AppGini.updateChildrenCount() on clicking .update-children-count
+	$j(document).on('click', '.update-children-count', function() {
+		AppGini.updateChildrenCount(false); // update only once -- no rescheduling
 	})
 });
 
@@ -2385,4 +2406,99 @@ AppGini.createCSSClass = (className, sourceElmClass, sourceElmProps = [], additi
 
 	// remove the hidden element
 	document.body.removeChild(hiddenElm);
+}
+
+AppGini.updateChildrenCount = (scheduleNextCall = true) => {
+	if(!$j('.count-children').length) return;
+
+	AppGini._childrenCount = AppGini._childrenCount || {};
+
+	// if there are no visible .count-children elements, schedule next call and return
+	if(!$j('.count-children:visible').length && scheduleNextCall) {
+		setTimeout(AppGini.updateChildrenCount, 1000);
+		return;
+	}
+
+	// TVP?
+	if($j('#current_view').val() == 'TVP' && !AppGini._childRecordsInfoAdaptedToTVP) {
+		// show only the count, no link, no add new
+		$j('.child-records-info').not('th').html('<div class="text-right count-children"></div>');
+		AppGini._childRecordsInfoAdaptedToTVP = true;
+	}
+
+	// for each .count-children element, get the nearest parent .child-records-info
+	const countEls = {};
+	$j('.count-children').each(function() {
+		const countEl = $j(this);
+		const parentEl = countEl.closest('.child-records-info');
+		const childTable = parentEl.data('table');
+		const childLookupField = parentEl.data('lookup-field');
+		const id = parentEl.data('id');
+
+		countEls[childTable] = countEls[childTable] || {};
+		countEls[childTable][childLookupField] = countEls[childTable][childLookupField] || [];
+		countEls[childTable][childLookupField].push(id);
+	});
+
+	// disable .update-children-count buttons
+	$j('.update-children-count').prop('disabled', true);
+
+	// issue an ajax request for each child table > lookup field
+	let countsChanged = false;
+	const requests = [];
+	const startTimestamp = AppGini.unixTimestamp().msec;
+	for(const ChildTable in countEls) {
+		for(const ChildLookupField in countEls[ChildTable]) {
+			const childInfoContainers = $j(`.child-records-info[data-table=${ChildTable}][data-lookup-field=${ChildLookupField}]`);
+
+			requests.push($j.ajax({
+				url: `${AppGini.config.url.replace(/\/$/, '')}/parent-children.php`,
+				data: {
+					ChildTable,
+					ChildLookupField,
+					IDs: countEls[ChildTable][ChildLookupField],
+					Operation: 'get-count'
+				},
+				type: 'POST',
+				success: function(resp) {
+					if(resp.status != 'success') return;
+
+					// resp.data is an object with keys = SelectedIDs and values = count
+					for(const id in resp.data.counts) {
+						const currentCell = childInfoContainers.filter(`[data-id=${id}]`).find('.count-children')
+						if(currentCell.length == 0) continue;
+
+						if(AppGini._childrenCount[ChildTable]?.[ChildLookupField]?.[id] != resp.data.counts[id]) {
+							countsChanged = true;
+							currentCell.text(resp.data.counts[id]);
+
+							// highlight changed cell for 1 sec
+							currentCell.addClass('bg-warning');
+							setTimeout(() => currentCell.removeClass('bg-warning'), 1000);
+						}
+
+						AppGini._childrenCount[ChildTable] = AppGini._childrenCount[ChildTable] || {};
+						AppGini._childrenCount[ChildTable][ChildLookupField] = AppGini._childrenCount[ChildTable][ChildLookupField] || {};
+						AppGini._childrenCount[ChildTable][ChildLookupField][id] = resp.data.counts[id];
+
+					}
+				}
+			}));
+		}
+	}
+
+	// when all requests are done, schedule next call
+	$j.when(...requests).done(function() {
+		// trigger childrenCountChanged event if counts changed
+		if(countsChanged)
+			$j(document).trigger('childrenCountChanged');
+
+		// enable .update-children-count buttons
+		$j('.update-children-count').prop('disabled', false);
+
+		// if elapsed time is > 2 seconds, wait 1 minute before next call, else wait 10 seconds
+		const elapsed = AppGini.unixTimestamp().msec - startTimestamp;
+		if(scheduleNextCall)
+			setTimeout(AppGini.updateChildrenCount, elapsed > 2000 ? 60000 : 10000);
+	});
 }

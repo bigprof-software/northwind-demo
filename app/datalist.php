@@ -881,9 +881,11 @@ class DataList {
 				$forceHeaderWidth = false;
 				if($rowTemplate == '' || $this->ShowTableHeader) {
 					for($i = 0; $i < count($this->ColCaption); $i++) {
+						$sort1 = $sort2 = $filterHint = $extraAttributes = $extraHint = '';
+						$extraClasses = "{$this->TableName}-{$this->ColFieldName[$i]}";
+						
 						/* Sorting icon and link */
-						$sort1 = $sort2 = $filterHint = '';
-						if($this->AllowSorting == 1) {
+						if($this->AllowSorting == 1 && $this->ColNumber[$i] != -1) {
 							if($current_view != 'TVP') {
 								$sort1 = "<a href=\"{$this->ScriptFileName}?SortDirection=asc&SortField=".($this->ColNumber[$i])."\" onClick=\"$resetSelection document.myform.NoDV.value=1; document.myform.SortDirection.value='asc'; document.myform.SortField.value = '".($this->ColNumber[$i])."'; document.myform.submit(); return false;\" class=\"TableHeader\">";
 								$sort2 = "</a>";
@@ -898,7 +900,7 @@ class DataList {
 						}
 
 						/* Filtering icon and hint */
-						if($this->AllowFilters && is_array($this->FilterField)) {
+						if($this->AllowFilters && is_array($this->FilterField) && $this->ColNumber[$i] != -1) {
 							// check to see if there is any filter applied on the current field
 							if(isset($this->ccffv[$i]) && in_array($this->ccffv[$i], $this->FilterField)) {
 								// render filter icon
@@ -906,7 +908,18 @@ class DataList {
 							}
 						}
 
-						$this->HTML .= "\t<th class=\"{$this->TableName}-{$this->ColFieldName[$i]}\" " . ($forceHeaderWidth ? ' style="width: ' . ($this->ColWidth[$i] ? $this->ColWidth[$i] : 100) . 'px;"' : '') . ">{$sort1}{$this->ColCaption[$i]}{$sort2}{$filterHint}</th>\n";
+						/* handle child info column header */
+						if($this->ColNumber[$i] == -1) {
+							[$childTable, $lookupField] = @explode('.', trim($this->ColFieldName[$i], '%'));
+							$extraClasses = "{$childTable}-{$lookupField} child-records-info";
+							$extraAttributes = " data-table=\"{$childTable}\" data-lookup-field=\"{$lookupField}\"";
+							$extraHint = ' <button class="btn-link update-children-count" type="button" title="' . $this->translation['update'] . '"><i class="glyphicon glyphicon-refresh text-muted"></i></button>';
+						}
+
+						$this->HTML .= "\t<th class=\"$extraClasses\" " . 
+							$extraAttributes .
+							($forceHeaderWidth ? ' style="width: ' . ($this->ColWidth[$i] ? $this->ColWidth[$i] : 100) . 'px;"' : '') . 
+							">{$sort1}{$this->ColCaption[$i]}{$sort2}{$filterHint}{$extraHint}</th>\n";
 					}
 				} elseif($current_view != 'TVP') {
 					// Display a Sort by drop down
@@ -916,6 +929,7 @@ class DataList {
 					if($this->AllowSorting == 1) {
 						$sortCombo = new Combo;
 						for($i = 0; $i < count($this->ColCaption); $i++) {
+							if($this->ColNumber[$i] == -1) continue; // skip child info columns
 							$sortCombo->ListItem[] = $this->ColCaption[$i];
 							$sortCombo->ListData[] = $this->ColNumber[$i];
 						}
@@ -1139,6 +1153,8 @@ class DataList {
 				}
 
 				$this->HTML .= '</div>'; // end of div.table_view
+
+				$this->HTML .= $this->hideInaccessibleChildrenFromTV();
 			}
 			/* that marks the end of the TV table */
 		}
@@ -1445,6 +1461,8 @@ class DataList {
 					if(col_class === undefined) return true;
 					if(val !== undefined && val !== true && val !== false) val = true;
 
+					col_class = col_class.split(/\s+/).shift(); // take only first class
+
 					var cn = 'columns-' + location.pathname.split(/\//).pop().split(/\./).shift(); // cookie name
 					var c = JSON.parse(localStorage.getItem(cn)) || {};
 
@@ -1502,7 +1520,7 @@ class DataList {
 					/* ignore the record selector and sum columns */
 					if(th.find('#select_all_records').length > 0 || th.hasClass('sum')) return;
 
-					var col_class = th.attr('class');
+					var col_class = th.attr('class').split(/\s+/).shift(); // take only first class
 					var label = $j.trim(th.text());
 
 					/* Add a toggler for the column in the #toggle-columns section */
@@ -1843,5 +1861,68 @@ class DataList {
 		);
 	}
 
+	private function hideInaccessibleChildrenFromTV() {
+		$childTables = getChildTables($this->TableName);
+
+		// we only need insert and view permissions
+		$jsChildTables = [];
+		foreach($childTables as $tn => $lufs) { // lufs = lookup fields
+			$perm = getTablePermissions($tn);
+
+			foreach($lufs as $lfn => $lf) {
+				$jsChildTables[$tn][$lfn] = [
+					// TODO: combine these with AppGini options from $this
+					'insert' => !empty($perm['insert']), 
+					'view' => !empty($perm['view']),
+					'label' => $lf['tab-label'],
+				];
+			}
+		}
+
+		ob_start(); ?>
+		<script>
+			$j(() => {
+				const childTables = <?php echo json_encode($jsChildTables, JSON_PRETTY_PRINT); ?>;
+				const processed = [];
+
+				// loop through .child-records-info elements,
+				// retrieving child table name and lookup field name
+				// and apply permissions accordingly
+				$j('.child-records-info').each(function() {
+					const el = $j(this);
+					const tn = el.data('table');
+					const lfn = el.data('lookup-field');
+					
+					// if already processed, skip
+					if(processed.indexOf(tn + lfn) > -1) return;
+					
+					// mark as processed
+					processed.push(tn + lfn);
+
+					const allEls = $j(`.child-records-info[data-table="${tn}"][data-lookup-field="${lfn}"]`);
+
+					if(!childTables[tn] || !childTables[tn][lfn]) {
+						// remove all els having the same tn and lfn
+						allEls.remove();
+						return;
+					}
+
+					// if no insert nor view, remove all els having the same tn and lfn
+					if(!childTables[tn][lfn].insert && !childTables[tn][lfn].view) {
+						allEls.remove();
+						return;
+					}
+
+					// if no insert, hide .new-child from all els
+					allEls.find('.new-child').css('visibility', childTables[tn][lfn].insert ? 'visible' : 'hidden');
+
+					// if no view, hide .children-count from all els
+					allEls.find('.children-count').css('visibility', childTables[tn][lfn].view ? 'visible' : 'hidden');
+				});
+			})
+		</script>
+		<?php
+		return ob_get_clean();
+	}
 }
 

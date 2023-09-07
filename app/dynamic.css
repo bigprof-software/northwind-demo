@@ -395,3 +395,19 @@ a[href="mailto:"] { display: none; }
 	margin-right: 5px;
 	margin-left: 0;
 }
+
+/* child record info in tv */
+.child-records-info > a {
+	display: inline-block;
+}
+.child-records-info > a.children-count {
+	text-align: right;
+	width: calc(100% - 3em);
+}
+.child-records-info > a.new-child {
+	text-align: center;
+	width: 2.5em;
+}
+.update-children-count {
+	height: .8em;
+}
