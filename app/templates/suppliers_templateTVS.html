@@ -1,17 +1,17 @@
 <!-- Edit this file to change the layout of each record in the table view -->
-<!-- To disable clicking of a field, remove the  and  formatters around it-->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
 
 <!-- If you wish to hide the table view header that contains the column titles, -->
 <!-- add the following to the suppliers_init() hook (in hooks/suppliers.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="suppliers-CompanyName-<%%VALUE(SupplierID)%%>" class="suppliers-CompanyName"><%%VALUE(CompanyName)%%></td>
-		<td id="suppliers-ContactName-<%%VALUE(SupplierID)%%>" class="suppliers-ContactName"><%%VALUE(ContactName)%%></td>
-		<td id="suppliers-ContactTitle-<%%VALUE(SupplierID)%%>" class="suppliers-ContactTitle"><%%VALUE(ContactTitle)%%></td>
-		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country"><%%VALUE(Country)%%></td>
-		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone"><%%VALUE(Phone)%%></td>
-		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax"><%%VALUE(Fax)%%></td>
-		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
+		<td id="suppliers-CompanyName-<%%VALUE(SupplierID)%%>" class="suppliers-CompanyName text-bold"><%%VALUE(CompanyName)%%></td>
+		<td id="suppliers-ContactName-<%%VALUE(SupplierID)%%>" class="suppliers-ContactName text-bold"><%%VALUE(ContactName)%%></td>
+		<td id="suppliers-ContactTitle-<%%VALUE(SupplierID)%%>" class="suppliers-ContactTitle text-bold"><%%VALUE(ContactTitle)%%></td>
+		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country text-bold"><%%VALUE(Country)%%></td>
+		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone text-bold"><%%VALUE(Phone)%%></td>
+		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax text-bold"><%%VALUE(Fax)%%></td>
+		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage text-bold"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
 		<td class="child-products-SupplierID child-records-info text-center" data-id="<%%VALUE(SupplierID)%%>" data-table="products" data-lookup-field="SupplierID">
 			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Products supplied)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
