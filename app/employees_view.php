@@ -157,10 +157,10 @@
 	$x->DefaultSortField = '4';
 	$x->DefaultSortDirection = 'asc';
 
-	$x->ColWidth = [60, 100, 100, 200, 100, 120, 150, 150, 150, ];
-	$x->ColCaption = ['Photo', 'Last Name', 'First Name', 'Title', 'Hire Date', 'Country', 'ReportsTo', 'Age', 'Total Sales', ];
-	$x->ColFieldName = ['Photo', 'LastName', 'FirstName', 'Title', 'HireDate', 'Country', 'ReportsTo', 'Age', 'TotalSales', ];
-	$x->ColNumber  = [3, 4, 5, 6, 8, 13, 17, 18, 19, ];
+	$x->ColWidth = [60, 100, 100, 200, 100, 120, 150, 150, 150, 100, 100, ];
+	$x->ColCaption = ['Photo', 'Last Name', 'First Name', 'Title', 'Hire Date', 'Country', 'ReportsTo', 'Age', 'Total Sales', 'Subordinates', 'Initiated orders', ];
+	$x->ColFieldName = ['Photo', 'LastName', 'FirstName', 'Title', 'HireDate', 'Country', 'ReportsTo', 'Age', 'TotalSales', '%employees.ReportsTo%', '%orders.EmployeeID%', ];
+	$x->ColNumber  = [3, 4, 5, 6, 8, 13, 17, 18, 19, -1, -1, ];
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/employees_templateTV.html';

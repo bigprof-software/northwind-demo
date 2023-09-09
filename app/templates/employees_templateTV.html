@@ -14,3 +14,11 @@
 		<td id="employees-ReportsTo-<%%VALUE(EmployeeID)%%>" class="employees-ReportsTo"><%%SELECT%%><%%VALUE(ReportsTo)%%><%%ENDSELECT%%></td>
 		<td id="employees-Age-<%%VALUE(EmployeeID)%%>" class="employees-Age text-right"><%%SELECT%%><%%VALUE(Age)%%><%%ENDSELECT%%></td>
 		<td id="employees-TotalSales-<%%VALUE(EmployeeID)%%>" class="employees-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>
+		<td class="employees-ReportsTo child-records-info text-center" data-id="<%%VALUE(EmployeeID)%%>" data-table="employees" data-lookup-field="ReportsTo">
+			<a href="employees_view.php?filterer_ReportsTo=<%%VALUE(EmployeeID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="employees_view.php?filterer_ReportsTo=<%%VALUE(EmployeeID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%>" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
+		</td>
+		<td class="orders-EmployeeID child-records-info text-center" data-id="<%%VALUE(EmployeeID)%%>" data-table="orders" data-lookup-field="EmployeeID">
+			<a href="orders_view.php?filterer_EmployeeID=<%%VALUE(EmployeeID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="orders_view.php?filterer_EmployeeID=<%%VALUE(EmployeeID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%>" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
+		</td>
