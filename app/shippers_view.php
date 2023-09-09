@@ -62,7 +62,7 @@
 	$x->AllowMassDelete = (getLoggedAdmin() !== false);
 	$x->AllowInsert = $perm['insert'];
 	$x->AllowUpdate = $perm['edit'];
-	$x->SeparateDV = 1;
+	$x->SeparateDV = 0;
 	$x->AllowDeleteOfParents = 0;
 	$x->AllowFilters = 1;
 	$x->AllowSavingFilters = 1;
