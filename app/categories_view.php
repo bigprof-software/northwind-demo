@@ -95,7 +95,7 @@
 	$x->TemplateDV = 'templates/categories_templateDV.html';
 	$x->TemplateDVP = 'templates/categories_templateDVP.html';
 
-	$x->ShowTableHeader = 1;
+	$x->ShowTableHeader = 0;
 	$x->TVClasses = "";
 	$x->DVClasses = "";
 	$x->HasCalculatedFields = false;

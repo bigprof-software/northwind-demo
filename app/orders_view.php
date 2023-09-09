@@ -172,7 +172,7 @@
 	$x->TemplateDV = 'templates/orders_templateDV.html';
 	$x->TemplateDVP = 'templates/orders_templateDVP.html';
 
-	$x->ShowTableHeader = 1;
+	$x->ShowTableHeader = 0;
 	$x->TVClasses = "";
 	$x->DVClasses = "";
 	$x->HasCalculatedFields = true;

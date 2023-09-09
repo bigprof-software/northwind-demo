@@ -1,19 +1,32 @@
-<!-- Edit this file to change the layout of each record in the table view -->
-<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
+		<td colspan="8" class="row">
+			<div id="customers-CompanyName-<%%VALUE(CustomerID)%%>" class="customers-CompanyName col-sm-12 h5 text-bold"><%%VALUE(CompanyName)%%></div>
+			<div class="col-md-6">
+				<dl class="dl-horizontal">
+					<dt class="customers-CustomerID-caption field-caption-tv">Customer ID</dt>
+					<dd id="customers-CustomerID-<%%VALUE(CustomerID)%%>" class="customers-CustomerID text-bold"><%%VALUE(CustomerID)%%></dd>
 
-<!-- If you wish to hide the table view header that contains the column titles, -->
-<!-- add the following to the customers_init() hook (in hooks/customers.php file) -->
-<!--     $options->ShowTableHeader = 0;     -->
+					<dt class="customers-ContactName-caption field-caption-tv">Contact Name</dt>
+					<dd id="customers-ContactName-<%%VALUE(CustomerID)%%>" class="customers-ContactName text-bold"><%%VALUE(ContactName)%%></dd>
 
-		<td id="customers-CompanyName-<%%VALUE(CustomerID)%%>" class="customers-CompanyName text-bold"><%%VALUE(CompanyName)%%></td>
-		<td id="customers-CustomerID-<%%VALUE(CustomerID)%%>" class="customers-CustomerID text-bold"><%%VALUE(CustomerID)%%></td>
-		<td id="customers-ContactName-<%%VALUE(CustomerID)%%>" class="customers-ContactName text-bold"><%%VALUE(ContactName)%%></td>
-		<td id="customers-Address-<%%VALUE(CustomerID)%%>" class="customers-Address text-bold"><%%VALUE(Address)%%></td>
-		<td id="customers-City-<%%VALUE(CustomerID)%%>" class="customers-City text-bold"><%%VALUE(City)%%></td>
-		<td id="customers-Region-<%%VALUE(CustomerID)%%>" class="customers-Region text-bold"><%%VALUE(Region)%%></td>
-		<td id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country text-bold"><%%VALUE(Country)%%></td>
-		<td id="customers-TotalSales-<%%VALUE(CustomerID)%%>" class="customers-TotalSales text-right text-bold"><%%VALUE(TotalSales)%%></td>
-		<td class="child-orders-CustomerID child-records-info text-center" data-id="<%%VALUE(CustomerID)%%>" data-table="orders" data-lookup-field="CustomerID">
-			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
-			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Customer's Orders)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
+					<dt class="customers-Address-caption field-caption-tv">Address</dt>
+					<dd id="customers-Address-<%%VALUE(CustomerID)%%>" class="customers-Address text-bold"><%%VALUE(Address)%%></dd>
+
+					<dt class="customers-City-caption field-caption-tv">City</dt>
+					<dd id="customers-City-<%%VALUE(CustomerID)%%>" class="customers-City text-bold"><%%VALUE(City)%%></dd>
+
+				</dl>
+			</div>
+			<div class="col-md-6">
+				<dl class="dl-horizontal">
+					<dt class="customers-Region-caption field-caption-tv">Region</dt>
+					<dd id="customers-Region-<%%VALUE(CustomerID)%%>" class="customers-Region text-bold"><%%VALUE(Region)%%></dd>
+
+					<dt class="customers-Country-caption field-caption-tv">Country</dt>
+					<dd id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country text-bold"><%%VALUE(Country)%%></dd>
+
+					<dt class="customers-TotalSales-caption field-caption-tv">Total Sales</dt>
+					<dd id="customers-TotalSales-<%%VALUE(CustomerID)%%>" class="customers-TotalSales text-right text-bold"><%%VALUE(TotalSales)%%></dd>
+
+				</dl>
+			</div>
 		</td>

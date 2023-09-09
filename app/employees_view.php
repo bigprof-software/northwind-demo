@@ -168,7 +168,7 @@
 	$x->TemplateDV = 'templates/employees_templateDV.html';
 	$x->TemplateDVP = 'templates/employees_templateDVP.html';
 
-	$x->ShowTableHeader = 1;
+	$x->ShowTableHeader = 0;
 	$x->TVClasses = "";
 	$x->DVClasses = "";
 	$x->HasCalculatedFields = true;

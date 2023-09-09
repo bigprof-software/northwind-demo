@@ -92,7 +92,7 @@
 	$x->TemplateDV = 'templates/shippers_templateDV.html';
 	$x->TemplateDVP = 'templates/shippers_templateDVP.html';
 
-	$x->ShowTableHeader = 1;
+	$x->ShowTableHeader = 0;
 	$x->TVClasses = "";
 	$x->DVClasses = "";
 	$x->HasCalculatedFields = false;
