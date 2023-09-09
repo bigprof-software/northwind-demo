@@ -2407,6 +2407,11 @@ AppGini.createCSSClass = (className, sourceElmClass, sourceElmProps = [], additi
 	// remove the hidden element
 	document.body.removeChild(hiddenElm);
 }
+
+/**
+ * Detect and update child info elements in the current page.
+ * @param {boolean} scheduleNextCall If true, schedule next call to this function.
+ */
 AppGini.updateChildrenCount = (scheduleNextCall = true) => {
 	if(!$j('.count-children').length) return;
 
@@ -2434,10 +2439,14 @@ AppGini.updateChildrenCount = (scheduleNextCall = true) => {
 		const childLookupField = parentEl.data('lookup-field');
 		const id = parentEl.data('id');
 
+		if(!childTable || !childLookupField || !id) return;
+
 		countEls[childTable] = countEls[childTable] || {};
 		countEls[childTable][childLookupField] = countEls[childTable][childLookupField] || [];
 		countEls[childTable][childLookupField].push(id);
 	});
+
+	if(Object.keys(countEls).length == 0) return;
 
 	// disable .update-children-count buttons
 	$j('.update-children-count').prop('disabled', true);
