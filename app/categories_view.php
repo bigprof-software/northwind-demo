@@ -84,10 +84,10 @@
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'desc';
 
-	$x->ColWidth = [75, 150, 500, ];
-	$x->ColCaption = ['Picture', 'Category Name', 'Description', ];
-	$x->ColFieldName = ['Picture', 'CategoryName', 'Description', ];
-	$x->ColNumber  = [2, 3, 4, ];
+	$x->ColWidth = [75, 150, 500, 100, ];
+	$x->ColCaption = ['Picture', 'Category Name', 'Description', 'Products under this category', ];
+	$x->ColFieldName = ['Picture', 'CategoryName', 'Description', '%products.CategoryID%', ];
+	$x->ColNumber  = [2, 3, 4, -1, ];
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/categories_templateTV.html';

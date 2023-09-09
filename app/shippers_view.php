@@ -81,10 +81,10 @@
 	$x->DefaultSortField = '2';
 	$x->DefaultSortDirection = 'asc';
 
-	$x->ColWidth = [400, 150, ];
-	$x->ColCaption = ['Company Name', 'Phone', ];
-	$x->ColFieldName = ['CompanyName', 'Phone', ];
-	$x->ColNumber  = [2, 3, ];
+	$x->ColWidth = [400, 150, 100, ];
+	$x->ColCaption = ['Company Name', 'Phone', 'Orders via shipper', ];
+	$x->ColFieldName = ['CompanyName', 'Phone', '%orders.ShipVia%', ];
+	$x->ColNumber  = [2, 3, -1, ];
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/shippers_templateTV.html';

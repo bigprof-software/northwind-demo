@@ -161,10 +161,10 @@
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'desc';
 
-	$x->ColWidth = [75, 150, 200, 150, 100, 150, 150, 150, 150, 150];
-	$x->ColCaption = ['Order ID', 'Status', 'Customer', 'Employee', 'Order Date', 'Shipped Date', 'Ship Via', 'Ship Country', 'Total', 'Order items'];
-	$x->ColFieldName = ['OrderID', 'Status', 'CustomerID', 'EmployeeID', 'OrderDate', 'ShippedDate', 'ShipVia', 'ShipCountry', 'Total', '%order_details.OrderID%'];
-	$x->ColNumber  = [1, 2, 3, 4, 5, 8, 9, 16, 19, -1];
+	$x->ColWidth = [75, 150, 200, 150, 100, 150, 150, 150, 150, 100, ];
+	$x->ColCaption = ['Order ID', 'Status', 'Customer', 'Employee', 'Order Date', 'Shipped Date', 'Ship Via', 'Ship Country', 'Total', 'Order Items', ];
+	$x->ColFieldName = ['OrderID', 'Status', 'CustomerID', 'EmployeeID', 'OrderDate', 'ShippedDate', 'ShipVia', 'ShipCountry', 'Total', '%order_details.OrderID%', ];
+	$x->ColNumber  = [1, 2, 3, 4, 5, 8, 9, 16, 19, -1, ];
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/orders_templateTV.html';

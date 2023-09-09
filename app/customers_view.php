@@ -126,10 +126,10 @@
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'asc';
 
-	$x->ColWidth = [250, 90, 200, 150, 100, 50, 120, 150, ];
-	$x->ColCaption = ['Company Name', 'Customer ID', 'Contact Name', 'Address', 'City', 'Region', 'Country', 'Total Sales', ];
-	$x->ColFieldName = ['CompanyName', 'CustomerID', 'ContactName', 'Address', 'City', 'Region', 'Country', 'TotalSales', ];
-	$x->ColNumber  = [1, 2, 3, 5, 6, 7, 9, 12, ];
+	$x->ColWidth = [250, 90, 200, 150, 100, 50, 120, 150, 100, ];
+	$x->ColCaption = ['Company Name', 'Customer ID', 'Contact Name', 'Address', 'City', 'Region', 'Country', 'Total Sales', 'Customer\'s Orders', ];
+	$x->ColFieldName = ['CompanyName', 'CustomerID', 'ContactName', 'Address', 'City', 'Region', 'Country', 'TotalSales', '%orders.CustomerID%', ];
+	$x->ColNumber  = [1, 2, 3, 5, 6, 7, 9, 12, -1, ];
 
 	// template paths below are based on the app main directory
 	$x->Template = 'templates/customers_templateTV.html';
