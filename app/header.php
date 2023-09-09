@@ -86,7 +86,7 @@
 						el.setAttribute('title', translation);
 						el.classList.add('translated');
 					});
-				}
+				},
 			}
 
 			AppGini.config = <?php echo json_encode($jsAppConfig, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>

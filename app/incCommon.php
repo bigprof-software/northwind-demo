@@ -1342,6 +1342,8 @@ EOT;
 		return $userPCConfig;
 	}
 
+	#########################################################
+
 	function getChildTables($parentTable, $skipPermissions = false, $filterByPermission = 'view') {
 		$pcConfig = getLookupFields($skipPermissions, $filterByPermission);
 		$childTables = [];

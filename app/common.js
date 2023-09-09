@@ -2407,7 +2407,6 @@ AppGini.createCSSClass = (className, sourceElmClass, sourceElmProps = [], additi
 	// remove the hidden element
 	document.body.removeChild(hiddenElm);
 }
-
 AppGini.updateChildrenCount = (scheduleNextCall = true) => {
 	if(!$j('.count-children').length) return;
 
@@ -2463,7 +2462,7 @@ AppGini.updateChildrenCount = (scheduleNextCall = true) => {
 				success: function(resp) {
 					if(resp.status != 'success') return;
 
-					// resp.data is an object with keys = SelectedIDs and values = count
+					// resp.data is an object with keys = IDs and values = count
 					for(const id in resp.data.counts) {
 						const currentCell = childInfoContainers.filter(`[data-id=${id}]`).find('.count-children')
 						if(currentCell.length == 0) continue;

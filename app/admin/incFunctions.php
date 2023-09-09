@@ -3089,8 +3089,8 @@
 	 * 
 	 * @details if $isError is true, $dataOrMsg is assumed to be an error message and $errorStatusCode is sent as the HTTP status code
 	 *     example error response: `{"status":"error","message":"Access denied"}`
-	 *             if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
-	 *             example success response: `{"status":"success","data":{"id":1,"name":"John Doe"}}`
+	 *     if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
+	 *     example success response: `{"status":"success","data":{"id":1,"name":"John Doe"}}`
 	 */
 	function json_response($dataOrMsg, $isError = false, $errorStatusCode = 400) {
 		@header('Content-type: application/json');

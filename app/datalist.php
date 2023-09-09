@@ -883,7 +883,7 @@ class DataList {
 					for($i = 0; $i < count($this->ColCaption); $i++) {
 						$sort1 = $sort2 = $filterHint = $extraAttributes = $extraHint = '';
 						$extraClasses = "{$this->TableName}-{$this->ColFieldName[$i]}";
-						
+
 						/* Sorting icon and link */
 						if($this->AllowSorting == 1 && $this->ColNumber[$i] != -1) {
 							if($current_view != 'TVP') {
@@ -1892,10 +1892,10 @@ class DataList {
 					const el = $j(this);
 					const tn = el.data('table');
 					const lfn = el.data('lookup-field');
-					
+
 					// if already processed, skip
 					if(processed.indexOf(tn + lfn) > -1) return;
-					
+
 					// mark as processed
 					processed.push(tn + lfn);
 
