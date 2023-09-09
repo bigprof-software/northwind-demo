@@ -1166,6 +1166,7 @@ EOT;
 					'child-primary-key-index' => 0,
 					'tab-label' => 'Initiated orders <span class="hidden child-label-orders child-field-caption">(Employee)</span>',
 					'auto-close' => false,
+					'table-icon' => 'resources/table_icons/cash_register.png',
 					'display-refresh' => true,
 					'display-add-new' => true,
 					'forced-where' => '',

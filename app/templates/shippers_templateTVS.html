@@ -7,7 +7,7 @@
 
 		<td id="shippers-CompanyName-<%%VALUE(ShipperID)%%>" class="shippers-CompanyName"><%%VALUE(CompanyName)%%></td>
 		<td id="shippers-Phone-<%%VALUE(ShipperID)%%>" class="shippers-Phone"><%%VALUE(Phone)%%></td>
-		<td class="orders-ShipVia child-records-info text-center" data-id="<%%VALUE(ShipperID)%%>" data-table="orders" data-lookup-field="ShipVia">
+		<td class="child-orders-ShipVia child-records-info text-center" data-id="<%%VALUE(ShipperID)%%>" data-table="orders" data-lookup-field="ShipVia">
 			<a href="orders_view.php?filterer_ShipVia=<%%VALUE(ShipperID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
-			<a href="orders_view.php?filterer_ShipVia=<%%VALUE(ShipperID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%>" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
+			<a href="orders_view.php?filterer_ShipVia=<%%VALUE(ShipperID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Orders via shipper)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>
