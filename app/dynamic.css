@@ -136,6 +136,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 /* tv tools button widths */
 .tv-tools .btn { width: 5em; }
 
+#spm_notification { direction: ltr !important; }
 /* compact theme styles */
 .container.theme-compact, .container-fluid.theme-compact { line-height: 1.6; font-size: 0.857em; }
 
@@ -423,4 +424,8 @@ dd.child-records-info > a.children-count {
 .theme-rtl .dl-horizontal dd.text-left,
 .theme-rtl .dl-horizontal dd > div.text-left {
 	max-width: 8em;
+}
+.theme-rtl .child-records-info {
+	direction: ltr;
+	text-align: right;
 }
