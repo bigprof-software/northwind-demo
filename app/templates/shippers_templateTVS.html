@@ -7,6 +7,11 @@
 					<dt class="shippers-Phone-caption field-caption-tv">Phone</dt>
 					<dd id="shippers-Phone-<%%VALUE(ShipperID)%%>" class="shippers-Phone text-bold"><%%VALUE(Phone)%%></dd>
 
+					<dt class="child-orders-ShipVia-caption field-caption-tv" title="Orders via shipper">Orders via shipper</dt>
+					<dd class="child-orders-ShipVia child-records-info" data-id="<%%VALUE(ShipperID)%%>" data-table="orders" data-lookup-field="ShipVia">
+						<a href="orders_view.php?filterer_ShipVia=<%%VALUE(ShipperID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+						<a href="orders_view.php?filterer_ShipVia=<%%VALUE(ShipperID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Orders via shipper)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
+					</dd>
 				</dl>
 			</div>
 		</td>

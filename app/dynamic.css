@@ -404,6 +404,9 @@ a[href="mailto:"] { display: none; }
 	text-align: right;
 	width: calc(100% - 3em);
 }
+dd.child-records-info > a.children-count {
+	max-width: 6em;
+}
 .child-records-info > a.new-child {
 	text-align: center;
 	width: 2.5em;
