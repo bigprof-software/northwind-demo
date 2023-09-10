@@ -414,3 +414,13 @@ dd.child-records-info > a.children-count {
 .update-children-count {
 	height: .8em;
 }
+
+/* prevent right-aligned fields in non-default TV layouts from being too wide */
+.container:not(.theme-rtl) .dl-horizontal dd.text-right,
+.container:not(.theme-rtl) .dl-horizontal dd > div.text-right {
+	max-width: 8em;
+}
+.theme-rtl .dl-horizontal dd.text-left,
+.theme-rtl .dl-horizontal dd > div.text-left {
+	max-width: 8em;
+}
