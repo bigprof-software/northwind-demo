@@ -17,3 +17,4 @@ app/Northwind.axp
 app/admin/backups/*
 *.sql
 !northwind.sql
+config.bak.php
