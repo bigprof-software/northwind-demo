@@ -151,7 +151,7 @@
 			$QueryWhere = $x->QueryWhere;
 		}
 
-		$sumQuery = "SELECT SUM(`order_details`.`Quantity`) FROM {$x->QueryFrom} {$QueryWhere}";
+		$sumQuery = "SELECT SUM(`order_details`.`Quantity`), SUM(`order_details`.`Subtotal`) FROM {$x->QueryFrom} {$QueryWhere}";
 		$res = sql($sumQuery, $eo);
 		if($row = db_fetch_row($res)) {
 			$sumRow = '<tr class="success sum">';
@@ -162,7 +162,7 @@
 			$sumRow .= '<td class="order_details-UnitPrice sum"></td>';
 			$sumRow .= "<td class=\"order_details-Quantity text-right sum locale-int\">{$row[0]}</td>";
 			$sumRow .= '<td class="order_details-Discount sum"></td>';
-			$sumRow .= '<td class="order_details-Subtotal sum"></td>';
+			$sumRow .= "<td class=\"order_details-Subtotal text-right sum locale-float\">{$row[1]}</td>";
 			$sumRow .= '</tr>';
 
 			$x->HTML = str_replace('<!-- tv data below -->', '', $x->HTML);
