@@ -1,15 +1,14 @@
-		<td colspan="3" class="row">
-			<div id="categories-CategoryName-<%%VALUE(CategoryID)%%>" class="categories-CategoryName col-sm-12 h5 text-bold"><%%VALUE(CategoryName)%%></div>
-			<div class="col-md-6">				<dl class="dl-horizontal">
-					<dt class="categories-Description-caption field-caption-tv">Description</dt>
-					<dd id="categories-Description-<%%VALUE(CategoryID)%%>" class="categories-Description text-bold"><%%VALUE(Description)%%></dd>
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
 
-					<dt class="child-products-CategoryID-caption field-caption-tv" title="Products under this category">Products under this category</dt>
-					<dd class="child-products-CategoryID child-records-info" data-id="<%%VALUE(CategoryID)%%>" data-table="products" data-lookup-field="CategoryID">
-						<a href="products_view.php?filterer_CategoryID=<%%VALUE(CategoryID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
-						<a href="products_view.php?filterer_CategoryID=<%%VALUE(CategoryID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Products under this category)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
-					</dd>
-				</dl>
-			</div>
-			<div class="col-md-6"><div id="categories-Picture-<%%VALUE(CategoryID)%%>" class="categories-Picture"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories-Picture"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=tv" class="img-thumbnail"></a></div></div>
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the categories_init() hook (in hooks/categories.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
+
+		<td id="categories-Picture-<%%VALUE(CategoryID)%%>" class="categories-Picture text-bold"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Picture)%%>" data-lightbox="categories-Picture"><img src="thumbnail.php?i=<%%VALUE(Picture)%%>&t=categories&f=Picture&v=tv" class="img-thumbnail"></a></td>
+		<td id="categories-CategoryName-<%%VALUE(CategoryID)%%>" class="categories-CategoryName text-bold"><%%VALUE(CategoryName)%%></td>
+		<td id="categories-Description-<%%VALUE(CategoryID)%%>" class="categories-Description text-bold"><%%VALUE(Description)%%></td>
+		<td class="child-products-CategoryID child-records-info" data-id="<%%VALUE(CategoryID)%%>" data-table="products" data-lookup-field="CategoryID">
+			<a href="products_view.php?filterer_CategoryID=<%%VALUE(CategoryID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="products_view.php?filterer_CategoryID=<%%VALUE(CategoryID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Products under this category)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>

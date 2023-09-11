@@ -137,7 +137,7 @@
 	$x->TemplateDV = 'templates/customers_templateDV.html';
 	$x->TemplateDVP = 'templates/customers_templateDVP.html';
 
-	$x->ShowTableHeader = 0;
+	$x->ShowTableHeader = 1;
 	$x->TVClasses = "";
 	$x->DVClasses = "";
 	$x->HasCalculatedFields = true;
