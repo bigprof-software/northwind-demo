@@ -1,40 +1,20 @@
-		<td colspan="9" class="row">
-			<div id="orders-OrderID-<%%VALUE(OrderID)%%>" class="orders-OrderID col-sm-12 h5 text-bold"><%%SELECT%%><%%VALUE(OrderID)%%><%%ENDSELECT%%></div>
-			<div class="col-md-6">
-				<dl class="dl-horizontal">
-					<dt class="orders-Status-caption field-caption-tv">Status</dt>
-					<dd id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status"><%%SELECT%%><%%VALUE(Status)%%><%%ENDSELECT%%></dd>
+<!-- Edit this file to change the layout of each record in the table view -->
+<!-- To disable clicking of a field, remove the <%%SELECT%%> and <%%ENDSELECT%%> formatters around it-->
 
-					<dt class="orders-CustomerID-caption field-caption-tv">Customer</dt>
-					<dd id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID"><%%SELECT%%><%%VALUE(CustomerID)%%><%%ENDSELECT%%></dd>
+<!-- If you wish to hide the table view header that contains the column titles, -->
+<!-- add the following to the orders_init() hook (in hooks/orders.php file) -->
+<!--     $options->ShowTableHeader = 0;     -->
 
-					<dt class="orders-EmployeeID-caption field-caption-tv">Employee</dt>
-					<dd id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID"><%%SELECT%%><%%VALUE(EmployeeID)%%><%%ENDSELECT%%></dd>
-
-					<dt class="orders-OrderDate-caption field-caption-tv">Order Date</dt>
-					<dd id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate"><%%SELECT%%><%%VALUE(OrderDate)%%><%%ENDSELECT%%></dd>
-
-				</dl>
-			</div>
-			<div class="col-md-6">
-				<dl class="dl-horizontal">
-					<dt class="orders-ShippedDate-caption field-caption-tv">Shipped Date</dt>
-					<dd id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate"><%%SELECT%%><%%VALUE(ShippedDate)%%><%%ENDSELECT%%></dd>
-
-					<dt class="orders-ShipVia-caption field-caption-tv">Ship Via</dt>
-					<dd id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia"><%%SELECT%%><%%VALUE(ShipVia)%%><%%ENDSELECT%%></dd>
-
-					<dt class="orders-ShipCountry-caption field-caption-tv">Ship Country</dt>
-					<dd id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry"><%%SELECT%%><%%VALUE(ShipCountry)%%><%%ENDSELECT%%></dd>
-
-					<dt class="orders-Total-caption field-caption-tv">Total</dt>
-					<dd id="orders-Total-<%%VALUE(OrderID)%%>" class="orders-Total text-right"><%%SELECT%%><%%VALUE(Total)%%><%%ENDSELECT%%></dd>
-
-				<dt class="child-order_details-OrderID-caption field-caption-tv" title="Order Items">Order Items</dt>
-				<dd class="child-order_details-OrderID child-records-info" data-id="<%%VALUE(OrderID)%%>" data-table="order_details" data-lookup-field="OrderID">
-					<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
-					<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Order Items)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
-				</dd>
-				</dl>
-			</div>
+		<td id="orders-OrderID-<%%VALUE(OrderID)%%>" class="orders-OrderID text-right"><%%SELECT%%><%%VALUE(OrderID)%%><%%ENDSELECT%%></td>
+		<td id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status"><%%SELECT%%><%%VALUE(Status)%%><%%ENDSELECT%%></td>
+		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID"><%%SELECT%%><%%VALUE(CustomerID)%%><%%ENDSELECT%%></td>
+		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID"><%%SELECT%%><%%VALUE(EmployeeID)%%><%%ENDSELECT%%></td>
+		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate"><%%SELECT%%><%%VALUE(OrderDate)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate"><%%SELECT%%><%%VALUE(ShippedDate)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia"><%%SELECT%%><%%VALUE(ShipVia)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry"><%%SELECT%%><%%VALUE(ShipCountry)%%><%%ENDSELECT%%></td>
+		<td id="orders-Total-<%%VALUE(OrderID)%%>" class="orders-Total text-right"><%%SELECT%%><%%VALUE(Total)%%><%%ENDSELECT%%></td>
+		<td class="child-order_details-OrderID child-records-info" data-id="<%%VALUE(OrderID)%%>" data-table="order_details" data-lookup-field="OrderID">
+			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Order Items)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>
