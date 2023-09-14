@@ -826,7 +826,7 @@
 	}
 	########################################################################
 	function isEmail($email){
-		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
+		if(preg_match('/^([*+!.&#$ï¿½\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
 			return $email;
 
 		return false;
@@ -3109,4 +3109,18 @@
 			'status' => 'success',
 			'data' => $dataOrMsg,
 		]));
+	}
+
+	/**
+	 * @brief Check if a string is alphanumeric.
+	 *        We're defining it here in case it's not defined by some PHP installations.
+	 *        It's reuired by PHPMailer.
+	 *  
+	 * @param [in] $str string to check
+	 * @return bool, true if $str is alphanumeric, false otherwise
+	 */
+	if(!function_exists('ctype_alnum')) {
+		function ctype_alnum($str) {
+			return preg_match('/^[a-zA-Z0-9]+$/', $str);
+		}
 	}
