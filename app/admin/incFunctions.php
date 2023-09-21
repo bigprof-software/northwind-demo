@@ -826,7 +826,7 @@
 	}
 	########################################################################
 	function isEmail($email){
-		if(preg_match('/^([*+!.&#$ï¿½\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
+		if(preg_match('/^([*+!.&#$¦\'\\%\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,30})$/i', $email))
 			return $email;
 
 		return false;
@@ -2217,12 +2217,7 @@
 		$cfg = config('adminConfig');
 		$smtp = ($cfg['mail_function'] == 'smtp');
 
-		if(!class_exists('PHPMailer', false)) {
-			include_once(__DIR__ . '/../resources/PHPMailer/class.phpmailer.php');
-			if($smtp) include_once(__DIR__ . '/../resources/PHPMailer/class.smtp.php');
-		}
-
-		$pm = new PHPMailer;
+		$pm = new PHPMailer\PHPMailer\PHPMailer;
 		$pm->CharSet = datalist_db_encoding;
 
 		if($smtp) {
