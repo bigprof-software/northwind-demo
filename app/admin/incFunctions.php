@@ -331,6 +331,7 @@
 		static $cached = []; /* str => escaped_str */
 
 		if(!strlen($string)) return '';
+		if(is_numeric($string)) return db_escape($string); // don't cache numbers to avoid cases like '3.5' being equivelant to '3' in array indexes
 
 		if(!db_link()) sql("SELECT 1+1", $eo);
 
@@ -630,7 +631,7 @@
 		$payload = $data;
 		$payload['insert_x'] = 1;
 
-		$url = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . config('host') . '/' . application_uri("{$table}_view.php");
+		$url = application_url("{$table}_view.php");
 		$token = jwt_token();
 		$options = [
 			CURLOPT_URL => $url,
@@ -863,8 +864,12 @@
 			'pageRebuildFields.php', 
 			'pageSettings.php',
 			'ajax_check_login.php',
-			'ajax-update-calculated-fields.php',
+			'parent-children.php',
 		])) return;
+
+		// abort if current page is ajax
+		if(is_ajax()) return;
+		if(strpos(basename($_SERVER['PHP_SELF']), 'ajax-') === 0) return;
 
 		// run once per session, but force proceeding if not all mem tables created
 		$res = sql("show tables like 'membership_%'", $eo);
@@ -1781,6 +1786,22 @@
 		$eo);
 	}
 	########################################################################
+	function update_membership_cache() {
+		$tn = 'membership_cache';
+		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
+
+		sql(
+			"CREATE TABLE IF NOT EXISTS `membership_cache` (
+				`request` VARCHAR(100) NOT NULL,
+				`request_ts` INT,
+				`response` LONGTEXT,
+				PRIMARY KEY (`request`))
+			) CHARSET " . mysql_charset,
+		$eo);
+
+		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `response` `response` LONGTEXT", $eo);
+	}
+	########################################################################
 	function thisOr($this_val, $or = '&nbsp;') {
 		return ($this_val != '' ? $this_val : $or);
 	}
@@ -1899,8 +1920,15 @@
 	########################################################################
 	function application_url($page = '', $s = false) {
 		if($s === false) $s = $_SERVER;
-		$ssl = (!empty($s['HTTPS']) && strtolower($s['HTTPS']) != 'off');
+
+		$ssl = (
+			(!empty($s['HTTPS']) && strtolower($s['HTTPS']) != 'off')
+			// detect reverse proxy SSL
+			|| (!empty($s['HTTP_X_FORWARDED_PROTO']) && strtolower($s['HTTP_X_FORWARDED_PROTO']) == 'https')
+			|| (!empty($s['HTTP_X_FORWARDED_SSL']) && strtolower($s['HTTP_X_FORWARDED_SSL']) == 'on')
+		);
 		$http = ($ssl ? 'https:' : 'http:');
+
 		$port = $s['SERVER_PORT'];
 		$port = ($port == '80' || $port == '443' || !$port) ? '' : ':' . $port;
 		// HTTP_HOST already includes server port if not standard, but SERVER_NAME doesn't
@@ -2874,7 +2902,9 @@
 			'order_details' => [
 				'OrderID' => 'SELECT `orders`.`OrderID`, `orders`.`OrderID` FROM `orders` LEFT JOIN `customers` as customers1 ON `customers1`.`CustomerID`=`orders`.`CustomerID` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`orders`.`EmployeeID` LEFT JOIN `shippers` as shippers1 ON `shippers1`.`ShipperID`=`orders`.`ShipVia` ORDER BY 2',
 				'Category' => 'SELECT `products`.`ProductID`, IF(CHAR_LENGTH(`products`.`CategoryID`) || CHAR_LENGTH(`products`.`SupplierID`), CONCAT_WS(\'\', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS(\'\',   `categories1`.`CategoryName`), \'\'), \' / \', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS(\'\',   `suppliers1`.`CompanyName`), \'\')), \'\') FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
-				'ProductID' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
+				'ProductID' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` 
+WHERE COALESCE(`products`.`Discontinued`, 0) != 1
+ ORDER BY 2',
 			],
 			'products' => [
 				'SupplierID' => 'SELECT `suppliers`.`SupplierID`, `suppliers`.`CompanyName` FROM `suppliers` ORDER BY 2',

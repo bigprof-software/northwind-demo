@@ -782,6 +782,9 @@
 			'googlemap' => ['oembed' => '', 'regex' => '/^http.*\.google\..*maps/i'],
 		];
 
+		if(!$max_height) $max_height = 360;
+		if(!$max_width) $max_width = 480;
+
 		if(!isset($providers[$provider])) {
 			return '<div class="text-danger">' . $Translation['invalid provider'] . '</div>';
 		}
@@ -843,18 +846,10 @@
 	function request_cache($request, $force_fetch = false) {
 		$max_cache_lifetime = 7 * 86400; /* max cache lifetime in seconds before refreshing from source */
 
-		/* membership_cache table exists? if not, create it */
-		static $cache_table_exists = false;
-		if(!$cache_table_exists && !$force_fetch) {
-			$te = sqlValue("show tables like 'membership_cache'");
-			if(!$te) {
-				if(!sql("CREATE TABLE `membership_cache` (`request` VARCHAR(100) NOT NULL, `request_ts` INT, `response` TEXT NOT NULL, PRIMARY KEY (`request`))", $eo)) {
-					/* table can't be created, so force fetching request */
-					return request_cache($request, true);
-				}
-			}
-			$cache_table_exists = true;
-		}
+		// force fetching request if no cache table exists
+		$cache_table_exists = sqlValue("show tables like 'membership_cache'");
+		if(!$cache_table_exists)
+			return request_cache($request, true);
 
 		/* retrieve response from cache if exists */
 		if(!$force_fetch) {
