@@ -48,6 +48,7 @@ class DataList {
 		$AllowPrintingDV,
 		$HideTableView,
 		$AllowCSV,
+		$AllowAdminShowSQL,
 		$CSVSeparator,
 
 		$QuickSearch, // 0 to 3
@@ -96,6 +97,7 @@ class DataList {
 		$this->HideTableView = 0;
 		$this->QuickSearch = 0;
 		$this->AllowCSV = 0;
+		$this->AllowAdminShowSQL = 0;
 		$this->CSVSeparator = ',';
 
 		$this->AllowDVNavigation = true;
@@ -296,6 +298,9 @@ class DataList {
 					$url .= '&SelectedID=' . urlencode($SelectedID);
 			}
 
+			// append browser window id to url
+			$url .= (strpos($url, '?') === false ? '?' : '&') .  WindowMessages::windowIdQuery();
+
 			@header('Location: ' . $url);
 			$this->HTML .= "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;url=" . $url ."\">";
 
@@ -357,6 +362,10 @@ class DataList {
 			$filtersGET = substr($filtersGET, 1); // remove initial &
 
 			$redirectUrl = $this->ScriptFileName . '?SelectedID=' . urlencode($SelectedID) . '&' . $filtersGET . '&' . $update_status;
+
+			// append browser window id to url
+			$redirectUrl .= (strpos($redirectUrl, '?') === false ? '?' : '&') .  WindowMessages::windowIdQuery();
+
 			@header("Location: $redirectUrl");
 			$this->HTML .= '<META HTTP-EQUIV="Refresh" CONTENT="0;url='.$redirectUrl.'">';
 			return;
@@ -709,7 +718,7 @@ class DataList {
 			if($current_view == 'DV' && !$Embedded) {
 				$this->HTML .= '<div class="page-header">';
 					$this->HTML .= '<h1>';
-						$this->HTML .= '<a style="text-decoration: none; color: inherit;" href="' . $this->TableName . '_view.php"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
+						$this->HTML .= '<a style="text-decoration: none; color: inherit;" href="' . $this->TableName . '_view.php?' . WindowMessages::windowIdQuery() . '"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
 						/* show add new button if user can insert and there is a selected record */
 						if($SelectedID && $this->Permissions['insert'] && $this->SeparateDV && $this->AllowInsert) {
 							$this->HTML .= ' <button type="submit" id="addNew" name="addNew_x" value="1" class="btn btn-success"><i class="glyphicon glyphicon-plus-sign"></i> ' . $this->translation['Add New'] . '</button>';
@@ -800,7 +809,7 @@ class DataList {
 						$this->HTML .= '<h1>';
 							$this->HTML .= '<div class="row">';
 								$this->HTML .= '<div class="col-sm-8">';
-									$this->HTML .= '<a style="text-decoration: none; color: inherit;" href="' . $this->TableName . '_view.php"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
+									$this->HTML .= '<a style="text-decoration: none; color: inherit;" href="' . $this->TableName . '_view.php?' . WindowMessages::windowIdQuery() . '"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
 									/* show add new button if user can insert and there is a selected record */
 									if($SelectedID && $this->Permissions['insert'] && !$this->SeparateDV && $this->AllowInsert) {
 										$this->HTML .= ' <button type="submit" id="addNew" name="addNew_x" value="1" class="btn btn-success"><i class="glyphicon glyphicon-plus-sign"></i> ' . $this->translation['Add New'] . '</button>';
@@ -846,6 +855,11 @@ class DataList {
 
 			// begin table and display table title
 			if(!$this->HideTableView && !($dvprint_x && $this->AllowSelection && $SelectedID) && !$PrintDV && !$Embedded) {
+				if(getLoggedAdmin() && $this->AllowAdminShowSQL) {
+					$this->HTML .= '<button type="button" class="sql-query-copier btn btn-link btn-xs hidden">' . $this->translation['click to copy'] . '</button>';
+					$this->HTML .= '<pre class="sql-query-container hidden vspace-lg" title="' . html_attr($this->translation['click to copy']) . '">' . $this->getTVQuery($FirstRecord) . '</pre>';
+				}
+
 				$this->HTML .= '<div class="table-responsive"><table data-tablename="' . $this->TableName . '" class="table table-striped table-bordered table-hover">';
 
 				$this->HTML .= '<thead><tr>';
@@ -910,7 +924,7 @@ class DataList {
 
 						/* handle child info column header */
 						if($this->ColNumber[$i] == -1) {
-							[$childTable, $lookupField] = @explode('.', trim($this->ColFieldName[$i], '%'));
+							list($childTable, $lookupField) = @explode('.', trim($this->ColFieldName[$i], '%'));
 							$extraClasses = "child-{$childTable}-{$lookupField} child-records-info";
 							$extraAttributes = " data-table=\"{$childTable}\" data-lookup-field=\"{$lookupField}\"";
 							$extraHint = ' <button class="btn-link update-children-count" type="button" title="' . $this->translation['update'] . '"><i class="glyphicon glyphicon-refresh text-muted"></i></button>';
@@ -1139,7 +1153,9 @@ class DataList {
 				if($Print_x == '' && $i) { // TV
 					$this->HTML .= '<div class="row pagination-section">';
 						$this->HTML .= '<div class="col-xs-4 col-md-3 col-lg-2 vspacer-lg">';
-							if($FirstRecord > 1) $this->HTML .= '<button onClick="' . $resetSelection . ' document.myform.NoDV.value = 1; return true;" type="submit" name="Previous_x" id="Previous" value="1" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left rtl-mirror"></i> <span class="hidden-xs">' . $this->translation['Previous'] . '</span></button>';
+						if($FirstRecord > 1) 
+							$this->HTML .= '<div class="visible-xs">&nbsp;</div>' .
+								'<button onClick="' . $resetSelection . ' document.myform.NoDV.value = 1; return true;" type="submit" name="Previous_x" id="Previous" value="1" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left rtl-mirror"></i> <span class="hidden-xs">' . $this->translation['Previous'] . '</span></button>';
 						$this->HTML .= '</div>';
 
 						$this->HTML .= '<div class="col-xs-4 col-md-4 col-lg-2 col-md-offset-1 col-lg-offset-3 text-center vspacer-lg form-inline">';
@@ -1147,7 +1163,9 @@ class DataList {
 						$this->HTML .= '</div>';
 
 						$this->HTML .= '<div class="col-xs-4 col-md-3 col-lg-2 col-md-offset-1 col-lg-offset-3 text-right vspacer-lg">';
-							if($i < $RecordCount) $this->HTML .= '<button onClick="'.$resetSelection.' document.myform.NoDV.value = 1; return true;" type="submit" name="Next_x" id="Next" value="1" class="btn btn-default btn-block"><span class="hidden-xs">' . $this->translation['Next'] . '</span> <i class="glyphicon glyphicon-chevron-right rtl-mirror"></i></button>';
+						if($i < $RecordCount)
+							$this->HTML .= '<div class="visible-xs">&nbsp;</div>' .
+								'<button onClick="' . $resetSelection . ' document.myform.NoDV.value = 1; return true;" type="submit" name="Next_x" id="Next" value="1" class="btn btn-default btn-block"><span class="hidden-xs">' . $this->translation['Next'] . '</span> <i class="glyphicon glyphicon-chevron-right rtl-mirror"></i></button>';
 						$this->HTML .= '</div>';
 					$this->HTML .= '</div>';
 				}
@@ -1583,6 +1601,10 @@ class DataList {
 		if($this->AllowCSV)
 			$buttons .= '<button onClick="document.myform.NoDV.value = 1; <%%RESET_SELECTION%%> return true;" type="submit" name="CSV_x" id="CSV" value="1" class="btn btn-default"><i class="glyphicon glyphicon-download-alt"></i> <%%TRANSLATION(CSV)%%></button>';
 
+		// if admin and AllowAdminShowSQL, display SQL icon
+		if(getLoggedAdmin() && $this->AllowAdminShowSQL)
+			$buttons .= '<button onClick="$j(\'.sql-query-container, .sql-query-copier\').toggleClass(\'hidden\'); $j(this).toggleClass(\'active\');" type="button" id="ShowSQL" class="btn btn-default"><i class="glyphicon glyphicon-eye-open"></i> <%%TRANSLATION(SQL)%%></button>';
+
 		// display Filter icon
 		if($this->AllowFilters)
 			$buttons .= '<button onClick="document.myform.NoDV.value = 1; <%%RESET_SELECTION%%> return true;" type="submit" name="Filter_x" id="Filter" value="1" class="btn btn-default"><i class="glyphicon glyphicon-filter"></i> <%%TRANSLATION(filter)%%></button>';
@@ -1627,7 +1649,7 @@ class DataList {
 		]);
 	}
 
-	function getTVRevords($first) {
+	function getTVQuery($first) {
 		// TV/TVP query
 		$tvFields = $this->QueryFieldsTV;
 
@@ -1635,9 +1657,12 @@ class DataList {
 		if($this->PrimaryKey)
 			$tvFields["COALESCE($this->PrimaryKey)"] = str_replace('`', '', $this->PrimaryKey);
 
-		$tvQuery = $this->buildQuery($tvFields, $first - 1, $this->RecordsPerPage);
+		return $this->buildQuery($tvFields, $first - 1, $this->RecordsPerPage);
+	}
+
+	function getTVRevords($first) {
 		//$eo = ['silentErrors' => true];
-		$result = sql($tvQuery, $eo);
+		$result = sql($this->getTVQuery($first), $eo);
 		$tvRecords = [];
 		if(!$result) return $tvRecords;
 		while($row = db_fetch_array($result)) $tvRecords[] = $row;
@@ -1857,6 +1882,7 @@ class DataList {
 			&& (
 				!empty($this->FilterValue[$index])
 				|| strpos($this->FilterOperator[$index], 'empty') !== false
+				|| $this->FilterValue[$index] === '0'
 			)
 		);
 	}

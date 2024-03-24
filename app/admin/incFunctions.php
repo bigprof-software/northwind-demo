@@ -733,6 +733,10 @@
 	########################################################################
 	function redirect($url, $absolute = false) {
 		$fullURL = ($absolute ? $url : application_url($url));
+
+		// append browser window id to url (check if it should be preceded by ? or &)
+		$fullURL .= (strpos($fullURL, '?') === false ? '?' : '&') . WindowMessages::windowIdQuery();
+
 		if(!headers_sent()) header("Location: {$fullURL}");
 
 		echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;url={$fullURL}\">";
@@ -1639,6 +1643,107 @@
 		return isset($schema[$tn]) ? $schema[$tn] : [];
 	}
 	########################################################################
+	function updateField($tn, $fn, $dataType, $notNull = false, $default = null, $extra = null) {
+		$sqlNull = $notNull ? 'NOT NULL' : 'NULL';
+		$sqlDefault = $default === null ? '' : "DEFAULT '" . makeSafe($default) . "'";
+		$sqlExtra = $extra === null ? '' : $extra;
+
+		// get current field definition
+		$col = false;
+		$eo = ['silentErrors' => true];
+		$res = sql("SHOW COLUMNS FROM `{$tn}` LIKE '{$fn}'", $eo);
+		if($res) $col = db_fetch_assoc($res);
+
+		// if field does not exist, create it
+		if(!$col) {
+			sql("ALTER TABLE `{$tn}` ADD COLUMN `{$fn}` {$dataType} {$sqlNull} {$sqlDefault} {$sqlExtra}", $eo);
+			return;
+		}
+
+		// if field exists, alter it if needed
+		if(
+			strtolower($col['Type']) != strtolower($dataType) ||
+			(strtolower($col['Null']) == 'yes' && $notNull) ||
+			(strtolower($col['Null']) == 'no' && !$notNull) ||
+			(strtolower($col['Default']) != strtolower($default)) ||
+			(strtolower($col['Extra']) != strtolower($extra))
+		) {
+			sql("ALTER TABLE `{$tn}` CHANGE COLUMN `{$fn}` `{$fn}` {$dataType} {$sqlNull} {$sqlDefault} {$sqlExtra}", $eo);
+		}
+	}
+
+	########################################################################
+	function addIndex($tn, $fields, $unique = false) {
+		// if $fields is a string, convert it to an array
+		if(!is_array($fields)) $fields = [$fields];
+
+		// reshape fields so that key is field name and value is index length or null for full length
+		$fields2 = [];
+		foreach($fields as $k => $v) {
+			if(is_numeric($k)) {
+				$fields2[$v] = null; // $v is field name and index length is full length
+				continue;
+			}
+
+			$fields2[$k] = $v; // $k is field name and $v is index length
+		}
+		unset($fields); $fields = $fields2;
+
+		// prepare index name and sql
+		$index_name = implode('_', array_keys($fields));
+		$sql = "ALTER TABLE `{$tn}` ADD " . ($unique ? 'UNIQUE ' : '') . "INDEX `{$index_name}` (";
+		foreach($fields as $field => $length)
+			$sql .= "`$field`" . ($length === null ? '' : "($length)") . ',';
+		$sql = rtrim($sql, ',') . ')';
+
+		// get current indexes
+		$eo = ['silentErrors' => true];
+		$res = sql("SHOW INDEXES FROM `{$tn}`", $eo);
+		$indexes = [];
+		while($row = db_fetch_assoc($res))
+			$indexes[$row['Key_name']][$row['Seq_in_index']] = $row;
+
+		// if index does not exist, create it
+		if(!isset($indexes[$index_name])) {
+			sql($sql, $eo);
+			return;
+		}
+
+		// if index exists, alter it if needed
+		$index = $indexes[$index_name];
+		$index_changed = false;
+		$index_fields = [];
+		foreach($index as $seq_in_index => $info)
+			$index_fields[$seq_in_index] = $info['Column_name'];
+
+		if(count($index_fields) != count($fields)) $index_changed = true;
+		foreach($fields as $field => $length) {
+			// check if field exists in index
+			$seq_in_index = array_search($field, $index_fields);
+			if($seq_in_index === false) {
+				$index_changed = true;
+				break;
+			}
+
+			// check if field length is different
+			if($length !== null && $length != $index[$seq_in_index]['Sub_part']) {
+				$index_changed = true;
+				break;
+			}
+
+			// check index uniqueness
+			if(($unique && $index[$seq_in_index]['Non_unique'] == 1) || (!$unique && $index[$seq_in_index]['Non_unique'] == 0)) {
+				$index_changed = true;
+				break;
+			}
+		}
+		if(!$index_changed) return;
+
+		sql("ALTER TABLE `{$tn}` DROP INDEX `{$index_name}`", $eo);
+		sql($sql, $eo);
+	}
+
+	########################################################################
 	function update_membership_groups() {
 		$tn = 'membership_groups';
 		$eo = ['silentErrors' => true, 'noErrorQueryLog' => true];
@@ -1655,9 +1760,9 @@
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `name` `name` VARCHAR(100) NOT NULL", $eo);
-		sql("ALTER TABLE `{$tn}` ADD UNIQUE INDEX `name` (`name`)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `allowCSVImport` TINYINT NOT NULL DEFAULT '0'", $eo);
+		updateField($tn, 'name', 'VARCHAR(100)', true);
+		addIndex($tn, 'name', true);
+		updateField($tn, 'allowCSVImport', 'TINYINT', true, '0');
 	}
 	########################################################################
 	function update_membership_users() {
@@ -1688,14 +1793,14 @@
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `pass_reset_key` VARCHAR(100)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `pass_reset_expiry` INT UNSIGNED", $eo);
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `passMD5` `passMD5` VARCHAR(255)", $eo);
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `memberID` `memberID` VARCHAR(100) NOT NULL", $eo);
-		sql("ALTER TABLE `{$tn}` ADD INDEX `groupID` (`groupID`)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `flags` TEXT", $eo);
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `allowCSVImport` TINYINT NOT NULL DEFAULT '0'", $eo);
-		sql("ALTER TABLE `{$tn}` ADD COLUMN `data` LONGTEXT", $eo);
+		updateField($tn, 'pass_reset_key', 'VARCHAR(100)');
+		updateField($tn, 'pass_reset_expiry', 'INT UNSIGNED');
+		updateField($tn, 'passMD5', 'VARCHAR(255)');
+		updateField($tn, 'memberID', 'VARCHAR(100)', true);
+		addIndex($tn, 'groupID');
+		updateField($tn, 'flags', 'TEXT');
+		updateField($tn, 'allowCSVImport', 'TINYINT', true, '0');
+		updateField($tn, 'data', 'LONGTEXT');
 	}
 	########################################################################
 	function update_membership_userrecords() {
@@ -1720,12 +1825,12 @@
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` ADD UNIQUE INDEX `tableName_pkValue` (`tableName`, `pkValue`(100))", $eo);
-		sql("ALTER TABLE `{$tn}` ADD INDEX `pkValue` (`pkValue`)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD INDEX `tableName` (`tableName`)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD INDEX `memberID` (`memberID`)", $eo);
-		sql("ALTER TABLE `{$tn}` ADD INDEX `groupID` (`groupID`)", $eo);
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `memberID` `memberID` VARCHAR(100)", $eo);
+		addIndex($tn, ['tableName' => null, 'pkValue' => 100], true);
+		addIndex($tn, 'pkValue');
+		addIndex($tn, 'tableName');
+		addIndex($tn, 'memberID');
+		addIndex($tn, 'groupID');
+		updateField($tn, 'memberID', 'VARCHAR(100)');
 	}
 	########################################################################
 	function update_membership_grouppermissions() {
@@ -1745,7 +1850,7 @@
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` ADD UNIQUE INDEX `groupID_tableName` (`groupID`, `tableName`)", $eo);
+		addIndex($tn, ['groupID', 'tableName'], true);
 	}
 	########################################################################
 	function update_membership_userpermissions() {
@@ -1765,8 +1870,8 @@
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `memberID` `memberID` VARCHAR(100) NOT NULL", $eo);
-		sql("ALTER TABLE `{$tn}` ADD UNIQUE INDEX `memberID_tableName` (`memberID`, `tableName`)", $eo);
+		updateField($tn, 'memberID', 'VARCHAR(100)', true);
+		addIndex($tn, ['memberID', 'tableName'], true);
 	}
 	########################################################################
 	function update_membership_usersessions() {
@@ -1795,11 +1900,11 @@
 				`request` VARCHAR(100) NOT NULL,
 				`request_ts` INT,
 				`response` LONGTEXT,
-				PRIMARY KEY (`request`))
+				PRIMARY KEY (`request`)
 			) CHARSET " . mysql_charset,
 		$eo);
 
-		sql("ALTER TABLE `{$tn}` CHANGE COLUMN `response` `response` LONGTEXT", $eo);
+		updateField($tn, 'response', 'LONGTEXT');
 	}
 	########################################################################
 	function thisOr($this_val, $or = '&nbsp;') {
@@ -3149,3 +3254,107 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 			return preg_match('/^[a-zA-Z0-9]+$/', $str);
 		}
 	}
+
+	/**
+	 * Perform an HTTP request and return the response, including headers and body, with support to cookies
+	 * 
+	 * @param string $url  URL to request
+	 * @param array $payload  payload to send with the request
+	 * @param array $headers  headers to send with the request, in the format ['header' => 'value']
+	 * @param string $type  request type, either 'GET' or 'POST'
+	 * @param string $cookieJar  path to a file to read/store cookies in
+	 * 
+	 * @return array  response, including `'headers'` and `'body'`, or error info if request failed
+	 */
+	function httpRequest($url, $payload = [], $headers = [], $type = 'GET', $cookieJar = null) {
+		// prep raw headers
+		if(!isset($headers['User-Agent'])) $headers['User-Agent'] = $_SERVER['HTTP_USER_AGENT'];
+		if(!isset($headers['Accept'])) $headers['Accept'] = $_SERVER['HTTP_ACCEPT'];
+		$rawHeaders = [];
+		foreach($headers as $k => $v) $rawHeaders[] = "$k: $v";
+
+		$payloadQuery = http_build_query($payload);
+
+		// for GET requests, append payload to url
+		if($type == 'GET' && strlen($payloadQuery)) $url .= "?$payloadQuery";
+
+		$respHeaders = [];
+		$ch = curl_init();
+		$options = [
+			CURLOPT_URL => $url,
+			CURLOPT_POST => ($type == 'POST'),
+			CURLOPT_POSTFIELDS => ($type == 'POST' && strlen($payloadQuery) ? $payloadQuery : null),
+			CURLOPT_HEADER => false,
+			CURLOPT_HEADERFUNCTION => function($curl, $header) use (&$respHeaders) {
+				list($k, $v) = explode(': ', $header);
+				$respHeaders[trim($k)] = trim($v);
+				return strlen($header);
+			},
+			CURLOPT_HTTPHEADER => $rawHeaders,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_RETURNTRANSFER => true,
+		];
+
+		/* if this is a localhost request, no need to verify SSL */
+		if(preg_match('/^https?:\/\/(localhost|127\.0\.0\.1)/i', $url)) {
+			$options[CURLOPT_SSL_VERIFYPEER] = false;
+			$options[CURLOPT_SSL_VERIFYHOST] = false;
+		}
+
+		if($cookieJar) {
+			$options[CURLOPT_COOKIEJAR] = $cookieJar;
+			$options[CURLOPT_COOKIEFILE] = $cookieJar;
+		}
+
+		if(defined('CURLOPT_TCP_FASTOPEN')) $options[CURLOPT_TCP_FASTOPEN] = true;
+		if(defined('CURLOPT_UNRESTRICTED_AUTH')) $options[CURLOPT_UNRESTRICTED_AUTH] = true;
+
+		curl_setopt_array($ch, $options);
+
+		$respBody = curl_exec($ch);
+
+		if($respBody === false) return [
+			'error' => curl_error($ch),
+			'info' => curl_getinfo($ch),
+		];
+
+		curl_close($ch);
+
+		// wait for 0.05 seconds after launching request
+		usleep(50000);
+
+		return [
+			'headers' => $respHeaders,
+			'body' => $respBody,
+		];
+	}
+
+	/**
+	 * @brief Retrieve owner username of the record with the given primary key value
+	 * 
+	 * @param $tn string table name
+	 * @param $pkValue string primary key value
+	 * @return string|null username of the record owner, or null if not found
+	 */
+	function getRecordOwner($tn, $pkValue) {
+		$tn = makeSafe($tn);
+		$pkValue = makeSafe($pkValue);
+		$owner = sqlValue("SELECT `memberID` FROM `membership_userrecords` WHERE `tableName`='{$tn}' AND `pkValue`='$pkValue'");
+
+		if(!strlen($owner)) return null;
+		return $owner;
+	}
+
+	/**
+	 * @brief Retrieve lookup field name that determines record owner of the given table
+	 * 
+	 * @param $tn string table name
+	 * @return string|null lookup field name, or null if default (record owner is user that creates the record)
+	 */
+	function tableRecordOwner($tn) {
+		$owners = [
+		];
+
+		return $owners[$tn] ?? null;
+	}
+

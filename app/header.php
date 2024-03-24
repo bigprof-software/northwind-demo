@@ -108,6 +108,8 @@
 				<div style="min-height: 70px;" class="hidden-print top-margin-adjuster"></div>
 			<?php } ?>
 
+			<?php echo WindowMessages::getHtml(); ?>
+
 			<?php if(class_exists('Notification', false)) echo Notification::placeholder(); ?>
 
 			<?php 
