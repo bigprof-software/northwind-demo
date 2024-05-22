@@ -20,7 +20,7 @@ function employees_insert(&$error_message = '') {
 			'noRename' => false,
 			'dir' => '',
 			'success' => function($name, $selected_id) {
-				createThumbnail($name, getThumbnailSpecs('employees', 'Photo', 'tv'));
+				Thumbnail::create($name, getThumbnailSpecs('employees', 'Photo', 'tv'));
 			},
 			'failure' => function($selected_id, $fileRemoved) {
 				if(!strlen(Request::val('SelectedID'))) return '';
@@ -198,7 +198,7 @@ function employees_update(&$selected_id, &$error_message = '') {
 			'dir' => '',
 			'id' => $selected_id,
 			'success' => function($name, $selected_id) {
-				createThumbnail($name, getThumbnailSpecs('employees', 'Photo', 'tv'));
+				Thumbnail::create($name, getThumbnailSpecs('employees', 'Photo', 'tv'));
 			},
 			'removeOnSuccess' => true,
 			'removeOnRequest' => true,

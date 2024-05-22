@@ -19,8 +19,8 @@ function categories_insert(&$error_message = '') {
 			'noRename' => false,
 			'dir' => '',
 			'success' => function($name, $selected_id) {
-				createThumbnail($name, getThumbnailSpecs('categories', 'Picture', 'tv'));
-				createThumbnail($name, getThumbnailSpecs('categories', 'Picture', 'dv'));
+				Thumbnail::create($name, getThumbnailSpecs('categories', 'Picture', 'tv'));
+				Thumbnail::create($name, getThumbnailSpecs('categories', 'Picture', 'dv'));
 			},
 			'failure' => function($selected_id, $fileRemoved) {
 				if(!strlen(Request::val('SelectedID'))) return '';
@@ -166,8 +166,8 @@ function categories_update(&$selected_id, &$error_message = '') {
 			'dir' => '',
 			'id' => $selected_id,
 			'success' => function($name, $selected_id) {
-				createThumbnail($name, getThumbnailSpecs('categories', 'Picture', 'tv'));
-				createThumbnail($name, getThumbnailSpecs('categories', 'Picture', 'dv'));
+				Thumbnail::create($name, getThumbnailSpecs('categories', 'Picture', 'tv'));
+				Thumbnail::create($name, getThumbnailSpecs('categories', 'Picture', 'dv'));
 			},
 			'removeOnSuccess' => true,
 			'removeOnRequest' => true,
