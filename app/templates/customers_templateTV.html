@@ -14,6 +14,6 @@
 		<td id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
 		<td id="customers-TotalSales-<%%VALUE(CustomerID)%%>" class="customers-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>
 		<td class="child-orders-CustomerID child-records-info" data-id="<%%VALUE(CustomerID)%%>" data-table="orders" data-lookup-field="CustomerID">
-			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Customer's Orders)" class="modal-link children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Customer's Orders)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>

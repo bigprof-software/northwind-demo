@@ -13,7 +13,7 @@
 		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax text-bold"><%%VALUE(Fax)%%></td>
 		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage text-bold"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
 		<td class="child-products-SupplierID child-records-info" data-id="<%%VALUE(SupplierID)%%>" data-table="products" data-lookup-field="SupplierID">
-			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%TRANSLATION(view)%%>" class="children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Products supplied)" class="modal-link children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Products supplied)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>
 		<script>$j(function() {
