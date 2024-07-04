@@ -290,31 +290,40 @@ function employees_update(&$selected_id, &$error_message = '') {
 	set_record_owner('employees', $selected_id);
 }
 
-function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $AllowDelete = 1, $separateDV = 0, $TemplateDV = '', $TemplateDVP = '') {
+function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = true, $allowDelete = true, $separateDV = true, $templateDV = '', $templateDVP = '') {
 	// function to return an editable form for a table records
-	// and fill it with data of record whose ID is $selected_id. If $selected_id
+	// and fill it with data of record whose ID is $selectedId. If $selectedId
 	// is empty, an empty form is shown, with only an 'Add New'
 	// button displayed.
 
 	global $Translation;
 	$eo = ['silentErrors' => true];
-	$noUploads = null;
-	$row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
-
+	$noUploads = $row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
 	$noSaveAsCopy = true;
+	$hasSelectedId = strlen($selectedId) > 0;
 
 	// mm: get table permissions
 	$arrPerm = getTablePermissions('employees');
-	if(!$arrPerm['insert'] && $selected_id == '')
+	$allowInsert = ($arrPerm['insert'] ? true : false);
+	$allowUpdate = $hasSelectedId && check_record_permission('employees', $selectedId, 'edit');
+	$allowDelete = $hasSelectedId && check_record_permission('employees', $selectedId, 'delete');
+
+	if(!$allowInsert && !$hasSelectedId)
 		// no insert permission and no record selected
-		// so show access denied error unless TVDV
+		// so show access denied error -- except if TVDV: just hide DV
 		return $separateDV ? $Translation['tableAccessDenied'] : '';
-	$AllowInsert = ($arrPerm['insert'] ? true : false);
+
+	if($hasSelectedId && !check_record_permission('employees', $selectedId, 'view'))
+		return $Translation['tableAccessDenied'];
+
 	// print preview?
-	$dvprint = false;
-	if(strlen($selected_id) && Request::val('dvprint_x') != '') {
-		$dvprint = true;
-	}
+	$dvprint = $hasSelectedId && Request::val('dvprint_x') != '';
+
+	$showSaveNew = !$dvprint && ($allowInsert && !$hasSelectedId);
+	$showSaveChanges = !$dvprint && $allowUpdate && $hasSelectedId;
+	$showDelete = !$dvprint && $allowDelete && $hasSelectedId;
+	$showSaveAsCopy = !$dvprint && ($allowInsert && $hasSelectedId && !$noSaveAsCopy);
+	$fieldsAreEditable = !$dvprint && (($allowInsert && !$hasSelectedId) || ($allowUpdate && $hasSelectedId) || $showSaveAsCopy);
 
 	$filterer_ReportsTo = Request::val('filterer_ReportsTo');
 
@@ -356,17 +365,8 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	// combobox: ReportsTo
 	$combo_ReportsTo = new DataCombo;
 
-	if($selected_id) {
-		if(!check_record_permission('employees', $selected_id, 'view'))
-			return $Translation['tableAccessDenied'];
-
-		// can edit?
-		$AllowUpdate = check_record_permission('employees', $selected_id, 'edit');
-
-		// can delete?
-		$AllowDelete = check_record_permission('employees', $selected_id, 'delete');
-
-		$res = sql("SELECT * FROM `employees` WHERE `EmployeeID`='" . makeSafe($selected_id) . "'", $eo);
+	if($hasSelectedId) {
+		$res = sql("SELECT * FROM `employees` WHERE `EmployeeID`='" . makeSafe($selectedId) . "'", $eo);
 		if(!($row = db_fetch_array($res))) {
 			return error_message($Translation['No records found'], 'employees_view.php', false);
 		}
@@ -391,7 +391,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 
 	<script>
 		// initial lookup values
-		AppGini.current_ReportsTo__RAND__ = { text: "", value: "<?php echo addslashes($selected_id ? $urow['ReportsTo'] : htmlspecialchars($filterer_ReportsTo, ENT_QUOTES)); ?>"};
+		AppGini.current_ReportsTo__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['ReportsTo'] : htmlspecialchars($filterer_ReportsTo, ENT_QUOTES)); ?>"};
 
 		jQuery(function() {
 			setTimeout(function() {
@@ -406,7 +406,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 					f: 'ReportsTo',
 					id: AppGini.current_ReportsTo__RAND__.value,
 					text: AppGini.current_ReportsTo__RAND__.text,
-					o: <?php echo (($AllowUpdate || $AllowInsert) && !$dvprint ? '1' : '0'); ?>
+					o: <?php echo ($fieldsAreEditable ? '1' : '0'); ?>
 
 				},
 				success: function(html) {
@@ -440,10 +440,10 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 
 	// open the detail view template
 	if($dvprint) {
-		$template_file = is_file("./{$TemplateDVP}") ? "./{$TemplateDVP}" : './templates/employees_templateDVP.html';
+		$template_file = is_file("./{$templateDVP}") ? "./{$templateDVP}" : './templates/employees_templateDVP.html';
 		$templateCode = @file_get_contents($template_file);
 	} else {
-		$template_file = is_file("./{$TemplateDV}") ? "./{$TemplateDV}" : './templates/employees_templateDV.html';
+		$template_file = is_file("./{$templateDV}") ? "./{$templateDV}" : './templates/employees_templateDV.html';
 		$templateCode = @file_get_contents($template_file);
 	}
 
@@ -452,8 +452,9 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	$templateCode = str_replace('<%%RND1%%>', $rnd1, $templateCode);
 	$templateCode = str_replace('<%%EMBEDDED%%>', (Request::val('Embedded') ? 'Embedded=1' : ''), $templateCode);
 	// process buttons
-	if($arrPerm['insert'] && !$selected_id) { // allow insert and no record selected?
-		if(!$selected_id) $templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return employees_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	if($showSaveNew) {
+		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return employees_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	} elseif($showSaveAsCopy) {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="insert" name="insert_x" value="1" onclick="return employees_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save As Copy'] . '</button>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '', $templateCode);
@@ -466,14 +467,14 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
 	}
 
-	if($selected_id) {
+	if($hasSelectedId) {
 		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
-		if($AllowUpdate)
+		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" onclick="return employees_validateData();" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '', $templateCode);
 
-		if($AllowDelete)
+		if($allowDelete)
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '<button type="submit" class="btn btn-danger" id="delete" name="delete_x" value="1" title="' . html_attr($Translation['Delete']) . '"><i class="glyphicon glyphicon-trash"></i> ' . $Translation['Delete'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '', $templateCode);
@@ -486,8 +487,8 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		// if not in embedded mode and user has insert only but no view/update/delete,
 		// remove 'back' button
 		if(
-			$arrPerm['insert']
-			&& !$arrPerm['update'] && !$arrPerm['delete'] && !$arrPerm['view']
+			$allowInsert
+			&& !$allowUpdate && !$allowDelete && !$arrPerm['view']
 			&& !Request::val('Embedded')
 		)
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
@@ -512,7 +513,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	}
 
 	// set records to read only if user can't insert new records and can't edit current record
-	if(($selected_id && !$AllowUpdate) || (!$selected_id && !$AllowInsert)) {
+	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
 		$jsReadOnly .= "\tjQuery('#TitleOfCourtesy').replaceWith('<div class=\"form-control-static\" id=\"TitleOfCourtesy\">' + (jQuery('#TitleOfCourtesy').val() || '') + '</div>');\n";
 		$jsReadOnly .= "\tjQuery('#Photo').replaceWith('<div class=\"form-control-static\" id=\"Photo\">' + (jQuery('#Photo').val() || '') + '</div>');\n";
@@ -535,22 +536,23 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
 
 		$noUploads = true;
-	} elseif(($AllowInsert && !$selected_id) || ($AllowUpdate && $selected_id)) {
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);"; // temporarily disable form change handler
+	} else {
+		// temporarily disable form change handler till time and datetime pickers are enabled
+		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
 		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos
 	$templateCode = str_replace(
 		'<%%COMBO(BirthDate)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_BirthDate->GetHTML(true) . '</div>' : 
 			$combo_BirthDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(BirthDate)%%>', $combo_BirthDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
 		'<%%COMBO(HireDate)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_HireDate->GetHTML(true) . '</div>' : 
 			$combo_HireDate->GetHTML()
 		), $templateCode);
@@ -581,7 +583,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	$templateCode = str_replace('<%%UPLOADFILE(EmployeeID)%%>', '', $templateCode);
 	$templateCode = str_replace('<%%UPLOADFILE(TitleOfCourtesy)%%>', '', $templateCode);
 	$templateCode = str_replace('<%%UPLOADFILE(Photo)%%>', ($noUploads ? '' : "<div>{$Translation['upload image']}</div>" . '<input type="file" name="Photo" id="Photo" data-filetypes="jpg|jpeg|gif|png|webp" data-maxsize="15360000" style="max-width: calc(100% - 1.5rem);" accept="capture=camera,image/*">' . '<i class="text-danger clear-upload hidden pull-right" style="margin-top: -.1em; font-size: large;">&times;</i>'), $templateCode);
-	if($AllowUpdate && $row['Photo'] != '') {
+	if($allowUpdate && $row['Photo'] != '') {
 		$templateCode = str_replace('<%%REMOVEFILE(Photo)%%>', '<input type="checkbox" name="Photo_remove" id="Photo_remove" value="1"> <label for="Photo_remove" style="color: red; font-weight: bold;">'.$Translation['remove image'].'</label>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%REMOVEFILE(Photo)%%>', '', $templateCode);
@@ -604,7 +606,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	$templateCode = str_replace('<%%UPLOADFILE(TotalSales)%%>', '', $templateCode);
 
 	// process values
-	if($selected_id) {
+	if($hasSelectedId) {
 		if( $dvprint) $templateCode = str_replace('<%%VALUE(EmployeeID)%%>', safe_html($urow['EmployeeID']), $templateCode);
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(EmployeeID)%%>', html_attr($row['EmployeeID']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(EmployeeID)%%>', urlencode($urow['EmployeeID']), $templateCode);
@@ -628,11 +630,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		$templateCode = str_replace('<%%URLVALUE(BirthDate)%%>', urlencode(app_datetime($urow['BirthDate'])), $templateCode);
 		$templateCode = str_replace('<%%VALUE(HireDate)%%>', app_datetime($row['HireDate']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(HireDate)%%>', urlencode(app_datetime($urow['HireDate'])), $templateCode);
-		if($dvprint || (!$AllowUpdate && !$AllowInsert)) {
-			$templateCode = str_replace('<%%VALUE(Address)%%>', safe_html($urow['Address']), $templateCode);
-		} else {
-			$templateCode = str_replace('<%%VALUE(Address)%%>', safe_html($urow['Address'], true), $templateCode);
-		}
+		$templateCode = str_replace('<%%VALUE(Address)%%>', safe_html($urow['Address'], $fieldsAreEditable), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(Address)%%>', urlencode($urow['Address']), $templateCode);
 		if( $dvprint) $templateCode = str_replace('<%%VALUE(City)%%>', safe_html($urow['City']), $templateCode);
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(City)%%>', html_attr($row['City']), $templateCode);
@@ -652,7 +650,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		if( $dvprint) $templateCode = str_replace('<%%VALUE(Extension)%%>', safe_html($urow['Extension']), $templateCode);
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(Extension)%%>', html_attr($row['Extension']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(Extension)%%>', urlencode($urow['Extension']), $templateCode);
-		if($AllowUpdate || $AllowInsert) {
+		if($fieldsAreEditable) {
 			$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<textarea name="Notes" id="Notes" rows="5">' . safe_html(htmlspecialchars_decode($row['Notes'])) . '</textarea>', $templateCode);
 		} else {
 			$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<div id="Notes" class="form-control-static">' . $row['Notes'] . '</div>', $templateCode);
@@ -724,7 +722,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 		$templateCode .= $jsReadOnly;
 		$templateCode .= $jsEditable;
 
-		if(!$selected_id) {
+		if(!$hasSelectedId) {
 		}
 
 		$templateCode.="\n});</script>\n";
@@ -752,8 +750,8 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 
 	/* default field values */
 	$rdata = $jdata = get_defaults('employees');
-	if($selected_id) {
-		$jdata = get_joined_record('employees', $selected_id);
+	if($hasSelectedId) {
+		$jdata = get_joined_record('employees', $selectedId);
 		if($jdata === false) $jdata = get_defaults('employees');
 		$rdata = $row;
 	}
@@ -762,7 +760,7 @@ function employees_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $
 	// hook: employees_dv
 	if(function_exists('employees_dv')) {
 		$args = [];
-		employees_dv(($selected_id ? $selected_id : FALSE), getMemberInfo(), $templateCode, $args);
+		employees_dv(($hasSelectedId ? $selectedId : FALSE), getMemberInfo(), $templateCode, $args);
 	}
 
 	return $templateCode;

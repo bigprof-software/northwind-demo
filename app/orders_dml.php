@@ -214,31 +214,40 @@ function orders_update(&$selected_id, &$error_message = '') {
 	set_record_owner('orders', $selected_id);
 }
 
-function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $AllowDelete = 1, $separateDV = 0, $TemplateDV = '', $TemplateDVP = '') {
+function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true, $allowDelete = true, $separateDV = true, $templateDV = '', $templateDVP = '') {
 	// function to return an editable form for a table records
-	// and fill it with data of record whose ID is $selected_id. If $selected_id
+	// and fill it with data of record whose ID is $selectedId. If $selectedId
 	// is empty, an empty form is shown, with only an 'Add New'
 	// button displayed.
 
 	global $Translation;
 	$eo = ['silentErrors' => true];
-	$noUploads = null;
-	$row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
-
+	$noUploads = $row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
 	$noSaveAsCopy = true;
+	$hasSelectedId = strlen($selectedId) > 0;
 
 	// mm: get table permissions
 	$arrPerm = getTablePermissions('orders');
-	if(!$arrPerm['insert'] && $selected_id == '')
+	$allowInsert = ($arrPerm['insert'] ? true : false);
+	$allowUpdate = $hasSelectedId && check_record_permission('orders', $selectedId, 'edit');
+	$allowDelete = $hasSelectedId && check_record_permission('orders', $selectedId, 'delete');
+
+	if(!$allowInsert && !$hasSelectedId)
 		// no insert permission and no record selected
-		// so show access denied error unless TVDV
+		// so show access denied error -- except if TVDV: just hide DV
 		return $separateDV ? $Translation['tableAccessDenied'] : '';
-	$AllowInsert = ($arrPerm['insert'] ? true : false);
+
+	if($hasSelectedId && !check_record_permission('orders', $selectedId, 'view'))
+		return $Translation['tableAccessDenied'];
+
 	// print preview?
-	$dvprint = false;
-	if(strlen($selected_id) && Request::val('dvprint_x') != '') {
-		$dvprint = true;
-	}
+	$dvprint = $hasSelectedId && Request::val('dvprint_x') != '';
+
+	$showSaveNew = !$dvprint && ($allowInsert && !$hasSelectedId);
+	$showSaveChanges = !$dvprint && $allowUpdate && $hasSelectedId;
+	$showDelete = !$dvprint && $allowDelete && $hasSelectedId;
+	$showSaveAsCopy = !$dvprint && ($allowInsert && $hasSelectedId && !$noSaveAsCopy);
+	$fieldsAreEditable = !$dvprint && (($allowInsert && !$hasSelectedId) || ($allowUpdate && $hasSelectedId) || $showSaveAsCopy);
 
 	$filterer_CustomerID = Request::val('filterer_CustomerID');
 	$filterer_EmployeeID = Request::val('filterer_EmployeeID');
@@ -287,17 +296,8 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	$combo_added_date->MonthNames = $Translation['month names'];
 	$combo_added_date->NamePrefix = 'added_date';
 
-	if($selected_id) {
-		if(!check_record_permission('orders', $selected_id, 'view'))
-			return $Translation['tableAccessDenied'];
-
-		// can edit?
-		$AllowUpdate = check_record_permission('orders', $selected_id, 'edit');
-
-		// can delete?
-		$AllowDelete = check_record_permission('orders', $selected_id, 'delete');
-
-		$res = sql("SELECT * FROM `orders` WHERE `OrderID`='" . makeSafe($selected_id) . "'", $eo);
+	if($hasSelectedId) {
+		$res = sql("SELECT * FROM `orders` WHERE `OrderID`='" . makeSafe($selectedId) . "'", $eo);
 		if(!($row = db_fetch_array($res))) {
 			return error_message($Translation['No records found'], 'orders_view.php', false);
 		}
@@ -330,9 +330,9 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 
 	<script>
 		// initial lookup values
-		AppGini.current_CustomerID__RAND__ = { text: "", value: "<?php echo addslashes($selected_id ? $urow['CustomerID'] : htmlspecialchars($filterer_CustomerID, ENT_QUOTES)); ?>"};
-		AppGini.current_EmployeeID__RAND__ = { text: "", value: "<?php echo addslashes($selected_id ? $urow['EmployeeID'] : htmlspecialchars($filterer_EmployeeID, ENT_QUOTES)); ?>"};
-		AppGini.current_ShipVia__RAND__ = { text: "<?php echo ($selected_id ? '' : 'Federal Shipping'); ?>", value: "<?php echo addslashes($selected_id ? $urow['ShipVia'] : htmlspecialchars($filterer_ShipVia, ENT_QUOTES)); ?>"};
+		AppGini.current_CustomerID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['CustomerID'] : htmlspecialchars($filterer_CustomerID, ENT_QUOTES)); ?>"};
+		AppGini.current_EmployeeID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['EmployeeID'] : htmlspecialchars($filterer_EmployeeID, ENT_QUOTES)); ?>"};
+		AppGini.current_ShipVia__RAND__ = { text: "<?php echo ($hasSelectedId ? '' : 'Federal Shipping'); ?>", value: "<?php echo addslashes($hasSelectedId ? $urow['ShipVia'] : htmlspecialchars($filterer_ShipVia, ENT_QUOTES)); ?>"};
 
 		jQuery(function() {
 			setTimeout(function() {
@@ -342,7 +342,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 			}, 50); /* we need to slightly delay client-side execution of the above code to allow AppGini.ajaxCache to work */
 		});
 		function CustomerID_reload__RAND__() {
-		<?php if(($AllowUpdate || ($arrPerm['insert'] && !$selected_id)) && !$dvprint) { ?>
+		<?php if($fieldsAreEditable) { ?>
 
 			$j("#CustomerID-container__RAND__").select2({
 				/* initial default value */
@@ -419,7 +419,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 
 		}
 		function EmployeeID_reload__RAND__() {
-		<?php if(($AllowUpdate || ($arrPerm['insert'] && !$selected_id)) && !$dvprint) { ?>
+		<?php if($fieldsAreEditable) { ?>
 
 			$j("#EmployeeID-container__RAND__").select2({
 				/* initial default value */
@@ -496,7 +496,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 
 		}
 		function ShipVia_reload__RAND__() {
-		<?php if(($AllowUpdate || ($arrPerm['insert'] && !$selected_id)) && !$dvprint) { ?>
+		<?php if($fieldsAreEditable) { ?>
 
 			$j("#ShipVia-container__RAND__").select2({
 				/* initial default value */
@@ -504,7 +504,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 					$j.ajax({
 						url: 'ajax_combo.php',
 						dataType: 'json',
-						<?php if(!$selected_id && !$filterer_ShipVia) { ?>
+						<?php if(!$hasSelectedId && !$filterer_ShipVia) { ?>
 							data: { text: AppGini.htmlEntitiesToText('Federal Shipping'), t: 'orders', f: 'ShipVia' },
 						<?php } else { ?>
 							data: { id: AppGini.current_ShipVia__RAND__.value, t: 'orders', f: 'ShipVia' },
@@ -587,10 +587,10 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 
 	// open the detail view template
 	if($dvprint) {
-		$template_file = is_file("./{$TemplateDVP}") ? "./{$TemplateDVP}" : './templates/orders_templateDVP.html';
+		$template_file = is_file("./{$templateDVP}") ? "./{$templateDVP}" : './templates/orders_templateDVP.html';
 		$templateCode = @file_get_contents($template_file);
 	} else {
-		$template_file = is_file("./{$TemplateDV}") ? "./{$TemplateDV}" : './templates/orders_templateDV.html';
+		$template_file = is_file("./{$templateDV}") ? "./{$templateDV}" : './templates/orders_templateDV.html';
 		$templateCode = @file_get_contents($template_file);
 	}
 
@@ -599,8 +599,9 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	$templateCode = str_replace('<%%RND1%%>', $rnd1, $templateCode);
 	$templateCode = str_replace('<%%EMBEDDED%%>', (Request::val('Embedded') ? 'Embedded=1' : ''), $templateCode);
 	// process buttons
-	if($arrPerm['insert'] && !$selected_id) { // allow insert and no record selected?
-		if(!$selected_id) $templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return orders_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	if($showSaveNew) {
+		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return orders_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	} elseif($showSaveAsCopy) {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="insert" name="insert_x" value="1" onclick="return orders_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save As Copy'] . '</button>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '', $templateCode);
@@ -613,14 +614,14 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
 	}
 
-	if($selected_id) {
+	if($hasSelectedId) {
 		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
-		if($AllowUpdate)
+		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" onclick="return orders_validateData();" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '', $templateCode);
 
-		if($AllowDelete)
+		if($allowDelete)
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '<button type="submit" class="btn btn-danger" id="delete" name="delete_x" value="1" title="' . html_attr($Translation['Delete']) . '"><i class="glyphicon glyphicon-trash"></i> ' . $Translation['Delete'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '', $templateCode);
@@ -633,8 +634,8 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 		// if not in embedded mode and user has insert only but no view/update/delete,
 		// remove 'back' button
 		if(
-			$arrPerm['insert']
-			&& !$arrPerm['update'] && !$arrPerm['delete'] && !$arrPerm['view']
+			$allowInsert
+			&& !$allowUpdate && !$allowDelete && !$arrPerm['view']
 			&& !Request::val('Embedded')
 		)
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
@@ -659,7 +660,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	}
 
 	// set records to read only if user can't insert new records and can't edit current record
-	if(($selected_id && !$AllowUpdate) || (!$selected_id && !$AllowInsert)) {
+	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
 		$jsReadOnly .= "\tjQuery('#CustomerID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
 		$jsReadOnly .= "\tjQuery('#CustomerID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
@@ -678,8 +679,9 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
 
 		$noUploads = true;
-	} elseif(($AllowInsert && !$selected_id) || ($AllowUpdate && $selected_id)) {
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);"; // temporarily disable form change handler
+	} else {
+		// temporarily disable form change handler till time and datetime pickers are enabled
+		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
 		$jsEditable .= "\tjQuery('#OrderTime').addClass('always_shown').timepicker({ defaultTime: false, showSeconds: true, showMeridian: true, showInputs: false, disableFocus: true, minuteStep: 5 });";
 		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
@@ -693,21 +695,21 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	$templateCode = str_replace('<%%URLCOMBOTEXT(EmployeeID)%%>', urlencode($combo_EmployeeID->MatchText), $templateCode);
 	$templateCode = str_replace(
 		'<%%COMBO(OrderDate)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_OrderDate->GetHTML(true) . '</div>' : 
 			$combo_OrderDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(OrderDate)%%>', $combo_OrderDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
 		'<%%COMBO(RequiredDate)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_RequiredDate->GetHTML(true) . '</div>' : 
 			$combo_RequiredDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(RequiredDate)%%>', $combo_RequiredDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
 		'<%%COMBO(ShippedDate)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_ShippedDate->GetHTML(true) . '</div>' : 
 			$combo_ShippedDate->GetHTML()
 		), $templateCode);
@@ -717,7 +719,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	$templateCode = str_replace('<%%URLCOMBOTEXT(ShipVia)%%>', urlencode($combo_ShipVia->MatchText), $templateCode);
 	$templateCode = str_replace(
 		'<%%COMBO(added_date)%%>', 
-		($selected_id && !$arrPerm['edit'] && ($noSaveAsCopy || !$arrPerm['insert']) ? 
+		(!$fieldsAreEditable ? 
 			'<div class="form-control-static">' . $combo_added_date->GetHTML(true) . '</div>' : 
 			$combo_added_date->GetHTML()
 		), $templateCode);
@@ -755,7 +757,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	$templateCode = str_replace('<%%UPLOADFILE(Total)%%>', '', $templateCode);
 
 	// process values
-	if($selected_id) {
+	if($hasSelectedId) {
 		if( $dvprint) $templateCode = str_replace('<%%VALUE(OrderID)%%>', safe_html($urow['OrderID']), $templateCode);
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(OrderID)%%>', html_attr($row['OrderID']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(OrderID)%%>', urlencode($urow['OrderID']), $templateCode);
@@ -835,7 +837,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 		$templateCode .= $jsReadOnly;
 		$templateCode .= $jsEditable;
 
-		if(!$selected_id) {
+		if(!$hasSelectedId) {
 		}
 
 		$templateCode.="\n});</script>\n";
@@ -856,7 +858,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 		$templateCode .= "\t\t\tcontentType: 'application/x-www-form-urlencoded; charset=" . datalist_db_encoding . "',\n";
 		$templateCode .= "\t\t\ttype: 'GET',\n";
 		$templateCode .= "\t\t\tbeforeSend: function() { \$j('#CustomerID$rnd1').prop('disabled', true); },\n";
-		$templateCode .= "\t\t\tcomplete: function() { " . (($arrPerm['insert'] || (($arrPerm['edit'] == 1 && $ownerMemberID == getLoggedMemberID()) || ($arrPerm['edit'] == 2 && $ownerGroupID == getLoggedGroupID()) || $arrPerm['edit'] == 3)) ? "\$j('#CustomerID$rnd1').prop('disabled', false); " : "\$j('#CustomerID$rnd1').prop('disabled', true); ")." \$j(window).resize(); }\n";
+		$templateCode .= "\t\t\tcomplete: function() { " . (($allowInsert || $allowUpdate) ? "\$j('#CustomerID$rnd1').prop('disabled', false); " : "\$j('#CustomerID$rnd1').prop('disabled', true); ")." \$j(window).resize(); }\n";
 	}
 	$templateCode .= "\t\t});\n";
 	$templateCode .= "\t};\n";
@@ -880,8 +882,8 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 
 	/* default field values */
 	$rdata = $jdata = get_defaults('orders');
-	if($selected_id) {
-		$jdata = get_joined_record('orders', $selected_id);
+	if($hasSelectedId) {
+		$jdata = get_joined_record('orders', $selectedId);
 		if($jdata === false) $jdata = get_defaults('orders');
 		$rdata = $row;
 	}
@@ -890,7 +892,7 @@ function orders_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $All
 	// hook: orders_dv
 	if(function_exists('orders_dv')) {
 		$args = [];
-		orders_dv(($selected_id ? $selected_id : FALSE), getMemberInfo(), $templateCode, $args);
+		orders_dv(($hasSelectedId ? $selectedId : FALSE), getMemberInfo(), $templateCode, $args);
 	}
 
 	return $templateCode;

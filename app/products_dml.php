@@ -246,31 +246,40 @@ function products_update(&$selected_id, &$error_message = '') {
 	set_record_owner('products', $selected_id);
 }
 
-function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $AllowDelete = 1, $separateDV = 0, $TemplateDV = '', $TemplateDVP = '') {
+function products_form($selectedId = '', $allowUpdate = true, $allowInsert = true, $allowDelete = true, $separateDV = true, $templateDV = '', $templateDVP = '') {
 	// function to return an editable form for a table records
-	// and fill it with data of record whose ID is $selected_id. If $selected_id
+	// and fill it with data of record whose ID is $selectedId. If $selectedId
 	// is empty, an empty form is shown, with only an 'Add New'
 	// button displayed.
 
 	global $Translation;
 	$eo = ['silentErrors' => true];
-	$noUploads = null;
-	$row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
-
+	$noUploads = $row = $urow = $jsReadOnly = $jsEditable = $lookups = null;
 	$noSaveAsCopy = true;
+	$hasSelectedId = strlen($selectedId) > 0;
 
 	// mm: get table permissions
 	$arrPerm = getTablePermissions('products');
-	if(!$arrPerm['insert'] && $selected_id == '')
+	$allowInsert = ($arrPerm['insert'] ? true : false);
+	$allowUpdate = $hasSelectedId && check_record_permission('products', $selectedId, 'edit');
+	$allowDelete = $hasSelectedId && check_record_permission('products', $selectedId, 'delete');
+
+	if(!$allowInsert && !$hasSelectedId)
 		// no insert permission and no record selected
-		// so show access denied error unless TVDV
+		// so show access denied error -- except if TVDV: just hide DV
 		return $separateDV ? $Translation['tableAccessDenied'] : '';
-	$AllowInsert = ($arrPerm['insert'] ? true : false);
+
+	if($hasSelectedId && !check_record_permission('products', $selectedId, 'view'))
+		return $Translation['tableAccessDenied'];
+
 	// print preview?
-	$dvprint = false;
-	if(strlen($selected_id) && Request::val('dvprint_x') != '') {
-		$dvprint = true;
-	}
+	$dvprint = $hasSelectedId && Request::val('dvprint_x') != '';
+
+	$showSaveNew = !$dvprint && ($allowInsert && !$hasSelectedId);
+	$showSaveChanges = !$dvprint && $allowUpdate && $hasSelectedId;
+	$showDelete = !$dvprint && $allowDelete && $hasSelectedId;
+	$showSaveAsCopy = !$dvprint && ($allowInsert && $hasSelectedId && !$noSaveAsCopy);
+	$fieldsAreEditable = !$dvprint && (($allowInsert && !$hasSelectedId) || ($allowUpdate && $hasSelectedId) || $showSaveAsCopy);
 
 	$filterer_SupplierID = Request::val('filterer_SupplierID');
 	$filterer_CategoryID = Request::val('filterer_CategoryID');
@@ -284,17 +293,8 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	// combobox: CategoryID
 	$combo_CategoryID = new DataCombo;
 
-	if($selected_id) {
-		if(!check_record_permission('products', $selected_id, 'view'))
-			return $Translation['tableAccessDenied'];
-
-		// can edit?
-		$AllowUpdate = check_record_permission('products', $selected_id, 'edit');
-
-		// can delete?
-		$AllowDelete = check_record_permission('products', $selected_id, 'delete');
-
-		$res = sql("SELECT * FROM `products` WHERE `ProductID`='" . makeSafe($selected_id) . "'", $eo);
+	if($hasSelectedId) {
+		$res = sql("SELECT * FROM `products` WHERE `ProductID`='" . makeSafe($selectedId) . "'", $eo);
 		if(!($row = db_fetch_array($res))) {
 			return error_message($Translation['No records found'], 'products_view.php', false);
 		}
@@ -319,8 +319,8 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 
 	<script>
 		// initial lookup values
-		AppGini.current_SupplierID__RAND__ = { text: "", value: "<?php echo addslashes($selected_id ? $urow['SupplierID'] : htmlspecialchars($filterer_SupplierID, ENT_QUOTES)); ?>"};
-		AppGini.current_CategoryID__RAND__ = { text: "", value: "<?php echo addslashes($selected_id ? $urow['CategoryID'] : htmlspecialchars($filterer_CategoryID, ENT_QUOTES)); ?>"};
+		AppGini.current_SupplierID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['SupplierID'] : htmlspecialchars($filterer_SupplierID, ENT_QUOTES)); ?>"};
+		AppGini.current_CategoryID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['CategoryID'] : htmlspecialchars($filterer_CategoryID, ENT_QUOTES)); ?>"};
 
 		jQuery(function() {
 			setTimeout(function() {
@@ -329,7 +329,7 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 			}, 50); /* we need to slightly delay client-side execution of the above code to allow AppGini.ajaxCache to work */
 		});
 		function SupplierID_reload__RAND__() {
-		<?php if(($AllowUpdate || ($arrPerm['insert'] && !$selected_id)) && !$dvprint) { ?>
+		<?php if($fieldsAreEditable) { ?>
 
 			$j("#SupplierID-container__RAND__").select2({
 				/* initial default value */
@@ -406,7 +406,7 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 
 		}
 		function CategoryID_reload__RAND__() {
-		<?php if(($AllowUpdate || ($arrPerm['insert'] && !$selected_id)) && !$dvprint) { ?>
+		<?php if($fieldsAreEditable) { ?>
 
 			$j("#CategoryID-container__RAND__").select2({
 				/* initial default value */
@@ -492,10 +492,10 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 
 	// open the detail view template
 	if($dvprint) {
-		$template_file = is_file("./{$TemplateDVP}") ? "./{$TemplateDVP}" : './templates/products_templateDVP.html';
+		$template_file = is_file("./{$templateDVP}") ? "./{$templateDVP}" : './templates/products_templateDVP.html';
 		$templateCode = @file_get_contents($template_file);
 	} else {
-		$template_file = is_file("./{$TemplateDV}") ? "./{$TemplateDV}" : './templates/products_templateDV.html';
+		$template_file = is_file("./{$templateDV}") ? "./{$templateDV}" : './templates/products_templateDV.html';
 		$templateCode = @file_get_contents($template_file);
 	}
 
@@ -504,8 +504,9 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	$templateCode = str_replace('<%%RND1%%>', $rnd1, $templateCode);
 	$templateCode = str_replace('<%%EMBEDDED%%>', (Request::val('Embedded') ? 'Embedded=1' : ''), $templateCode);
 	// process buttons
-	if($arrPerm['insert'] && !$selected_id) { // allow insert and no record selected?
-		if(!$selected_id) $templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return products_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	if($showSaveNew) {
+		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-success" id="insert" name="insert_x" value="1" onclick="return products_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save New'] . '</button>', $templateCode);
+	} elseif($showSaveAsCopy) {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="insert" name="insert_x" value="1" onclick="return products_validateData();"><i class="glyphicon glyphicon-plus-sign"></i> ' . $Translation['Save As Copy'] . '</button>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%INSERT_BUTTON%%>', '', $templateCode);
@@ -518,14 +519,14 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
 	}
 
-	if($selected_id) {
+	if($hasSelectedId) {
 		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
-		if($AllowUpdate)
+		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" onclick="return products_validateData();" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '', $templateCode);
 
-		if($AllowDelete)
+		if($allowDelete)
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '<button type="submit" class="btn btn-danger" id="delete" name="delete_x" value="1" title="' . html_attr($Translation['Delete']) . '"><i class="glyphicon glyphicon-trash"></i> ' . $Translation['Delete'] . '</button>', $templateCode);
 		else
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '', $templateCode);
@@ -538,8 +539,8 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		// if not in embedded mode and user has insert only but no view/update/delete,
 		// remove 'back' button
 		if(
-			$arrPerm['insert']
-			&& !$arrPerm['update'] && !$arrPerm['delete'] && !$arrPerm['view']
+			$allowInsert
+			&& !$allowUpdate && !$allowDelete && !$arrPerm['view']
 			&& !Request::val('Embedded')
 		)
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
@@ -564,7 +565,7 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	}
 
 	// set records to read only if user can't insert new records and can't edit current record
-	if(($selected_id && !$AllowUpdate) || (!$selected_id && !$AllowInsert)) {
+	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
 		$jsReadOnly .= "\tjQuery('#ProductName').replaceWith('<div class=\"form-control-static\" id=\"ProductName\">' + (jQuery('#ProductName').val() || '') + '</div>');\n";
 		$jsReadOnly .= "\tjQuery('#SupplierID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
@@ -582,8 +583,9 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
 
 		$noUploads = true;
-	} elseif(($AllowInsert && !$selected_id) || ($AllowUpdate && $selected_id)) {
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);"; // temporarily disable form change handler
+	} else {
+		// temporarily disable form change handler till time and datetime pickers are enabled
+		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
 		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
@@ -624,14 +626,14 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	$templateCode = str_replace('<%%UPLOADFILE(Discontinued)%%>', '', $templateCode);
 	$templateCode = str_replace('<%%UPLOADFILE(TotalSales)%%>', '', $templateCode);
 	$templateCode = str_replace('<%%UPLOADFILE(TechSheet)%%>', ($noUploads ? '' : "<div>{$Translation['upload image']}</div>" . '<input type="file" name="TechSheet" id="TechSheet" data-filetypes="txt|doc|docx|docm|odt|pdf|rtf" data-maxsize="2048000" style="max-width: calc(100% - 1.5rem);" accept=".txt,.doc,.docx,.docm,.odt,.pdf,.rtf">' . '<i class="text-danger clear-upload hidden pull-right" style="margin-top: -.1em; font-size: large;">&times;</i>'), $templateCode);
-	if($AllowUpdate && $row['TechSheet'] != '') {
+	if($allowUpdate && $row['TechSheet'] != '') {
 		$templateCode = str_replace('<%%REMOVEFILE(TechSheet)%%>', '<input type="checkbox" name="TechSheet_remove" id="TechSheet_remove" value="1"> <label for="TechSheet_remove" style="color: red; font-weight: bold;">'.$Translation['remove image'].'</label>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%REMOVEFILE(TechSheet)%%>', '', $templateCode);
 	}
 
 	// process values
-	if($selected_id) {
+	if($hasSelectedId) {
 		if( $dvprint) $templateCode = str_replace('<%%VALUE(ProductID)%%>', safe_html($urow['ProductID']), $templateCode);
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(ProductID)%%>', html_attr($row['ProductID']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(ProductID)%%>', urlencode($urow['ProductID']), $templateCode);
@@ -710,7 +712,7 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 		$templateCode .= $jsReadOnly;
 		$templateCode .= $jsEditable;
 
-		if(!$selected_id) {
+		if(!$hasSelectedId) {
 			$templateCode.="\n\tif(document.getElementById('TechSheetEdit')) { document.getElementById('TechSheetEdit').style.display='inline'; }";
 			$templateCode.="\n\tif(document.getElementById('TechSheetEditLink')) { document.getElementById('TechSheetEditLink').style.display='none'; }";
 		}
@@ -740,8 +742,8 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 
 	/* default field values */
 	$rdata = $jdata = get_defaults('products');
-	if($selected_id) {
-		$jdata = get_joined_record('products', $selected_id);
+	if($hasSelectedId) {
+		$jdata = get_joined_record('products', $selectedId);
 		if($jdata === false) $jdata = get_defaults('products');
 		$rdata = $row;
 	}
@@ -750,7 +752,7 @@ function products_form($selected_id = '', $AllowUpdate = 1, $AllowInsert = 1, $A
 	// hook: products_dv
 	if(function_exists('products_dv')) {
 		$args = [];
-		products_dv(($selected_id ? $selected_id : FALSE), getMemberInfo(), $templateCode, $args);
+		products_dv(($hasSelectedId ? $selectedId : FALSE), getMemberInfo(), $templateCode, $args);
 	}
 
 	return $templateCode;

@@ -9,158 +9,31 @@
 	// check if this setup file already run
 	if($thisMD5 != $prevMD5) {
 		// set up tables
-		setupTable(
-			'customers', " 
-			CREATE TABLE IF NOT EXISTS `customers` ( 
-				`CompanyName` VARCHAR(40) NOT NULL,
-				`CustomerID` VARCHAR(5) NOT NULL,
-				PRIMARY KEY (`CustomerID`),
-				`ContactName` VARCHAR(30) NULL,
-				`ContactTitle` VARCHAR(30) NULL,
-				`Address` TEXT NULL,
-				`City` VARCHAR(15) NULL,
-				`Region` VARCHAR(15) NULL,
-				`PostalCode` VARCHAR(10) NULL,
-				`Country` VARCHAR(15) NULL,
-				`Phone` VARCHAR(24) NULL,
-				`Fax` VARCHAR(24) NULL,
-				`TotalSales` DECIMAL(10,2) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('customers', []);
 
-		setupTable(
-			'employees', " 
-			CREATE TABLE IF NOT EXISTS `employees` ( 
-				`EmployeeID` INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`EmployeeID`),
-				`TitleOfCourtesy` VARCHAR(50) NULL,
-				`Photo` VARCHAR(40) NULL,
-				`LastName` VARCHAR(50) NULL,
-				`FirstName` VARCHAR(10) NULL,
-				`Title` VARCHAR(30) NULL,
-				`BirthDate` DATE NULL,
-				`HireDate` DATE NULL,
-				`Address` VARCHAR(50) NULL,
-				`City` VARCHAR(15) NULL,
-				`Region` VARCHAR(15) NULL,
-				`PostalCode` VARCHAR(10) NULL,
-				`Country` VARCHAR(15) NULL,
-				`HomePhone` VARCHAR(24) NULL,
-				`Extension` VARCHAR(4) NULL,
-				`Notes` TEXT NULL,
-				`ReportsTo` INT NULL,
-				`Age` INT NULL,
-				`TotalSales` DECIMAL(10,2) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('employees', []);
 		setupIndexes('employees', ['ReportsTo',]);
 
-		setupTable(
-			'orders', " 
-			CREATE TABLE IF NOT EXISTS `orders` ( 
-				`OrderID` INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`OrderID`),
-				`Status` VARCHAR(200) NULL,
-				`CustomerID` VARCHAR(5) NULL,
-				`EmployeeID` INT NULL,
-				`OrderDate` DATE NULL,
-				`OrderTime` TIME NULL,
-				`RequiredDate` DATE NULL,
-				`ShippedDate` DATE NULL,
-				`ShipVia` INT(11) NULL,
-				`Freight` FLOAT(10,2) NULL DEFAULT '0',
-				`ShipName` VARCHAR(5) NULL,
-				`ShipAddress` VARCHAR(5) NULL,
-				`ShipCity` VARCHAR(5) NULL,
-				`ShipRegion` VARCHAR(5) NULL,
-				`ShipPostalCode` VARCHAR(5) NULL,
-				`ShipCountry` VARCHAR(5) NULL,
-				`added_by` VARCHAR(40) NULL,
-				`added_date` DATE NULL,
-				`Total` DECIMAL(10,2) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('orders', []);
 		setupIndexes('orders', ['CustomerID','EmployeeID','ShipVia',]);
 
-		setupTable(
-			'order_details', " 
-			CREATE TABLE IF NOT EXISTS `order_details` ( 
-				`odID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`odID`),
-				`OrderID` INT NULL DEFAULT '0',
-				`Category` INT NULL,
-				`ProductID` INT NULL DEFAULT '0',
-				`UnitPrice` FLOAT(10,2) NULL DEFAULT '0',
-				`Quantity` SMALLINT NULL DEFAULT '1',
-				`Discount` FLOAT(10,2) NULL DEFAULT '0',
-				`Subtotal` DECIMAL(10,2) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('order_details', []);
 		setupIndexes('order_details', ['OrderID','ProductID',]);
 
-		setupTable(
-			'products', " 
-			CREATE TABLE IF NOT EXISTS `products` ( 
-				`ProductID` INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`ProductID`),
-				`ProductName` VARCHAR(50) NULL,
-				`SupplierID` INT(11) NULL,
-				`CategoryID` INT NULL,
-				`QuantityPerUnit` VARCHAR(50) NULL,
-				`UnitPrice` FLOAT(10,2) NULL DEFAULT '0',
-				`UnitsInStock` SMALLINT NULL DEFAULT '0',
-				`UnitsOnOrder` SMALLINT(6) NULL DEFAULT '0',
-				`ReorderLevel` SMALLINT NULL DEFAULT '0',
-				`Discontinued` TINYINT NULL DEFAULT '0',
-				`TotalSales` DECIMAL(10,2) NULL,
-				`TechSheet` VARCHAR(40) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('products', []);
 		setupIndexes('products', ['SupplierID','CategoryID',]);
 
-		setupTable(
-			'categories', " 
-			CREATE TABLE IF NOT EXISTS `categories` ( 
-				`CategoryID` INT NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`CategoryID`),
-				`Picture` VARCHAR(40) NULL,
-				`CategoryName` VARCHAR(50) NULL,
-				UNIQUE `CategoryName_unique` (`CategoryName`),
-				`Description` TEXT NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('categories', []);
 
-		setupTable(
-			'suppliers', " 
-			CREATE TABLE IF NOT EXISTS `suppliers` ( 
-				`SupplierID` INT(11) NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`SupplierID`),
-				`CompanyName` VARCHAR(50) NULL,
-				`ContactName` VARCHAR(30) NULL,
-				`ContactTitle` VARCHAR(30) NULL,
-				`Address` VARCHAR(50) NULL,
-				`City` VARCHAR(15) NULL,
-				`Region` VARCHAR(15) NULL,
-				`PostalCode` VARCHAR(10) NULL,
-				`Country` VARCHAR(50) NULL,
-				`Phone` VARCHAR(24) NULL,
-				`Fax` VARCHAR(24) NULL,
-				`HomePage` TEXT NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('suppliers', []);
 
-		setupTable(
-			'shippers', " 
-			CREATE TABLE IF NOT EXISTS `shippers` ( 
-				`ShipperID` INT(11) NOT NULL AUTO_INCREMENT,
-				PRIMARY KEY (`ShipperID`),
-				`CompanyName` VARCHAR(40) NOT NULL,
-				UNIQUE `CompanyName_unique` (`CompanyName`),
-				`Phone` VARCHAR(24) NULL
-			) CHARSET utf8mb4"
-		);
+		setupTable('shippers', []);
 
 
+
+		// set up internal tables
+		setupTable('appgini_query_log', []);
+		setupTable('appgini_csv_import_jobs', []);
 
 		// save MD5
 		@file_put_contents($setupHash, $thisMD5);
@@ -180,15 +53,17 @@
 	}
 
 
-	function setupTable($tableName, $createSQL = '', $arrAlter = '') {
+	function setupTable($tableName, $arrAlter = []) {
 		global $Translation;
 		$oldTableName = '';
+
+		$createSQL = createTableIfNotExists($tableName, true);
 		ob_start();
 
 		echo '<div style="padding: 5px; border-bottom:solid 1px silver; font-family: verdana, arial; font-size: 10px;">';
 
 		// is there a table rename query?
-		if(is_array($arrAlter)) {
+		if(!empty($arrAlter)) {
 			$matches = [];
 			if(preg_match("/ALTER TABLE `(.*)` RENAME `$tableName`/i", $arrAlter[0], $matches)) {
 				$oldTableName = $matches[1];
@@ -198,7 +73,7 @@
 		if($res = @db_query("SELECT COUNT(1) FROM `$tableName`")) { // table already exists
 			if($row = @db_fetch_array($res)) {
 				echo str_replace(['<TableName>', '<NumRecords>'], [$tableName, $row[0]], $Translation['table exists']);
-				if(is_array($arrAlter)) {
+				if(!empty($arrAlter)) {
 					echo '<br>';
 					foreach($arrAlter as $alter) {
 						if($alter != '') {
@@ -231,9 +106,9 @@
 						echo '<span class="label label-success">' . $Translation['ok'] . '</span>';
 					}
 
-					if(is_array($arrAlter)) setupTable($tableName, $createSQL, false, $arrAlter); // execute Alter queries on renamed table ...
+					if(!empty($arrAlter)) setupTable($tableName, $arrAlter); // execute Alter queries on renamed table ...
 				} else { // if old tableName doesn't exist (nor the new one since we're here), then just create the table.
-					setupTable($tableName, $createSQL, false); // no Alter queries passed ...
+					setupTable($tableName); // no Alter queries passed ...
 				}
 			} else { // tableName doesn't exist and no rename, so just create the table
 				echo str_replace("<TableName>", $tableName, $Translation["creating table"]);
