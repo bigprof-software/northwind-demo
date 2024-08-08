@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 24.15;
+AppGini.version = 24.17;
 
 /* initials and fixes */
 jQuery(function() {
@@ -1627,12 +1627,18 @@ AppGini.calculatedFields = {
 		if(!$j('.has-calculated-fields').length) return false;
 
 		// init TV update of calculated fields
-		AppGini.calculatedFields.updateServerSide(
+		if($j('.table_view').length) AppGini.calculatedFields.updateServerSide(
 			table, 
 			// array of record IDs
 			$j('.table_view tr[data-id]').map(function() {
 				return $j(this).data('id');
 			}).get()
+		);
+
+		// init DV update of calculated fields
+		if($j('.detail_view').length) AppGini.calculatedFields.updateServerSide(
+			table,
+			[$j('input[name=SelectedID]').val()]
 		);
 
 		// init child tabs update of calculated fields
