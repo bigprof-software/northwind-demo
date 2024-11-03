@@ -39,6 +39,7 @@
 					'imgFolder' => rtrim(config('adminConfig')['baseUploadPath'], '\\/') . '/',
 					'url' => application_url(),
 					'uri' => application_uri(),
+					'googleAPIKey' => config('adminConfig')['googleAPIKey'],
 				];
 			?>
 			var AppGini = AppGini || {};
@@ -51,8 +52,8 @@
 		<?php } ?>
 		<script src="<?php echo PREPEND_PATH; ?>common.js?<?php echo filemtime( __DIR__ . '/common.js'); ?>"></script>
 		<script src="<?php echo PREPEND_PATH; ?>shortcuts.js?<?php echo filemtime( __DIR__ . '/shortcuts.js'); ?>"></script>
-		<?php if(isset($x->TableName) && is_file(__DIR__ . "/hooks/{$x->TableName}-tv.js")) { ?>
-			<script src="<?php echo PREPEND_PATH; ?>hooks/<?php echo $x->TableName; ?>-tv.js"></script>
+		<?php if(isset($x->TableName) && is_file(__DIR__ . "/hooks/{$x->TableName}-tv.js") && strpos(@$x->ContentType, 'tableview') !== false) { ?>
+			<script src="<?php echo PREPEND_PATH; ?>hooks/<?php echo $x->TableName; ?>-tv.js?<?php echo @filemtime(__DIR__ . "/hooks/{$x->TableName}-tv.js"); ?>"></script>
 		<?php } ?>
 
 	</head>

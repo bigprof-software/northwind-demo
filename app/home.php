@@ -179,7 +179,7 @@
 
 	} elseif($mi['username'] && $mi['username'] != $guest_username) {
 		// non-guest user but no tables to access
-		die(error_message($Translation['no table access'], false));
+		die(error_message($Translation['no table access'], application_url('index.php?signIn=1'), false));
 	} else {
 		?><script>window.location='index.php?signIn=1';</script><?php
 	}
