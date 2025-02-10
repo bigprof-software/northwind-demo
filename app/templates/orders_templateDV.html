@@ -263,12 +263,6 @@
 				$j('#orders_dv_container').removeClass('hidden');
 			}
 
-			$j('form').eq(0).change(function() {
-				if($j(this).data('already_changed')) return;
-				if($j('#deselect').length) $j('#deselect').removeClass('btn-default').addClass('btn-warning').get(0).lastChild.data = " <%%TRANSLATION(Cancel)%%>";
-				$j(this).data('already_changed', true);
-			});
-
 			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 			if(embedded_mode) {
@@ -380,6 +374,7 @@
 				}
 			});
 
+			ordersUniqueFields.forEach(fieldName => enforce_uniqueness('orders', fieldName));
 
 			/* load admin tools for admin user */
 			if(!add_new_mode) {
@@ -392,13 +387,8 @@
 					}
 				);
 			}
-
-			/* warn user if 'add new' clicked while unsaved changes exist */
-			$j('#addNew').click(function() {
-				if($j('#deselect.btn-warning').length) {
-					return confirm('<%%TRANSLATION(discard changes confirm)%%>');
-				}
-			});
-
 		});
+
+		var ordersUniqueFields = [
+		];
 	</script>

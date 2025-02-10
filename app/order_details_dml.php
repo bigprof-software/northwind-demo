@@ -10,7 +10,10 @@ function order_details_insert(&$error_message = '') {
 
 	// mm: can member insert record?
 	$arrPerm = getTablePermissions('order_details');
-	if(!$arrPerm['insert']) return false;
+	if(!$arrPerm['insert']) {
+		$error_message = $Translation['no insert permission'];
+		return false;
+	}
 
 	$data = [
 		'OrderID' => Request::lookup('OrderID', '0'),
@@ -21,47 +24,14 @@ function order_details_insert(&$error_message = '') {
 		'Discount' => Request::val('Discount', '0'),
 	];
 
-
-	// hook: order_details_before_insert
-	if(function_exists('order_details_before_insert')) {
-		$args = [];
-		if(!order_details_before_insert($data, getMemberInfo(), $args)) {
-			if(isset($args['error_message'])) $error_message = $args['error_message'];
-			return false;
-		}
-	}
-
-	$error = '';
-	// set empty fields to NULL
-	$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
-	insert('order_details', backtick_keys_once($data), $error);
-	if($error) {
-		$error_message = $error;
-		return false;
-	}
-
-	$recID = db_insert_id(db_link());
-
-	update_calc_fields('order_details', $recID, calculated_fields()['order_details']);
-
-	// hook: order_details_after_insert
-	if(function_exists('order_details_after_insert')) {
-		$res = sql("SELECT * FROM `order_details` WHERE `odID`='" . makeSafe($recID, false) . "' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) {
-			$data = array_map('makeSafe', $row);
-		}
-		$data['selectedID'] = makeSafe($recID, false);
-		$args = [];
-		if(!order_details_after_insert($data, getMemberInfo(), $args)) { return $recID; }
-	}
-
-	// mm: save ownership data
 	// record owner is current user
 	$recordOwner = getLoggedMemberID();
-	set_record_owner('order_details', $recID, $recordOwner);
+
+	$recID = tableInsert('order_details', $data, $recordOwner, $error_message);
 
 	// if this record is a copy of another record, copy children if applicable
-	if(strlen(Request::val('SelectedID'))) order_details_copy_children($recID, Request::val('SelectedID'));
+	if(strlen(Request::val('SelectedID')) && $recID !== false)
+		order_details_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -71,6 +41,8 @@ function order_details_copy_children($destination_id, $source_id) {
 	$requests = []; // array of curl handlers for launching insert requests
 	$eo = ['silentErrors' => true];
 	$safe_sid = makeSafe($source_id);
+	$currentUsername = getLoggedMemberID();
+	$errorMessage = '';
 
 	// launch requests, asynchronously
 	curl_batch($requests);
@@ -159,14 +131,11 @@ function order_details_update(&$selected_id, &$error_message = '') {
 	}
 
 
-	$eo = ['silentErrors' => true];
-
 	update_calc_fields('order_details', $data['selectedID'], calculated_fields()['order_details']);
 
 	// hook: order_details_after_update
 	if(function_exists('order_details_after_update')) {
-		$res = sql("SELECT * FROM `order_details` WHERE `odID`='{$data['selectedID']}' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) $data = array_map('makeSafe', $row);
+		if($row = getRecord('order_details', $data['selectedID'])) $data = array_map('makeSafe', $row);
 
 		$data['selectedID'] = $data['odID'];
 		$args = ['old_data' => $old_data];
@@ -225,8 +194,7 @@ function order_details_form($selectedId = '', $allowUpdate = true, $allowInsert 
 	$combo_ProductID = new DataCombo;
 
 	if($hasSelectedId) {
-		$res = sql("SELECT * FROM `order_details` WHERE `odID`='" . makeSafe($selectedId) . "'", $eo);
-		if(!($row = db_fetch_array($res))) {
+		if(!($row = getRecord('order_details', $selectedId))) {
 			return error_message($Translation['No records found'], 'order_details_view.php', false);
 		}
 		$combo_OrderID->SelectedData = $row['OrderID'];
@@ -253,7 +221,7 @@ function order_details_form($selectedId = '', $allowUpdate = true, $allowInsert 
 		AppGini.current_OrderID__RAND__ = { text: "<?php echo ($hasSelectedId ? '' : '0'); ?>", value: "<?php echo addslashes($hasSelectedId ? $urow['OrderID'] : htmlspecialchars($filterer_OrderID, ENT_QUOTES)); ?>"};
 		AppGini.current_ProductID__RAND__ = { text: "<?php echo ($hasSelectedId ? '' : '0'); ?>", value: "<?php echo addslashes($hasSelectedId ? $urow['ProductID'] : htmlspecialchars($filterer_ProductID, ENT_QUOTES)); ?>"};
 
-		jQuery(function() {
+		$j(function() {
 			setTimeout(function() {
 				if(typeof(OrderID_reload__RAND__) == 'function') OrderID_reload__RAND__();
 				if(typeof(ProductID_reload__RAND__) == 'function') ProductID_reload__RAND__();
@@ -457,11 +425,11 @@ function order_details_form($selectedId = '', $allowUpdate = true, $allowInsert 
 	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
-		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
+		$backAction = 'return true;';
 	}
 
 	if($hasSelectedId) {
-		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
@@ -508,20 +476,20 @@ function order_details_form($selectedId = '', $allowUpdate = true, $allowInsert 
 	// set records to read only if user can't insert new records and can't edit current record
 	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
-		$jsReadOnly .= "\tjQuery('#OrderID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#OrderID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#ProductID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#ProductID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#UnitPrice').replaceWith('<div class=\"form-control-static\" id=\"UnitPrice\">' + (jQuery('#UnitPrice').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Quantity').replaceWith('<div class=\"form-control-static\" id=\"Quantity\">' + (jQuery('#Quantity').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Discount').replaceWith('<div class=\"form-control-static\" id=\"Discount\">' + (jQuery('#Discount').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
+		$jsReadOnly .= "\t\$j('#OrderID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#OrderID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#ProductID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#ProductID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#UnitPrice').replaceWith('<div class=\"form-control-static\" id=\"UnitPrice\">' + (\$j('#UnitPrice').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Quantity').replaceWith('<div class=\"form-control-static\" id=\"Quantity\">' + (\$j('#Quantity').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Discount').replaceWith('<div class=\"form-control-static\" id=\"Discount\">' + (\$j('#Discount').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('.select2-container').hide();\n";
 
 		$noUploads = true;
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
+		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
+		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos

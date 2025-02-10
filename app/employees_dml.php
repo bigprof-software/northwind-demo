@@ -10,7 +10,10 @@ function employees_insert(&$error_message = '') {
 
 	// mm: can member insert record?
 	$arrPerm = getTablePermissions('employees');
-	if(!$arrPerm['insert']) return false;
+	if(!$arrPerm['insert']) {
+		$error_message = $Translation['no insert permission'];
+		return false;
+	}
 
 	$data = [
 		'TitleOfCourtesy' => Request::val('TitleOfCourtesy', ''),
@@ -45,47 +48,14 @@ function employees_insert(&$error_message = '') {
 		'ReportsTo' => Request::lookup('ReportsTo', ''),
 	];
 
-
-	// hook: employees_before_insert
-	if(function_exists('employees_before_insert')) {
-		$args = [];
-		if(!employees_before_insert($data, getMemberInfo(), $args)) {
-			if(isset($args['error_message'])) $error_message = $args['error_message'];
-			return false;
-		}
-	}
-
-	$error = '';
-	// set empty fields to NULL
-	$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
-	insert('employees', backtick_keys_once($data), $error);
-	if($error) {
-		$error_message = $error;
-		return false;
-	}
-
-	$recID = db_insert_id(db_link());
-
-	update_calc_fields('employees', $recID, calculated_fields()['employees']);
-
-	// hook: employees_after_insert
-	if(function_exists('employees_after_insert')) {
-		$res = sql("SELECT * FROM `employees` WHERE `EmployeeID`='" . makeSafe($recID, false) . "' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) {
-			$data = array_map('makeSafe', $row);
-		}
-		$data['selectedID'] = makeSafe($recID, false);
-		$args = [];
-		if(!employees_after_insert($data, getMemberInfo(), $args)) { return $recID; }
-	}
-
-	// mm: save ownership data
 	// record owner is current user
 	$recordOwner = getLoggedMemberID();
-	set_record_owner('employees', $recID, $recordOwner);
+
+	$recID = tableInsert('employees', $data, $recordOwner, $error_message);
 
 	// if this record is a copy of another record, copy children if applicable
-	if(strlen(Request::val('SelectedID'))) employees_copy_children($recID, Request::val('SelectedID'));
+	if(strlen(Request::val('SelectedID')) && $recID !== false)
+		employees_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -95,6 +65,8 @@ function employees_copy_children($destination_id, $source_id) {
 	$requests = []; // array of curl handlers for launching insert requests
 	$eo = ['silentErrors' => true];
 	$safe_sid = makeSafe($source_id);
+	$currentUsername = getLoggedMemberID();
+	$errorMessage = '';
 
 	// launch requests, asynchronously
 	curl_batch($requests);
@@ -136,8 +108,8 @@ function employees_delete($selected_id, $AllowDeleteOfParents = false, $skipChec
 		$RetMsg = $Translation['confirm delete'];
 		$RetMsg = str_replace('<RelatedRecords>', sprintf($childrenATag, $rirow[0]), $RetMsg);
 		$RetMsg = str_replace(['[<TableName>]', '<TableName>'], sprintf($childrenATag, 'employees'), $RetMsg);
-		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = \'employees_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . '\';">', $RetMsg);
-		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = \'employees_view.php?SelectedID=' . urlencode($selected_id) . '\';">', $RetMsg);
+		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = `employees_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
+		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = `employees_view.php?SelectedID=' . urlencode($selected_id) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
 		return $RetMsg;
 	}
 
@@ -156,8 +128,8 @@ function employees_delete($selected_id, $AllowDeleteOfParents = false, $skipChec
 		$RetMsg = $Translation['confirm delete'];
 		$RetMsg = str_replace('<RelatedRecords>', sprintf($childrenATag, $rirow[0]), $RetMsg);
 		$RetMsg = str_replace(['[<TableName>]', '<TableName>'], sprintf($childrenATag, 'orders'), $RetMsg);
-		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = \'employees_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . '\';">', $RetMsg);
-		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = \'employees_view.php?SelectedID=' . urlencode($selected_id) . '\';">', $RetMsg);
+		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = `employees_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
+		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = `employees_view.php?SelectedID=' . urlencode($selected_id) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
 		return $RetMsg;
 	}
 
@@ -274,14 +246,11 @@ function employees_update(&$selected_id, &$error_message = '') {
 	}
 
 
-	$eo = ['silentErrors' => true];
-
 	update_calc_fields('employees', $data['selectedID'], calculated_fields()['employees']);
 
 	// hook: employees_after_update
 	if(function_exists('employees_after_update')) {
-		$res = sql("SELECT * FROM `employees` WHERE `EmployeeID`='{$data['selectedID']}' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) $data = array_map('makeSafe', $row);
+		if($row = getRecord('employees', $data['selectedID'])) $data = array_map('makeSafe', $row);
 
 		$data['selectedID'] = $data['EmployeeID'];
 		$args = ['old_data' => $old_data];
@@ -368,8 +337,7 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	$combo_ReportsTo = new DataCombo;
 
 	if($hasSelectedId) {
-		$res = sql("SELECT * FROM `employees` WHERE `EmployeeID`='" . makeSafe($selectedId) . "'", $eo);
-		if(!($row = db_fetch_array($res))) {
+		if(!($row = getRecord('employees', $selectedId))) {
 			return error_message($Translation['No records found'], 'employees_view.php', false);
 		}
 		$combo_BirthDate->DefaultDate = $row['BirthDate'];
@@ -395,7 +363,7 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 		// initial lookup values
 		AppGini.current_ReportsTo__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['ReportsTo'] : htmlspecialchars($filterer_ReportsTo, ENT_QUOTES)); ?>"};
 
-		jQuery(function() {
+		$j(function() {
 			setTimeout(function() {
 				if(typeof(ReportsTo_reload__RAND__) == 'function') ReportsTo_reload__RAND__();
 			}, 50); /* we need to slightly delay client-side execution of the above code to allow AppGini.ajaxCache to work */
@@ -466,11 +434,11 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
-		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
+		$backAction = 'return true;';
 	}
 
 	if($hasSelectedId) {
-		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
@@ -517,31 +485,31 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	// set records to read only if user can't insert new records and can't edit current record
 	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
-		$jsReadOnly .= "\tjQuery('#TitleOfCourtesy').replaceWith('<div class=\"form-control-static\" id=\"TitleOfCourtesy\">' + (jQuery('#TitleOfCourtesy').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Photo').replaceWith('<div class=\"form-control-static\" id=\"Photo\">' + (jQuery('#Photo').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#LastName').replaceWith('<div class=\"form-control-static\" id=\"LastName\">' + (jQuery('#LastName').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#FirstName').replaceWith('<div class=\"form-control-static\" id=\"FirstName\">' + (jQuery('#FirstName').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Title').replaceWith('<div class=\"form-control-static\" id=\"Title\">' + (jQuery('#Title').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#BirthDate').prop('readonly', true);\n";
-		$jsReadOnly .= "\tjQuery('#BirthDateDay, #BirthDateMonth, #BirthDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#HireDate').prop('readonly', true);\n";
-		$jsReadOnly .= "\tjQuery('#HireDateDay, #HireDateMonth, #HireDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#Address').replaceWith('<div class=\"form-control-static\" id=\"Address\">' + (jQuery('#Address').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#City').replaceWith('<div class=\"form-control-static\" id=\"City\">' + (jQuery('#City').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Region').replaceWith('<div class=\"form-control-static\" id=\"Region\">' + (jQuery('#Region').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#PostalCode').replaceWith('<div class=\"form-control-static\" id=\"PostalCode\">' + (jQuery('#PostalCode').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Country').replaceWith('<div class=\"form-control-static\" id=\"Country\">' + (jQuery('#Country').val() || '') + '</div>'); jQuery('#Country-multi-selection-help').hide();\n";
-		$jsReadOnly .= "\tjQuery('#HomePhone').replaceWith('<div class=\"form-control-static\" id=\"HomePhone\">' + (jQuery('#HomePhone').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Extension').replaceWith('<div class=\"form-control-static\" id=\"Extension\">' + (jQuery('#Extension').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#ReportsTo').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#ReportsTo_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
+		$jsReadOnly .= "\t\$j('#TitleOfCourtesy').replaceWith('<div class=\"form-control-static\" id=\"TitleOfCourtesy\">' + (\$j('#TitleOfCourtesy').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Photo').replaceWith('<div class=\"form-control-static\" id=\"Photo\">' + (\$j('#Photo').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#LastName').replaceWith('<div class=\"form-control-static\" id=\"LastName\">' + (\$j('#LastName').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#FirstName').replaceWith('<div class=\"form-control-static\" id=\"FirstName\">' + (\$j('#FirstName').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Title').replaceWith('<div class=\"form-control-static\" id=\"Title\">' + (\$j('#Title').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#BirthDate').prop('readonly', true);\n";
+		$jsReadOnly .= "\t\$j('#BirthDateDay, #BirthDateMonth, #BirthDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#HireDate').prop('readonly', true);\n";
+		$jsReadOnly .= "\t\$j('#HireDateDay, #HireDateMonth, #HireDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#Address').replaceWith('<div class=\"form-control-static\" id=\"Address\">' + (\$j('#Address').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#City').replaceWith('<div class=\"form-control-static\" id=\"City\">' + (\$j('#City').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Region').replaceWith('<div class=\"form-control-static\" id=\"Region\">' + (\$j('#Region').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#PostalCode').replaceWith('<div class=\"form-control-static\" id=\"PostalCode\">' + (\$j('#PostalCode').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Country').replaceWith('<div class=\"form-control-static\" id=\"Country\">' + (\$j('#Country').val() || '') + '</div>'); \$j('#Country-multi-selection-help').hide();\n";
+		$jsReadOnly .= "\t\$j('#HomePhone').replaceWith('<div class=\"form-control-static\" id=\"HomePhone\">' + (\$j('#HomePhone').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Extension').replaceWith('<div class=\"form-control-static\" id=\"Extension\">' + (\$j('#Extension').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#ReportsTo').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#ReportsTo_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('.select2-container').hide();\n";
 
 		$noUploads = true;
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
+		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
+		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos

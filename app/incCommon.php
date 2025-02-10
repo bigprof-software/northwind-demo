@@ -24,7 +24,7 @@
 		error_message($msg[, $back_url]) -- returns html code for a styled error message .. pass explicit false in second param to suppress back button
 		toMySQLDate($formattedDate, $sep = datalist_date_separator, $ord = datalist_date_format)
 		reIndex(&$arr) -- returns a copy of the given array, with keys replaced by 1-based numeric indices, and values replaced by original keys
-		get_embed($provider, $url[, $width, $height, $retrieve]) -- returns embed code for a given url (supported providers: youtube, googlemap)
+		get_embed($provider, $url[, $width, $height, $retrieve]) -- returns embed code for a given url (supported providers: [auto-detect], or explicitly pass one of: youtube, vimeo, googlemap, dailymotion, videofileurl)
 		check_record_permission($table, $id, $perm = 'view') -- returns true if current user has the specified permission $perm ('view', 'edit' or 'delete') for the given recors, false otherwise
 		NavMenus($options) -- returns the HTML code for the top navigation menus. $options is not implemented currently.
 		StyleSheet() -- returns the HTML code for included style sheet files to be placed in the <head> section.
@@ -823,15 +823,27 @@
 		if(!$url) return '';
 
 		$providers = [
-			'youtube' => ['oembed' => 'https://www.youtube.com/oembed?'],
+			'youtube' => ['oembed' => 'https://www.youtube.com/oembed', 'regex' => '/^http.*(youtu\.be|youtube\.com)\/.*/i'],
+			'vimeo' => ['oembed' => 'https://vimeo.com/api/oembed.json', 'regex' => '/^http.*vimeo\.com\/.*/i'],
 			'googlemap' => ['oembed' => '', 'regex' => '/^http.*\.google\..*maps/i'],
+			'dailymotion' => ['oembed' => 'https://www.dailymotion.com/services/oembed', 'regex' => '/^http.*(dailymotion\.com|dai\.ly)\/.*/i'],
+			'videofileurl' => ['oembed' => '', 'regex' => '/\.(mp4|webm|ogg|ogv)$/i'],
 		];
 
 		if(!$max_height) $max_height = 360;
 		if(!$max_width) $max_width = 480;
 
 		if(!isset($providers[$provider])) {
-			return '<div class="text-danger">' . $Translation['invalid provider'] . '</div>';
+			// try detecting provider from URL based on regex
+			foreach($providers as $p => $opts) {
+				if(preg_match($opts['regex'], $url)) {
+					$provider = $p;
+					break;
+				}
+			}
+
+			if(!isset($providers[$provider]))
+				return '<div class="text-danger">' . $Translation['invalid provider'] . '</div>';
 		}
 
 		if(isset($providers[$provider]['regex']) && !preg_match($providers[$provider]['regex'], $url)) {
@@ -839,7 +851,7 @@
 		}
 
 		if($providers[$provider]['oembed']) {
-			$oembed = $providers[$provider]['oembed'] . 'url=' . urlencode($url) . "&amp;maxwidth={$max_width}&amp;maxheight={$max_height}&amp;format=json";
+			$oembed = $providers[$provider]['oembed'] . '?url=' . urlencode($url) . "&amp;maxwidth={$max_width}&amp;maxheight={$max_height}&amp;format=json";
 			$data_json = request_cache($oembed);
 
 			$data = json_decode($data_json, true);
@@ -869,8 +881,31 @@
 
 		/* special cases (where there is no oEmbed provider) */
 		if($provider == 'googlemap') return get_embed_googlemap($url, $max_width, $max_height, $retrieve);
+		if($provider == 'videofileurl') return get_embed_videofileurl($url, $max_width, $max_height, $retrieve);
 
-		return '<div class="text-danger">Invalid provider!</div>';
+		return '<div class="text-danger">' . $Translation['invalid provider'] . '</div>';
+	}
+
+	#########################################################
+
+	function get_embed_videofileurl($url, $max_width = '', $max_height = '', $retrieve = 'html') {
+		global $Translation;
+
+		$allowed_exts = ['mp4', 'webm', 'ogg', 'ogv'];
+		$ext = strtolower(pathinfo($url, PATHINFO_EXTENSION));
+
+		if(!in_array($ext, $allowed_exts)) {
+			return '<div class="text-danger">' . $Translation['invalid url'] . '</div>';
+		}
+
+		$video = "<video controls style=\"max-width: 100%%; height: auto;\" src=\"%s\"></video>";
+
+		switch($retrieve) {
+			case 'html':
+				return sprintf($video, $url);
+			default: // 'thumbnail'
+				return '';
+		}
 	}
 
 	#########################################################
@@ -1166,11 +1201,11 @@ EOT;
 		$safe_clear_label = html_attr($Translation['Reset Filters']);
 
 		if($separate_dv) {
-			$reset_selection = "document.myform.SelectedID.value = '';";
+			$reset_selection = "document.forms[0].SelectedID.value = '';";
 		} else {
-			$reset_selection = "document.myform.writeAttribute('novalidate', 'novalidate');";
+			$reset_selection = "document.forms[0].writeAttribute('novalidate', 'novalidate');";
 		}
-		$reset_selection .= ' document.myform.NoDV.value=1; return true;';
+		$reset_selection .= ' document.forms[0].NoDV.value=1; return true;';
 
 		$html = <<<EOT
 		<div class="input-group" id="quick-search">
@@ -1443,5 +1478,126 @@ EOT;
 	function isDetailViewEnabled($tn) {
 		$tables = ['customers', 'employees', 'orders', 'order_details', 'products', 'categories', 'suppliers', 'shippers', ];
 		return in_array($tn, $tables);
+	}
+
+	#########################################################
+
+	function appDir($path = '') {
+		// if path not empty and doesn't start with a slash, add it
+		if($path && $path[0] != '/') $path = '/' . $path;
+		return __DIR__ . $path;
+	}
+
+	#########################################################
+
+	/**
+	 * Inserts a new record in a table, performing various before and after tasks
+	 * @param string $tableName the name of the table to insert into
+	 * @param array $data associative array of field names and values to insert
+	 * @param string $recordOwner the username of the record owner
+	 * @param string $errorMessage error message to be set in case of failure
+	 * 
+	 * @return mixed the ID of the inserted record if successful, false otherwise
+	 */
+	function tableInsert($tableName, $data, $recordOwner, &$errorMessage = '') {
+		global $Translation;
+
+		// mm: can member insert record?
+		if(!getTablePermissions($tableName)['insert']) {
+			$errorMessage = $Translation['no insert permission'];
+			return false;
+		}
+
+		$memberInfo = getMemberInfo();
+
+		// check for required fields
+		$fields = get_table_fields($tableName);
+		$notNullFields = notNullFields($tableName);
+		foreach($notNullFields as $fieldName) {
+			if($data[$fieldName] !== '') continue;
+
+			$errorMessage = "{$fields[$fieldName]['info']['caption']}: {$Translation['field not null']}";
+			return false;
+		}
+
+		@include_once(__DIR__ . "/hooks/{$tableName}.php");
+
+		// hook: before_insert
+		$beforeInsertFunc = "{$tableName}_before_insert";
+		if(function_exists($beforeInsertFunc)) {
+			$args = [];
+			if(!$beforeInsertFunc($data, $memberInfo, $args)) {
+				if(isset($args['error_message'])) $errorMessage = $args['error_message'];
+				return false;
+			}
+		}
+
+		$pkIsAutoInc = pkIsAutoIncrement($tableName);
+		$pkField = getPKFieldName($tableName) ?: '';
+
+		$error = '';
+		// set empty fields to NULL
+		$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
+		insert($tableName, backtick_keys_once($data), $error);
+		if($error) {
+			$errorMessage = $error;
+			return false;
+		}
+
+		$recID = $pkIsAutoInc ? db_insert_id() : ($data[$pkField] ?? false);
+
+		update_calc_fields($tableName, $recID, calculated_fields()[$tableName]);
+
+		// hook: after_insert
+		$afterInsertFunc = "{$tableName}_after_insert";
+		if(function_exists($afterInsertFunc)) {
+			if($row = getRecord($tableName, $recID)) {
+				$data = array_map('makeSafe', $row);
+			}
+			$data['selectedID'] = makeSafe($recID);
+			$args = [];
+			if(!$afterInsertFunc($data, $memberInfo, $args)) { return $recID; }
+		}
+
+		// mm: save ownership data
+		// record owner is current user
+		set_record_owner($tableName, $recID, $recordOwner);
+
+		return $recID;
+	}
+
+	#########################################################
+
+	/**
+	 * Checks whether the primary key of a table is auto-increment
+	 * @param string $tn the name of the table
+	 * 
+	 * @return bool true if the primary key is auto-increment, false otherwise
+	 */
+	function pkIsAutoIncrement($tn) {
+		// caching
+		static $cache = [];
+
+		if(isset($cache[$tn])) return $cache[$tn];
+
+		$pk = getPKFieldName($tn);
+		if(!$pk) {
+			$cache[$tn] = false;
+			return false;
+		}
+
+		$isAutoInc = sqlValue("SHOW COLUMNS FROM `$tn` WHERE Field='{$pk}' AND Extra LIKE '%auto_increment%'");
+		$cache[$tn] = $isAutoInc ? true : false;
+		return $cache[$tn];
+	}
+
+	#########################################################
+
+	/**
+	 * @return bool true if the current user is an admin and revealing SQL is allowed, false otherwise
+	 */
+	function showSQL() {
+		$allowAdminShowSQL = false;
+		return $allowAdminShowSQL && getLoggedAdmin() !== false;
 	}
 

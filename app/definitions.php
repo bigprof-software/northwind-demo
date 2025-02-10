@@ -3,7 +3,7 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '24.18');
+	@define('APP_VERSION', '25.10');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);

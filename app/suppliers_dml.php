@@ -10,7 +10,10 @@ function suppliers_insert(&$error_message = '') {
 
 	// mm: can member insert record?
 	$arrPerm = getTablePermissions('suppliers');
-	if(!$arrPerm['insert']) return false;
+	if(!$arrPerm['insert']) {
+		$error_message = $Translation['no insert permission'];
+		return false;
+	}
 
 	$data = [
 		'CompanyName' => Request::val('CompanyName', ''),
@@ -26,47 +29,14 @@ function suppliers_insert(&$error_message = '') {
 		'HomePage' => Request::val('HomePage', ''),
 	];
 
-
-	// hook: suppliers_before_insert
-	if(function_exists('suppliers_before_insert')) {
-		$args = [];
-		if(!suppliers_before_insert($data, getMemberInfo(), $args)) {
-			if(isset($args['error_message'])) $error_message = $args['error_message'];
-			return false;
-		}
-	}
-
-	$error = '';
-	// set empty fields to NULL
-	$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
-	insert('suppliers', backtick_keys_once($data), $error);
-	if($error) {
-		$error_message = $error;
-		return false;
-	}
-
-	$recID = db_insert_id(db_link());
-
-	update_calc_fields('suppliers', $recID, calculated_fields()['suppliers']);
-
-	// hook: suppliers_after_insert
-	if(function_exists('suppliers_after_insert')) {
-		$res = sql("SELECT * FROM `suppliers` WHERE `SupplierID`='" . makeSafe($recID, false) . "' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) {
-			$data = array_map('makeSafe', $row);
-		}
-		$data['selectedID'] = makeSafe($recID, false);
-		$args = [];
-		if(!suppliers_after_insert($data, getMemberInfo(), $args)) { return $recID; }
-	}
-
-	// mm: save ownership data
 	// record owner is current user
 	$recordOwner = getLoggedMemberID();
-	set_record_owner('suppliers', $recID, $recordOwner);
+
+	$recID = tableInsert('suppliers', $data, $recordOwner, $error_message);
 
 	// if this record is a copy of another record, copy children if applicable
-	if(strlen(Request::val('SelectedID'))) suppliers_copy_children($recID, Request::val('SelectedID'));
+	if(strlen(Request::val('SelectedID')) && $recID !== false)
+		suppliers_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -76,6 +46,8 @@ function suppliers_copy_children($destination_id, $source_id) {
 	$requests = []; // array of curl handlers for launching insert requests
 	$eo = ['silentErrors' => true];
 	$safe_sid = makeSafe($source_id);
+	$currentUsername = getLoggedMemberID();
+	$errorMessage = '';
 
 	// launch requests, asynchronously
 	curl_batch($requests);
@@ -117,8 +89,8 @@ function suppliers_delete($selected_id, $AllowDeleteOfParents = false, $skipChec
 		$RetMsg = $Translation['confirm delete'];
 		$RetMsg = str_replace('<RelatedRecords>', sprintf($childrenATag, $rirow[0]), $RetMsg);
 		$RetMsg = str_replace(['[<TableName>]', '<TableName>'], sprintf($childrenATag, 'products'), $RetMsg);
-		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = \'suppliers_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . '\';">', $RetMsg);
-		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = \'suppliers_view.php?SelectedID=' . urlencode($selected_id) . '\';">', $RetMsg);
+		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = `suppliers_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
+		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = `suppliers_view.php?SelectedID=' . urlencode($selected_id) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
 		return $RetMsg;
 	}
 
@@ -189,14 +161,11 @@ function suppliers_update(&$selected_id, &$error_message = '') {
 	}
 
 
-	$eo = ['silentErrors' => true];
-
 	update_calc_fields('suppliers', $data['selectedID'], calculated_fields()['suppliers']);
 
 	// hook: suppliers_after_update
 	if(function_exists('suppliers_after_update')) {
-		$res = sql("SELECT * FROM `suppliers` WHERE `SupplierID`='{$data['selectedID']}' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) $data = array_map('makeSafe', $row);
+		if($row = getRecord('suppliers', $data['selectedID'])) $data = array_map('makeSafe', $row);
 
 		$data['selectedID'] = $data['SupplierID'];
 		$args = ['old_data' => $old_data];
@@ -264,8 +233,7 @@ function suppliers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	$combo_Country->SelectName = 'Country';
 
 	if($hasSelectedId) {
-		$res = sql("SELECT * FROM `suppliers` WHERE `SupplierID`='" . makeSafe($selectedId) . "'", $eo);
-		if(!($row = db_fetch_array($res))) {
+		if(!($row = getRecord('suppliers', $selectedId))) {
 			return error_message($Translation['No records found'], 'suppliers_view.php', false);
 		}
 		$combo_Country->SelectedData = $row['Country'];
@@ -285,7 +253,7 @@ function suppliers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	<script>
 		// initial lookup values
 
-		jQuery(function() {
+		$j(function() {
 			setTimeout(function() {
 			}, 50); /* we need to slightly delay client-side execution of the above code to allow AppGini.ajaxCache to work */
 		});
@@ -323,11 +291,11 @@ function suppliers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
-		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
+		$backAction = 'return true;';
 	}
 
 	if($hasSelectedId) {
-		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
@@ -374,25 +342,24 @@ function suppliers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	// set records to read only if user can't insert new records and can't edit current record
 	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
-		$jsReadOnly .= "\tjQuery('#CompanyName').replaceWith('<div class=\"form-control-static\" id=\"CompanyName\">' + (jQuery('#CompanyName').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#ContactName').replaceWith('<div class=\"form-control-static\" id=\"ContactName\">' + (jQuery('#ContactName').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#ContactTitle').replaceWith('<div class=\"form-control-static\" id=\"ContactTitle\">' + (jQuery('#ContactTitle').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Address').replaceWith('<div class=\"form-control-static\" id=\"Address\">' + (jQuery('#Address').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#City').replaceWith('<div class=\"form-control-static\" id=\"City\">' + (jQuery('#City').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Region').replaceWith('<div class=\"form-control-static\" id=\"Region\">' + (jQuery('#Region').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#PostalCode').replaceWith('<div class=\"form-control-static\" id=\"PostalCode\">' + (jQuery('#PostalCode').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Country').replaceWith('<div class=\"form-control-static\" id=\"Country\">' + (jQuery('#Country').val() || '') + '</div>'); jQuery('#Country-multi-selection-help').hide();\n";
-		$jsReadOnly .= "\tjQuery('#Phone').replaceWith('<div class=\"form-control-static\" id=\"Phone\">' + (jQuery('#Phone').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Fax').replaceWith('<div class=\"form-control-static\" id=\"Fax\">' + (jQuery('#Fax').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#HomePage').replaceWith('<div class=\"form-control-static\" id=\"HomePage\">' + (jQuery('#HomePage').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#HomePage, #HomePage-edit-link').hide();\n";
-		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
+		$jsReadOnly .= "\t\$j('#CompanyName').replaceWith('<div class=\"form-control-static\" id=\"CompanyName\">' + (\$j('#CompanyName').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#ContactName').replaceWith('<div class=\"form-control-static\" id=\"ContactName\">' + (\$j('#ContactName').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#ContactTitle').replaceWith('<div class=\"form-control-static\" id=\"ContactTitle\">' + (\$j('#ContactTitle').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Address').replaceWith('<div class=\"form-control-static\" id=\"Address\">' + (\$j('#Address').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#City').replaceWith('<div class=\"form-control-static\" id=\"City\">' + (\$j('#City').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Region').replaceWith('<div class=\"form-control-static\" id=\"Region\">' + (\$j('#Region').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#PostalCode').replaceWith('<div class=\"form-control-static\" id=\"PostalCode\">' + (\$j('#PostalCode').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Country').replaceWith('<div class=\"form-control-static\" id=\"Country\">' + (\$j('#Country').val() || '') + '</div>'); \$j('#Country-multi-selection-help').hide();\n";
+		$jsReadOnly .= "\t\$j('#Phone').replaceWith('<div class=\"form-control-static\" id=\"Phone\">' + (\$j('#Phone').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Fax').replaceWith('<div class=\"form-control-static\" id=\"Fax\">' + (\$j('#Fax').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#HomePage').parent().replaceWith(`<div class=\"form-control-static\" id=\"HomePage\">\${\$j('#HomePage').val() || ''}\${\$j('#HomePage').val() ? '<a target=\"_blank\" class=\"hspacer-lg\" href=\"' + \$j('#HomePage').val() + '\" target=\"_blank\"><i class=\"glyphicon glyphicon-globe\"></i></a>' : ''}</div>`);\n";
+		$jsReadOnly .= "\t\$j('.select2-container').hide();\n";
 
 		$noUploads = true;
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
+		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
+		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos
@@ -513,8 +480,6 @@ function suppliers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 		$templateCode .= $jsEditable;
 
 		if(!$hasSelectedId) {
-			$templateCode.="\n\tif(document.getElementById('HomePageEdit')) { document.getElementById('HomePageEdit').style.display='inline'; }";
-			$templateCode.="\n\tif(document.getElementById('HomePageEditLink')) { document.getElementById('HomePageEditLink').style.display='none'; }";
 		}
 
 		$templateCode.="\n});</script>\n";

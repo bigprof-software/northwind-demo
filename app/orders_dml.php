@@ -10,7 +10,10 @@ function orders_insert(&$error_message = '') {
 
 	// mm: can member insert record?
 	$arrPerm = getTablePermissions('orders');
-	if(!$arrPerm['insert']) return false;
+	if(!$arrPerm['insert']) {
+		$error_message = $Translation['no insert permission'];
+		return false;
+	}
 
 	$data = [
 		'CustomerID' => Request::lookup('CustomerID', ''),
@@ -31,47 +34,14 @@ function orders_insert(&$error_message = '') {
 		'added_date' => parseCode('<%%creationDate%%>', true, true),
 	];
 
-
-	// hook: orders_before_insert
-	if(function_exists('orders_before_insert')) {
-		$args = [];
-		if(!orders_before_insert($data, getMemberInfo(), $args)) {
-			if(isset($args['error_message'])) $error_message = $args['error_message'];
-			return false;
-		}
-	}
-
-	$error = '';
-	// set empty fields to NULL
-	$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
-	insert('orders', backtick_keys_once($data), $error);
-	if($error) {
-		$error_message = $error;
-		return false;
-	}
-
-	$recID = db_insert_id(db_link());
-
-	update_calc_fields('orders', $recID, calculated_fields()['orders']);
-
-	// hook: orders_after_insert
-	if(function_exists('orders_after_insert')) {
-		$res = sql("SELECT * FROM `orders` WHERE `OrderID`='" . makeSafe($recID, false) . "' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) {
-			$data = array_map('makeSafe', $row);
-		}
-		$data['selectedID'] = makeSafe($recID, false);
-		$args = [];
-		if(!orders_after_insert($data, getMemberInfo(), $args)) { return $recID; }
-	}
-
-	// mm: save ownership data
 	// record owner is current user
 	$recordOwner = getLoggedMemberID();
-	set_record_owner('orders', $recID, $recordOwner);
+
+	$recID = tableInsert('orders', $data, $recordOwner, $error_message);
 
 	// if this record is a copy of another record, copy children if applicable
-	if(strlen(Request::val('SelectedID'))) orders_copy_children($recID, Request::val('SelectedID'));
+	if(strlen(Request::val('SelectedID')) && $recID !== false)
+		orders_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -81,6 +51,8 @@ function orders_copy_children($destination_id, $source_id) {
 	$requests = []; // array of curl handlers for launching insert requests
 	$eo = ['silentErrors' => true];
 	$safe_sid = makeSafe($source_id);
+	$currentUsername = getLoggedMemberID();
+	$errorMessage = '';
 
 	// launch requests, asynchronously
 	curl_batch($requests);
@@ -122,8 +94,8 @@ function orders_delete($selected_id, $AllowDeleteOfParents = false, $skipChecks 
 		$RetMsg = $Translation['confirm delete'];
 		$RetMsg = str_replace('<RelatedRecords>', sprintf($childrenATag, $rirow[0]), $RetMsg);
 		$RetMsg = str_replace(['[<TableName>]', '<TableName>'], sprintf($childrenATag, 'order_details'), $RetMsg);
-		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = \'orders_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . '\';">', $RetMsg);
-		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = \'orders_view.php?SelectedID=' . urlencode($selected_id) . '\';">', $RetMsg);
+		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = `orders_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
+		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = `orders_view.php?SelectedID=' . urlencode($selected_id) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
 		return $RetMsg;
 	}
 
@@ -197,14 +169,11 @@ function orders_update(&$selected_id, &$error_message = '') {
 	}
 
 
-	$eo = ['silentErrors' => true];
-
 	update_calc_fields('orders', $data['selectedID'], calculated_fields()['orders']);
 
 	// hook: orders_after_update
 	if(function_exists('orders_after_update')) {
-		$res = sql("SELECT * FROM `orders` WHERE `OrderID`='{$data['selectedID']}' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) $data = array_map('makeSafe', $row);
+		if($row = getRecord('orders', $data['selectedID'])) $data = array_map('makeSafe', $row);
 
 		$data['selectedID'] = $data['OrderID'];
 		$args = ['old_data' => $old_data];
@@ -298,8 +267,7 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	$combo_added_date->NamePrefix = 'added_date';
 
 	if($hasSelectedId) {
-		$res = sql("SELECT * FROM `orders` WHERE `OrderID`='" . makeSafe($selectedId) . "'", $eo);
-		if(!($row = db_fetch_array($res))) {
+		if(!($row = getRecord('orders', $selectedId))) {
 			return error_message($Translation['No records found'], 'orders_view.php', false);
 		}
 		$combo_CustomerID->SelectedData = $row['CustomerID'];
@@ -335,7 +303,7 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 		AppGini.current_EmployeeID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['EmployeeID'] : htmlspecialchars($filterer_EmployeeID, ENT_QUOTES)); ?>"};
 		AppGini.current_ShipVia__RAND__ = { text: "<?php echo ($hasSelectedId ? '' : 'Federal Shipping'); ?>", value: "<?php echo addslashes($hasSelectedId ? $urow['ShipVia'] : htmlspecialchars($filterer_ShipVia, ENT_QUOTES)); ?>"};
 
-		jQuery(function() {
+		$j(function() {
 			setTimeout(function() {
 				if(typeof(CustomerID_reload__RAND__) == 'function') CustomerID_reload__RAND__();
 				if(typeof(EmployeeID_reload__RAND__) == 'function') EmployeeID_reload__RAND__();
@@ -612,11 +580,11 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
-		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
+		$backAction = 'return true;';
 	}
 
 	if($hasSelectedId) {
-		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
@@ -663,28 +631,28 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	// set records to read only if user can't insert new records and can't edit current record
 	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
-		$jsReadOnly .= "\tjQuery('#CustomerID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#CustomerID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#EmployeeID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#EmployeeID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#OrderDate').prop('readonly', true);\n";
-		$jsReadOnly .= "\tjQuery('#OrderDateDay, #OrderDateMonth, #OrderDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#OrderTime').replaceWith('<div class=\"form-control-static\" id=\"OrderTime\">' + (jQuery('#OrderTime').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#RequiredDate').prop('readonly', true);\n";
-		$jsReadOnly .= "\tjQuery('#RequiredDateDay, #RequiredDateMonth, #RequiredDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#ShippedDate').prop('readonly', true);\n";
-		$jsReadOnly .= "\tjQuery('#ShippedDateDay, #ShippedDateMonth, #ShippedDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#ShipVia').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#ShipVia_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#Freight').replaceWith('<div class=\"form-control-static\" id=\"Freight\">' + (jQuery('#Freight').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
+		$jsReadOnly .= "\t\$j('#CustomerID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#CustomerID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#EmployeeID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#EmployeeID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#OrderDate').prop('readonly', true);\n";
+		$jsReadOnly .= "\t\$j('#OrderDateDay, #OrderDateMonth, #OrderDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#OrderTime').replaceWith('<div class=\"form-control-static\" id=\"OrderTime\">' + (\$j('#OrderTime').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#RequiredDate').prop('readonly', true);\n";
+		$jsReadOnly .= "\t\$j('#RequiredDateDay, #RequiredDateMonth, #RequiredDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#ShippedDate').prop('readonly', true);\n";
+		$jsReadOnly .= "\t\$j('#ShippedDateDay, #ShippedDateMonth, #ShippedDateYear').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#ShipVia').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#ShipVia_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#Freight').replaceWith('<div class=\"form-control-static\" id=\"Freight\">' + (\$j('#Freight').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('.select2-container').hide();\n";
 
 		$noUploads = true;
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\tjQuery('#OrderTime').addClass('always_shown').timepicker({ defaultTime: false, showSeconds: true, showMeridian: true, showInputs: false, disableFocus: true, minuteStep: 5 });";
-		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
+		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
+		$jsEditable .= "\t\$j('#OrderTime').addClass('always_shown').timepicker({ defaultTime: false, showSeconds: true, showMeridian: true, showInputs: false, disableFocus: true, minuteStep: 5 });";
+		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos

@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 24.18;
+AppGini.version = 25.10;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;
@@ -191,7 +191,8 @@ $j(function() {
 			return false;
 		}
 
-		$j('form').attr('novalidate', 'novalidate')
+		AppGini.suppressBeforeUnloadWarning = true;
+
 		return true;
 	})
 
@@ -336,8 +337,9 @@ $j(function() {
 	// handle clicking 'Capture my location' button
 	AppGini.handleCaptureLocation();
 
-	// ignore form validation on clicking '#addNew' button
-	$j('#addNew').on('click', (e) => $j('form').attr('novalidate', 'novalidate'));
+	AppGini.handleDVFormChange();
+	AppGini.handleDVFormSubmission();
+	AppGini.addTimeFieldQuickActions();
 });
 
 /* show/hide TV action buttons based on whether records are selected or not */
@@ -686,18 +688,18 @@ function get_selected_records_ids() {
 }
 
 function print_multiple_dv_tvdv(t, ids) {
-	document.myform.NoDV.value=1;
-	document.myform.PrintDV.value=1;
-	document.myform.SelectedID.value = '';
-	document.myform.submit();
+	document.forms[0].NoDV.value=1;
+	document.forms[0].PrintDV.value=1;
+	document.forms[0].SelectedID.value = '';
+	document.forms[0].submit();
 	return true;
 }
 
 function print_multiple_dv_sdv(t, ids) {
-	document.myform.NoDV.value=1;
-	document.myform.PrintDV.value=1;
-	document.myform.writeAttribute('novalidate', 'novalidate');
-	document.myform.submit();
+	document.forms[0].NoDV.value=1;
+	document.forms[0].PrintDV.value=1;
+	document.forms[0].writeAttribute('novalidate', 'novalidate');
+	document.forms[0].submit();
 	return true;
 }
 
@@ -1012,32 +1014,9 @@ function enable_dvab_floating() {
 }
 
 /* check if a given field's value is unique and reflect this in the DV form */
-function enforce_uniqueness(table, field) {
-	$j('#' + field).on('change', function() {
-		/* check uniqueness of field */
-		var data = {
-			t: table,
-			f: field,
-			value: $j('#' + field).val()
-		};
-
-		if($j('[name=SelectedID]').val().length) data.id = $j('[name=SelectedID]').val();
-
-		$j.ajax({
-			url: 'ajax_check_unique.php',
-			data: data,
-			complete: function(resp) {
-				if(resp.responseJSON.result == 'ok') {
-					$j('#' + field + '-uniqueness-note').hide();
-					$j('#' + field).parents('.form-group').removeClass('has-error');
-				} else {
-					$j('#' + field + '-uniqueness-note').show();
-					$j('#' + field).parents('.form-group').addClass('has-error');
-					$j('#' + field).focus();
-					setTimeout(function() { $j('#update, #insert').prop('disabled', true); }, 500);
-				}
-			}
-		})
+function enforce_uniqueness(tableName, fieldName) {
+	$j(`#${fieldName}`).on('change', () => {
+		AppGini.checkUnique(tableName, fieldName);
 	});
 }
 
@@ -1348,7 +1327,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads allow-top-navigation-by-user-activation" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
@@ -1425,7 +1404,7 @@ AppGini.TVScroll = function() {
 									'<iframe ' +
 										'width="100%" height="100%" ' +
 										'style="display: block; overflow: scroll !important; -webkit-overflow-scrolling: touch !important;" ' +
-										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads" ' +
+										'sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-downloads allow-top-navigation-by-user-activation" ' +
 										'src="' + op.url + '">' +
 									'</iframe>'
 									: op.message
@@ -1656,7 +1635,7 @@ AppGini.calculatedFields = {
 		// init DV update of calculated fields
 		if($j('.detail_view').length) AppGini.calculatedFields.updateServerSide(
 			table,
-			[$j('input[name=SelectedID]').val()]
+			[AppGini.selectedID()]
 		);
 
 		// init child tabs update of calculated fields
@@ -1675,9 +1654,8 @@ AppGini.calculatedFields = {
 		if(childTables.length) return;
 
 		// init DV update of calculated fields
-		var selectedId = $j('input[name=SelectedID]').val();
-		if(undefined != selectedId)
-			AppGini.calculatedFields.updateServerSide(table, selectedId);
+		if(AppGini.selectedID().length)
+			AppGini.calculatedFields.updateServerSide(table, AppGini.selectedID());
 	},
 
 	updateServerSide: function(table, id) {
@@ -1967,7 +1945,7 @@ AppGini.isRecordUpdated = () => {
 
 AppGini.lockUpdatesOnUserRequest = function() {
 	// if this is not DV of existing record where editing and saving a copy are both enabled, skip
-	if(!$j('#update').length || !$j('#insert').length || !$j('input[name=SelectedID]').val().length) return;
+	if(!$j('#update').length || !$j('#insert').length || !AppGini.selectedID().length) return;
 
 	// if lock behavior already implemented, skip
 	if($j('#update').hasClass('locking-enabled')) return;
@@ -2158,7 +2136,7 @@ AppGini.Validation = {
 }
 /* function to execute provided callback, passing provided params, if current view id detail view for a new record */
 AppGini.newRecord = function(callback, params) {
-	if($j('.detail_view').length && !$j('[name=SelectedID').val().length) {
+	if($j('.detail_view').length && !AppGini.selectedID().length) {
 		callback(params);
 	}
 }
@@ -2890,6 +2868,14 @@ AppGini.renderTVRecordsPerPageSelector = () => {
 		// set RecordsPerPage hidden field value
 		parentForm.find('input[name=RecordsPerPage]').val(newRecordsPerPage);
 
+		// if the url includes special parameters, add them to the form
+		const url = new URL(window.location.href);
+		['record-added-ok', 'record-added-error', 'record-updated-ok', 'record-updated-error', 'record-deleted-ok', 'record-deleted-error', 'error_message'].forEach(param => {
+			if(!url.searchParams.has(param)) return;
+			const safeValue = url.searchParams.get(param).replace(/"/g, '&quot;');
+			parentForm.append(`<input type="hidden" name="${param}" value="${safeValue}">`);
+		});
+
 		// submit the form
 		parentForm.submit();
 	});
@@ -3114,6 +3100,17 @@ AppGini.handleSubmitRecord = (e, insertMode) => {
 		});
 	});
 
+	// check if all unique fields are actually unique
+	const uniqueFields = window[`${table}UniqueFields`] || [];
+	for(const fieldName of uniqueFields) {
+		// exclude selected record ID from uniqueness check if in update mode
+		// and perform a synchronous check to prevent form submission if not unique
+		if(!AppGini.checkUnique(table, fieldName, !insertMode, false)) {
+			actionButtons.prop('disabled', false);
+			return;
+		}
+	}
+
 	AppGini.populateAutomaticGeolocationFields((result) => {
 		if(result == NO_GEOLOCATION_THOUGH_REQUIRED) {
 			// geolocation required but not supported/granted
@@ -3132,6 +3129,9 @@ AppGini.handleSubmitRecord = (e, insertMode) => {
 
 		// add insert_x=1 or update_x=1 to form data based on insertMode
 		$j(`<input type="hidden" name="${insertMode ? 'insert' : 'update'}_x" value="1">`).appendTo(form);
+
+		AppGini.suppressBeforeUnloadWarning = true;
+
 		form.submit();
 	}, insertMode);
 }
@@ -3146,5 +3146,225 @@ AppGini.modalError = (message) => {
 		.addClass('alert alert-danger')
 		.css('margin', '0')
 		.append('<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>');
+}
+
+AppGini.handleDVFormChange = () => {
+	// run only once
+	if(AppGini._handleDVFormChangeApplied != undefined) return;
+	AppGini._handleDVFormChangeApplied = true;
+
+	// if no #insert or #update buttons, return
+	if(!$j('#insert').length && !$j('#update').length) return;
+
+	$j('form').eq(0).on('change', function() {
+		if($j(this).data('already_changed')) return;
+
+		if($j('#deselect').length) {
+			$j('#deselect')
+				.removeClass('btn-default')
+				.addClass('btn-warning')
+				.get(0).lastChild.data = ` ${AppGini.Translate._map['Cancel']}`;
+		}
+
+		// handle onbeforeunload event to warn user before leaving the page without saving changes
+		window.onbeforeunload = (e) => {
+			// if AppGini.suppressBeforeUnloadWarning is not set (i.e. requested action is not insert/update/delete),
+			// warn user before leaving the page
+			if(!AppGini.suppressBeforeUnloadWarning) {
+				e.preventDefault();
+				e.returnValue = AppGini.Translate._map['discard changes confirm'];
+				return e.returnValue;
+			}
+		}  
+
+		$j(this).data('already_changed', true);
+	});
+}
+
+AppGini.handleDVFormSubmission = () => {
+	// run only once
+	if(AppGini._handleDVFormSubmissionApplied != undefined) return;
+	AppGini._handleDVFormSubmissionApplied = true;
+
+	// disable form validation on form submission via any button other than #insert or #update
+	$j('form').eq(0).on('click', ':not([id=insert],[id=update])', function() {
+		$j(this).closest('form').attr('novalidate', 'novalidate');
+	});
+}
+
+/**
+ * Retrive the ID of the selected record in the current detail view.
+ * @returns {string} The ID of the selected record in the current detail view. If no record is selected, an empty string is returned.
+ */
+AppGini.selectedID = () => {
+	const selectedID = $j('input[name=SelectedID]').val();
+	return selectedID ? selectedID : '';
+}
+
+/**
+ * Check if user-provided value of a field is unique in the table.
+ * @param {string} tableName The name of the table to check uniqueness in.
+ * @param {string} fieldName The name of the field to check uniqueness for.
+ * @param {boolean} excludeSelectedID Whether to exclude the selected record ID from the uniqueness check. This is useful when updating an existing record. Default is true.
+ * @param {boolean} async Whether to run the check asynchronously. Default is true.
+ * @returns {boolean} true if the field value is unique or empty, false otherwise. This is returned only if the function is run synchronously. If the function is run asynchronously, no return value is provided.
+ */
+AppGini.checkUnique = (tableName, fieldName, excludeSelectedID = true, async = true) => {
+	/* check uniqueness of field */
+	var data = {
+		t: tableName,
+		f: fieldName,
+		value: $j(`#${fieldName}`).val().trim(),
+	};
+
+	// return true if field is empty
+	if(!data.value.length) return async ? null : true;
+
+	if(excludeSelectedID && AppGini.selectedID().length) data.id = AppGini.selectedID();
+
+	let isUnique = true;
+
+	$j.ajax({
+		url: 'ajax_check_unique.php',
+		data: data,
+		async: async,
+		complete: function(resp) {
+			if(resp?.responseJSON?.result == 'ok') {
+				$j(`#${fieldName}-uniqueness-note`).hide();
+				$j(`#${fieldName}`).parents('.form-group').removeClass('has-error');
+			} else {
+				$j(`#${fieldName}-uniqueness-note`).show();
+				$j(`#${fieldName}`).parents('.form-group').addClass('has-error');
+				$j(`#${fieldName}`).focus();
+				setTimeout(function() { $j('#update, #insert').prop('disabled', true); }, 500);
+				isUnique = false;
+			}
+		}
+	})
+
+	if(!async) return isUnique; // return the result if the function is running in sync mode
+}
+
+/**
+ * Add quick action buttons to time fields in detail view.
+ * To alter the behavior of the quick action buttons, you can define the following configuration options in
+ * one of the following hooks files:
+ * - hooks/header-extras.php
+ * - hooks/footer-extras.php
+ * - hooks/{tableName}-dv.js
+ * - {tableName}_dv() function in hooks/{tableName}.php
+ * 
+ * AppGini.config.disableTimeFieldQuickActions: set to true to disable time field quick actions.
+ * AppGini.config.timeFieldMinutesStep: set to the number of minutes to increment/decrement the time by. Default is 5.
+ */
+AppGini.addTimeFieldQuickActions = () => {
+
+	setTimeout(() => {
+		// skip if AppGini.config.disableTimeFieldQuickActions is defined and set to true
+		if(AppGini.config.disableTimeFieldQuickActions ?? false) return;
+
+		const timeFormat = AppGini.datetimeFormat('t');
+		const minutesStep = AppGini.config.timeFieldMinutesStep || 5;
+
+		$j('input[type="text"]').each(function() {
+			const el = $j(this);
+			if(!el.data('timepicker')) return;
+
+			// execute this only once per input
+			if(el.data('quick-actions-added')) return;
+			el.data('quick-actions-added', true);
+
+			// wrap the input in an input-group div,
+			// and add buttons at the right to:
+			// - clear the input
+			// - set the input to the current time
+			// - increment the time by minutesStep minutes, approximating to the nearest minutesStep minutes
+			// - decrement the time by minutesStep minutes, approximating to the nearest minutesStep minutes
+			el.wrap('<div class="input-group"></div>');
+			const inputGroup = el.parent();
+
+			const clearButton = $j('<button type="button" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i></button>');
+			const nowButton = $j('<button type="button" class="btn btn-default"><i class="glyphicon glyphicon-time"></i></button>');
+			const incButton = $j('<button type="button" class="btn btn-default"><i class="glyphicon glyphicon-chevron-up"></i></button>');
+			const decButton = $j('<button type="button" class="btn btn-default"><i class="glyphicon glyphicon-chevron-down"></i></button>');
+
+			clearButton.click(() => {
+				el.val('');
+				// trigger form change event
+				el.trigger('change');
+			});
+			nowButton.click(() => {
+				el.val(moment().format(timeFormat))
+				// trigger form change event
+				el.trigger('change');
+			});
+			incButton.click(() => {
+				// skip if no time is entered
+				if(el.val().length < 5) return;
+
+				// parse the time entered based on the current time format
+				const initialTime = moment(el.val(), timeFormat);
+
+				// skip if the time entered is invalid
+				if(!initialTime.isValid()) return;
+
+				// increment the time by minutesStep minutes, approximating to the nearest minutesStep minutes
+				// and set seconds to 0
+				const initialMinutes = initialTime.minutes();
+				let time = initialTime.clone().seconds(0);
+				let minutes = Math.floor(initialTime.minutes() / minutesStep) * minutesStep;
+				minutes = (minutes + minutesStep) % 60;
+				if(minutes < initialMinutes) {
+					time = time.hours(time.hours() + 1).minutes(minutes);
+				} else {
+					time = time.minutes(minutes);
+				}
+
+				// format the time according to the current time format
+				el.val(time.format(timeFormat));
+
+				// trigger form change event
+				el.trigger('change');
+			});
+			decButton.click(() => {
+				// skip if no time is entered
+				if(el.val().length < 5) return;
+
+				// parse the time entered based on the current time format
+				const initialTime = moment(el.val(), timeFormat);
+
+				// skip if the time entered is invalid
+				if(!initialTime.isValid()) return;
+
+				// decrement the time by minutesStep minutes, approximating to the nearest minutesStep minutes
+				// and set seconds to 0
+				const initialMinutes = initialTime.minutes();
+				let time = initialTime.clone().seconds(0);
+				let minutes = Math.floor(initialTime.minutes() / minutesStep) * minutesStep;
+				minutes = (minutes - minutesStep + 60) % 60;
+				if(minutes > initialMinutes) {
+					time = time.hours(time.hours() - 1).minutes(minutes);
+				} else {
+					time = time.minutes(minutes);
+				}
+
+				// format the time according to the current time format
+				el.val(time.format(timeFormat));
+
+				// trigger form change event
+				el.trigger('change');
+			});
+
+			const inputGroupBtns = $j('<span class="input-group-btn"></span>');
+
+			inputGroupBtns
+				.append(clearButton)
+				.append(nowButton)
+				.append(incButton)
+				.append(decButton)
+
+			inputGroup.append(inputGroupBtns);
+		})
+	}, 400); // wait for timepicker to initialize
 }
 

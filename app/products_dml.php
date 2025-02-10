@@ -10,7 +10,10 @@ function products_insert(&$error_message = '') {
 
 	// mm: can member insert record?
 	$arrPerm = getTablePermissions('products');
-	if(!$arrPerm['insert']) return false;
+	if(!$arrPerm['insert']) {
+		$error_message = $Translation['no insert permission'];
+		return false;
+	}
 
 	$data = [
 		'ProductName' => Request::val('ProductName', ''),
@@ -38,47 +41,14 @@ function products_insert(&$error_message = '') {
 		]),
 	];
 
-
-	// hook: products_before_insert
-	if(function_exists('products_before_insert')) {
-		$args = [];
-		if(!products_before_insert($data, getMemberInfo(), $args)) {
-			if(isset($args['error_message'])) $error_message = $args['error_message'];
-			return false;
-		}
-	}
-
-	$error = '';
-	// set empty fields to NULL
-	$data = array_map(function($v) { return ($v === '' ? NULL : $v); }, $data);
-	insert('products', backtick_keys_once($data), $error);
-	if($error) {
-		$error_message = $error;
-		return false;
-	}
-
-	$recID = db_insert_id(db_link());
-
-	update_calc_fields('products', $recID, calculated_fields()['products']);
-
-	// hook: products_after_insert
-	if(function_exists('products_after_insert')) {
-		$res = sql("SELECT * FROM `products` WHERE `ProductID`='" . makeSafe($recID, false) . "' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) {
-			$data = array_map('makeSafe', $row);
-		}
-		$data['selectedID'] = makeSafe($recID, false);
-		$args = [];
-		if(!products_after_insert($data, getMemberInfo(), $args)) { return $recID; }
-	}
-
-	// mm: save ownership data
 	// record owner is current user
 	$recordOwner = getLoggedMemberID();
-	set_record_owner('products', $recID, $recordOwner);
+
+	$recID = tableInsert('products', $data, $recordOwner, $error_message);
 
 	// if this record is a copy of another record, copy children if applicable
-	if(strlen(Request::val('SelectedID'))) products_copy_children($recID, Request::val('SelectedID'));
+	if(strlen(Request::val('SelectedID')) && $recID !== false)
+		products_copy_children($recID, Request::val('SelectedID'));
 
 	return $recID;
 }
@@ -88,6 +58,8 @@ function products_copy_children($destination_id, $source_id) {
 	$requests = []; // array of curl handlers for launching insert requests
 	$eo = ['silentErrors' => true];
 	$safe_sid = makeSafe($source_id);
+	$currentUsername = getLoggedMemberID();
+	$errorMessage = '';
 
 	// launch requests, asynchronously
 	curl_batch($requests);
@@ -129,8 +101,8 @@ function products_delete($selected_id, $AllowDeleteOfParents = false, $skipCheck
 		$RetMsg = $Translation['confirm delete'];
 		$RetMsg = str_replace('<RelatedRecords>', sprintf($childrenATag, $rirow[0]), $RetMsg);
 		$RetMsg = str_replace(['[<TableName>]', '<TableName>'], sprintf($childrenATag, 'order_details'), $RetMsg);
-		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = \'products_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . '\';">', $RetMsg);
-		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = \'products_view.php?SelectedID=' . urlencode($selected_id) . '\';">', $RetMsg);
+		$RetMsg = str_replace('<Delete>', '<input type="button" class="btn btn-danger" value="' . html_attr($Translation['yes']) . '" onClick="window.location = `products_view.php?SelectedID=' . urlencode($selected_id) . '&delete_x=1&confirmed=1&csrf_token=' . urlencode(csrf_token(false, true)) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
+		$RetMsg = str_replace('<Cancel>', '<input type="button" class="btn btn-success" value="' . html_attr($Translation[ 'no']) . '" onClick="window.location = `products_view.php?SelectedID=' . urlencode($selected_id) . (Request::val('Embedded') ? '&Embedded=1' : '') . '`;">', $RetMsg);
 		return $RetMsg;
 	}
 
@@ -229,14 +201,11 @@ function products_update(&$selected_id, &$error_message = '') {
 	}
 
 
-	$eo = ['silentErrors' => true];
-
 	update_calc_fields('products', $data['selectedID'], calculated_fields()['products']);
 
 	// hook: products_after_update
 	if(function_exists('products_after_update')) {
-		$res = sql("SELECT * FROM `products` WHERE `ProductID`='{$data['selectedID']}' LIMIT 1", $eo);
-		if($row = db_fetch_assoc($res)) $data = array_map('makeSafe', $row);
+		if($row = getRecord('products', $data['selectedID'])) $data = array_map('makeSafe', $row);
 
 		$data['selectedID'] = $data['ProductID'];
 		$args = ['old_data' => $old_data];
@@ -295,8 +264,7 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 	$combo_CategoryID = new DataCombo;
 
 	if($hasSelectedId) {
-		$res = sql("SELECT * FROM `products` WHERE `ProductID`='" . makeSafe($selectedId) . "'", $eo);
-		if(!($row = db_fetch_array($res))) {
+		if(!($row = getRecord('products', $selectedId))) {
 			return error_message($Translation['No records found'], 'products_view.php', false);
 		}
 		$combo_SupplierID->SelectedData = $row['SupplierID'];
@@ -323,7 +291,7 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 		AppGini.current_SupplierID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['SupplierID'] : htmlspecialchars($filterer_SupplierID, ENT_QUOTES)); ?>"};
 		AppGini.current_CategoryID__RAND__ = { text: "", value: "<?php echo addslashes($hasSelectedId ? $urow['CategoryID'] : htmlspecialchars($filterer_CategoryID, ENT_QUOTES)); ?>"};
 
-		jQuery(function() {
+		$j(function() {
 			setTimeout(function() {
 				if(typeof(SupplierID_reload__RAND__) == 'function') SupplierID_reload__RAND__();
 				if(typeof(CategoryID_reload__RAND__) == 'function') CategoryID_reload__RAND__();
@@ -517,11 +485,11 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 	if(Request::val('Embedded')) {
 		$backAction = 'AppGini.closeParentModal(); return false;';
 	} else {
-		$backAction = '$j(\'form\').eq(0).attr(\'novalidate\', \'novalidate\'); document.myform.reset(); return true;';
+		$backAction = 'return true;';
 	}
 
 	if($hasSelectedId) {
-		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" onclick="$j(\'form\').eq(0).prop(\'novalidate\', true); document.myform.reset(); return true;" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
+		if(!Request::val('Embedded')) $templateCode = str_replace('<%%DVPRINT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="dvprint" name="dvprint_x" value="1" title="' . html_attr($Translation['Print Preview']) . '"><i class="glyphicon glyphicon-print"></i> ' . $Translation['Print Preview'] . '</button>', $templateCode);
 		if($allowUpdate)
 			$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '<button type="submit" class="btn btn-success btn-lg" id="update" name="update_x" value="1" title="' . html_attr($Translation['Save Changes']) . '"><i class="glyphicon glyphicon-ok"></i> ' . $Translation['Save Changes'] . '</button>', $templateCode);
 		else
@@ -568,26 +536,25 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 	// set records to read only if user can't insert new records and can't edit current record
 	if(!$fieldsAreEditable) {
 		$jsReadOnly = '';
-		$jsReadOnly .= "\tjQuery('#ProductName').replaceWith('<div class=\"form-control-static\" id=\"ProductName\">' + (jQuery('#ProductName').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#SupplierID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#SupplierID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#CategoryID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
-		$jsReadOnly .= "\tjQuery('#CategoryID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
-		$jsReadOnly .= "\tjQuery('#QuantityPerUnit').replaceWith('<div class=\"form-control-static\" id=\"QuantityPerUnit\">' + (jQuery('#QuantityPerUnit').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#UnitPrice').replaceWith('<div class=\"form-control-static\" id=\"UnitPrice\">' + (jQuery('#UnitPrice').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#UnitsInStock').replaceWith('<div class=\"form-control-static\" id=\"UnitsInStock\">' + (jQuery('#UnitsInStock').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#UnitsOnOrder').replaceWith('<div class=\"form-control-static\" id=\"UnitsOnOrder\">' + (jQuery('#UnitsOnOrder').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#ReorderLevel').replaceWith('<div class=\"form-control-static\" id=\"ReorderLevel\">' + (jQuery('#ReorderLevel').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#Discontinued').prop('disabled', true);\n";
-		$jsReadOnly .= "\tjQuery('#TechSheet').replaceWith('<div class=\"form-control-static\" id=\"TechSheet\">' + (jQuery('#TechSheet').val() || '') + '</div>');\n";
-		$jsReadOnly .= "\tjQuery('#TechSheet, #TechSheet-edit-link').hide();\n";
-		$jsReadOnly .= "\tjQuery('.select2-container').hide();\n";
+		$jsReadOnly .= "\t\$j('#ProductName').replaceWith('<div class=\"form-control-static\" id=\"ProductName\">' + (\$j('#ProductName').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#SupplierID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#SupplierID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#CategoryID').prop('disabled', true).css({ color: '#555', backgroundColor: '#fff' });\n";
+		$jsReadOnly .= "\t\$j('#CategoryID_caption').prop('disabled', true).css({ color: '#555', backgroundColor: 'white' });\n";
+		$jsReadOnly .= "\t\$j('#QuantityPerUnit').replaceWith('<div class=\"form-control-static\" id=\"QuantityPerUnit\">' + (\$j('#QuantityPerUnit').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#UnitPrice').replaceWith('<div class=\"form-control-static\" id=\"UnitPrice\">' + (\$j('#UnitPrice').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#UnitsInStock').replaceWith('<div class=\"form-control-static\" id=\"UnitsInStock\">' + (\$j('#UnitsInStock').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#UnitsOnOrder').replaceWith('<div class=\"form-control-static\" id=\"UnitsOnOrder\">' + (\$j('#UnitsOnOrder').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#ReorderLevel').replaceWith('<div class=\"form-control-static\" id=\"ReorderLevel\">' + (\$j('#ReorderLevel').val() || '') + '</div>');\n";
+		$jsReadOnly .= "\t\$j('#Discontinued').prop('disabled', true);\n";
+		$jsReadOnly .= "\t\$j('#TechSheet').parent().replaceWith(`<div class=\"form-control-static\" id=\"TechSheet\">\${\$j('#TechSheet').val() || ''}\${\$j('#TechSheet').val() ? '<a target=\"_blank\" class=\"hspacer-lg\" href=\"' + \$j('#TechSheet').val() + '\" target=\"_blank\"><i class=\"glyphicon glyphicon-globe\"></i></a>' : ''}</div>`);\n";
+		$jsReadOnly .= "\t\$j('.select2-container').hide();\n";
 
 		$noUploads = true;
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
-		$jsEditable = "\tjQuery('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\tjQuery('form').eq(0).data('already_changed', false);"; // re-enable form change handler
+		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
+		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
 	// process combos
