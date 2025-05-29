@@ -1,0 +1,2883 @@
+[
+  {
+    "function_name": "set_headers",
+    "description": "Function starts with: @header('Content-Type: text/html; charset=' . datalist_db_encoding); ; // @header('X-Frame-Options: SAMEORIGIN'); // deprecated",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "set_headers();"
+    ],
+    "see_also": [
+      "application_url"
+    ]
+  },
+  {
+    "function_name": "get_tables_info",
+    "description": "Function starts with: static $all_tables = [], $accessible_tables = []; ; /* return cached results, if found */",
+    "parameters": [
+      {
+        "name": "skip_authentication",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "get_tables_info(false);"
+    ],
+    "see_also": [
+      "getLoggedAdmin"
+    ]
+  },
+  {
+    "function_name": "getTableList",
+    "description": "Function starts with: $arrAccessTables = []; ; $arrTables = [",
+    "parameters": [
+      {
+        "name": "skip_authentication",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      },
+      {
+        "name": "include_internal_tables",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "getTableList(false, false);"
+    ],
+    "see_also": [
+      "getLoggedAdmin"
+    ]
+  },
+  {
+    "function_name": "getThumbnailSpecs",
+    "description": "Function starts with: if($tableName=='employees' && $fieldName=='Photo' && $view=='tv') ; return ['width'=>50, 'height'=>50, 'identifier'=>'_tv'];",
+    "parameters": [
+      {
+        "name": "tableName",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "fieldName",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "view",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "getThumbnailSpecs(null, null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "createThumbnail",
+    "description": "Alias for `Thumbnail::create()`. Create a thumbnail of an image. The thumbnail is saved in the same directory as the original image, with the same name, suffixed with `$specs['identifier']`",
+    "parameters": [
+      {
+        "name": "img",
+        "type": "string",
+        "description": "- path to image file",
+        "example": "''"
+      },
+      {
+        "name": "specs",
+        "type": "array",
+        "description": "- array with thumbnail specs as returned by getThumbnailSpecs()",
+        "example": "[]"
+      }
+    ],
+    "return_value": {
+      "type": "bool",
+      "description": "- true on success, false on failure"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "createThumbnail('', []);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "formatUri",
+    "description": "Function starts with: $uri = str_replace('\\\\', '/', $uri); ; return trim($uri, '/');",
+    "parameters": [
+      {
+        "name": "uri",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: trim($uri, '/')"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "formatUri(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "makeSafe",
+    "description": "Function starts with: static $cached = []; /* str => escaped_str */ ; if(!strlen($string)) return '';",
+    "parameters": [
+      {
+        "name": "string",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "is_gpc",
+        "type": "mixed",
+        "description": "Optional. Default: true.",
+        "example": "true"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "makeSafe(null, true);"
+    ],
+    "see_also": [
+      "sql"
+    ]
+  },
+  {
+    "function_name": "checkPermissionVal",
+    "description": "Function starts with: // fn to make sure the value in the given POST variable is 0, 1, 2 or 3 ; // if the value is invalid, it default to 0",
+    "parameters": [
+      {
+        "name": "pvn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "checkPermissionVal(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "dieErrorPage",
+    "description": "Function starts with: global $Translation; ; $header = (defined('ADMIN_AREA') ? __DIR__ . '/incHeader.php' : __DIR__ . '/../header.php');",
+    "parameters": [
+      {
+        "name": "error",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "dieErrorPage(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "openDBConnection",
+    "description": "Function starts with: static $connected = false, $db_link; ; $dbServer = config('dbServer');",
+    "parameters": [
+      {
+        "name": "o",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "openDBConnection(null);"
+    ],
+    "see_also": [
+      "dieErrorPage"
+    ]
+  },
+  {
+    "function_name": "sql",
+    "description": "Function starts with: /* ; Supported options that can be passed in $o options array (as array keys):",
+    "parameters": [
+      {
+        "name": "statement",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "o",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "sql(null, null);"
+    ],
+    "see_also": [
+      "application_url",
+      "logErrorQuery",
+      "openDBConnection",
+      "logSlowQuery",
+      "dieErrorPage",
+      "getLoggedAdmin"
+    ]
+  },
+  {
+    "function_name": "logSlowQuery",
+    "description": "Function starts with: if(!createQueryLogTable()) return; ; $o = [",
+    "parameters": [
+      {
+        "name": "statement",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "duration",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "logSlowQuery(null, null);"
+    ],
+    "see_also": [
+      "stripParams",
+      "createQueryLogTable",
+      "sql",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "logErrorQuery",
+    "description": "Function starts with: if(!createQueryLogTable()) return; ; $o = [",
+    "parameters": [
+      {
+        "name": "statement",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "error",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "logErrorQuery(null, null);"
+    ],
+    "see_also": [
+      "stripParams",
+      "createQueryLogTable",
+      "sql",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "stripParams",
+    "description": "Strip specified parameters from a URL",
+    "parameters": [
+      {
+        "name": "uri",
+        "type": "string",
+        "description": "- the URL to strip parameters from, could be a full URL or just a URI",
+        "example": "''"
+      },
+      {
+        "name": "paramsToRemove",
+        "type": "array",
+        "description": "- an array of parameter names to remove",
+        "example": "[]"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": "- the URL with specified parameters removed"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "stripParams('', []);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "createQueryLogTable",
+    "description": "Function starts with: static $created = false; ; if($created) return true;",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "createQueryLogTable();"
+    ],
+    "see_also": [
+      "createTableIfNotExists"
+    ]
+  },
+  {
+    "function_name": "sqlValue",
+    "description": "Function starts with: // executes a statement that retreives a single data value and returns the value retrieved ; $eo = ['silentErrors' => true];",
+    "parameters": [
+      {
+        "name": "statement",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "error",
+        "type": "mixed",
+        "description": "Optional. Default: NULL.",
+        "example": "NULL"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "sqlValue(null, NULL);"
+    ],
+    "see_also": [
+      "sql"
+    ]
+  },
+  {
+    "function_name": "getLoggedAdmin",
+    "description": "Function starts with: return Authentication::getAdmin();",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: Authentication::getAdmin()"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "getLoggedAdmin();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "initSession",
+    "description": "Function starts with: Authentication::initSession();",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "initSession();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "jwt_key",
+    "description": "Function starts with: if(!is_file(configFileName())) return false; ; return md5_file(configFileName());",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "jwt_key();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "jwt_token",
+    "description": "Function starts with: if($user === false) { ; $mi = Authentication::getUser();",
+    "parameters": [
+      {
+        "name": "user",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "jwt_token(false);"
+    ],
+    "see_also": [
+      "jwt_key"
+    ]
+  },
+  {
+    "function_name": "jwt_header",
+    "description": "Function starts with: /* adapted from https://stackoverflow.com/a/40582472/1945185 */ ; $auth_header = null;",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "jwt_header();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "jwt_check_login",
+    "description": "Function starts with: // do we have an Authorization Bearer header? ; $token = jwt_header();",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "jwt_check_login();"
+    ],
+    "see_also": [
+      "jwt_header",
+      "jwt_key"
+    ]
+  },
+  {
+    "function_name": "curl_insert_handler",
+    "description": "Function starts with: if(!function_exists('curl_init')) return false; ; $ch = curl_init();",
+    "parameters": [
+      {
+        "name": "table",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "data",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "curl_insert_handler(null, null);"
+    ],
+    "see_also": [
+      "application_url",
+      "jwt_token"
+    ]
+  },
+  {
+    "function_name": "curl_batch",
+    "description": "Function starts with: if(!function_exists('curl_init')) return false; ; if(!is_array($handlers)) return false;",
+    "parameters": [
+      {
+        "name": "handlers",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "curl_batch(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "logOutUser",
+    "description": "Function starts with: RememberMe::logout();",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "logOutUser();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "getPKFieldName",
+    "description": "Function starts with: // get pk field name of given table ; static $pk = [];",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "getPKFieldName(null);"
+    ],
+    "see_also": [
+      "sql",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "getCSVData",
+    "description": "Function starts with: // get pk field name for given table ; if(!$pkField = getPKFieldName($tn))",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "pkValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "stripTags",
+        "type": "mixed",
+        "description": "Optional. Default: true.",
+        "example": "true"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "getCSVData(null, null, true);"
+    ],
+    "see_also": [
+      "sql",
+      "sqlValue",
+      "getPKFieldName",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "errorMsg",
+    "description": "Function starts with: echo \"<div class=\\\"alert alert-danger\\\">{$msg}</div>\";",
+    "parameters": [
+      {
+        "name": "msg",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "errorMsg(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "redirect",
+    "description": "Function starts with: $fullURL = ($absolute ? $url : application_url($url)); ; // append browser window id to url (check if it should be preceded by ? or &)",
+    "parameters": [
+      {
+        "name": "url",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "absolute",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "redirect(null, false);"
+    ],
+    "see_also": [
+      "application_url"
+    ]
+  },
+  {
+    "function_name": "htmlRadioGroup",
+    "description": "Function starts with: if(!is_array($arrValue)) return ''; ; ob_start();",
+    "parameters": [
+      {
+        "name": "name",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrCaption",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selectedValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selClass",
+        "type": "mixed",
+        "description": "Optional. Default: 'text-primary'.",
+        "example": "'text-primary'"
+      },
+      {
+        "name": "class",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "separator",
+        "type": "mixed",
+        "description": "Optional. Default: '<br>'.",
+        "example": "'<br>'"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "htmlRadioGroup(null, null, null, null, 'text-primary', '', '<br>');"
+    ],
+    "see_also": [
+      "html_attr"
+    ]
+  },
+  {
+    "function_name": "htmlSelect",
+    "description": "Function starts with: if($selectedClass == '') ; $selectedClass = $class;",
+    "parameters": [
+      {
+        "name": "name",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrCaption",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selectedValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "class",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "selectedClass",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $out"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "htmlSelect(null, null, null, null, '', '');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "htmlSQLSelect",
+    "description": "Function starts with: $arrVal = ['']; ; $arrCap = [''];",
+    "parameters": [
+      {
+        "name": "name",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "sql_param",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selectedValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "class",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "selectedClass",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "htmlSQLSelect(null, null, null, '', '');"
+    ],
+    "see_also": [
+      "sql",
+      "htmlSelect"
+    ]
+  },
+  {
+    "function_name": "bootstrapSelect",
+    "description": "Function starts with: if($selectedClass == '') $selectedClass = $class; ; $out = \"<select class=\\\"form-control\\\" name=\\\"{$name}\\\" id=\\\"{$name}\\\">\";",
+    "parameters": [
+      {
+        "name": "name",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "arrCaption",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selectedValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "class",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "selectedClass",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $out"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "bootstrapSelect(null, null, null, null, '', '');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "bootstrapSQLSelect",
+    "description": "Function starts with: $arrVal = ['']; ; $arrCap = [''];",
+    "parameters": [
+      {
+        "name": "name",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "sql_param",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "selectedValue",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "class",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "selectedClass",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "bootstrapSQLSelect(null, null, null, '', '');"
+    ],
+    "see_also": [
+      "sql",
+      "bootstrapSelect"
+    ]
+  },
+  {
+    "function_name": "isEmail",
+    "description": "Function starts with: if(preg_match('/^([*+!.&#$\u00a6\\'\\\\%\\/0-9a-z^_`{}=?~:-]+)@(([0-9a-z-]+\\.)+[0-9a-z]{2,30})$/i', $email)) ; return $email;",
+    "parameters": [
+      {
+        "name": "email",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "isEmail(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "notifyMemberApproval",
+    "description": "Function starts with: $adminConfig = config('adminConfig'); ; $memberID = strtolower($memberID);",
+    "parameters": [
+      {
+        "name": "memberID",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations.",
+    "examples_of_usage": [
+      "notifyMemberApproval(null);"
+    ],
+    "see_also": [
+      "sqlValue"
+    ]
+  },
+  {
+    "function_name": "setupMembership",
+    "description": "Function starts with: if(empty($_SESSION) || empty($_SESSION['memberID'])) return; ; /* abort if current page is one of the following exceptions */",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "setupMembership();"
+    ],
+    "see_also": [
+      "sql",
+      "configure_anonymous_group",
+      "membership_table_functions",
+      "is_ajax",
+      "configure_admin_group"
+    ]
+  },
+  {
+    "function_name": "membership_table_functions",
+    "description": "Function starts with: // returns a list of update_membership_* functions ; $arr = get_defined_functions();",
+    "parameters": [],
+    "return_value": {
+      "type": "bool",
+      "description": "Returns a literal value: (strpos($f, 'update_membership_') !== false)"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "membership_table_functions();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "configure_anonymous_group",
+    "description": "Function starts with: $eo = ['silentErrors' => true, 'noErrorQueryLog' => true]; ; $adminConfig = config('adminConfig');",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "configure_anonymous_group();"
+    ],
+    "see_also": [
+      "sql",
+      "sqlValue",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "configure_admin_group",
+    "description": "Function starts with: $eo = ['silentErrors' => true, 'noErrorQueryLog' => true]; ; $adminConfig = config('adminConfig');",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "configure_admin_group();"
+    ],
+    "see_also": [
+      "sql",
+      "sqlValue",
+      "getTableList",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "get_table_keys",
+    "description": "Function starts with: $keys = []; ; $res = sql(\"SHOW KEYS FROM `{$tn}`\", $eo);",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $keys"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration.",
+    "examples_of_usage": [
+      "get_table_keys(null);"
+    ],
+    "see_also": [
+      "sql"
+    ]
+  },
+  {
+    "function_name": "get_table_fields",
+    "description": "Function starts with: static $schema = null, $internalTables = null; ; if($schema === null) {",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      },
+      {
+        "name": "include_internal_tables",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "get_table_fields(null, false);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "updateField",
+    "description": "Function starts with: $sqlNull = $notNull ? 'NOT NULL' : 'NULL'; ; $sqlDefault = $default === null ? '' : \"DEFAULT '\" . makeSafe($default) . \"'\";",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "fn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "dataType",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "notNull",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      },
+      {
+        "name": "default_value",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      },
+      {
+        "name": "extra",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "updateField(null, null, null, false, null, null);"
+    ],
+    "see_also": [
+      "sql",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "addIndex",
+    "description": "Function starts with: // if $fields is a string, convert it to an array ; if(!is_array($fields)) $fields = [$fields];",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "fields",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "unique",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "addIndex(null, null, false);"
+    ],
+    "see_also": [
+      "sql"
+    ]
+  },
+  {
+    "function_name": "createTableIfNotExists",
+    "description": "Function starts with: $schema = get_table_fields($tn); ; if(!$schema) return false;",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "return_schema_without_executing",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "createTableIfNotExists(null, false);"
+    ],
+    "see_also": [
+      "sql",
+      "get_table_fields"
+    ]
+  },
+  {
+    "function_name": "update_membership_groups",
+    "description": "Function starts with: $tn = 'membership_groups'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_groups();"
+    ],
+    "see_also": [
+      "updateField",
+      "createTableIfNotExists",
+      "addIndex"
+    ]
+  },
+  {
+    "function_name": "update_membership_users",
+    "description": "Function starts with: $tn = 'membership_users'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_users();"
+    ],
+    "see_also": [
+      "updateField",
+      "createTableIfNotExists",
+      "addIndex"
+    ]
+  },
+  {
+    "function_name": "update_membership_userrecords",
+    "description": "Function starts with: $tn = 'membership_userrecords'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_userrecords();"
+    ],
+    "see_also": [
+      "updateField",
+      "createTableIfNotExists",
+      "addIndex"
+    ]
+  },
+  {
+    "function_name": "update_membership_grouppermissions",
+    "description": "Function starts with: $tn = 'membership_grouppermissions'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_grouppermissions();"
+    ],
+    "see_also": [
+      "createTableIfNotExists",
+      "addIndex"
+    ]
+  },
+  {
+    "function_name": "update_membership_userpermissions",
+    "description": "Function starts with: $tn = 'membership_userpermissions'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_userpermissions();"
+    ],
+    "see_also": [
+      "updateField",
+      "createTableIfNotExists",
+      "addIndex"
+    ]
+  },
+  {
+    "function_name": "update_membership_usersessions",
+    "description": "Function starts with: $tn = 'membership_usersessions'; ; // not using createTableIfNotExists() here because we need to add a composite unique index,",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations.",
+    "examples_of_usage": [
+      "update_membership_usersessions();"
+    ],
+    "see_also": [
+      "sql",
+      "createTableIfNotExists"
+    ]
+  },
+  {
+    "function_name": "update_membership_cache",
+    "description": "Function starts with: $tn = 'membership_cache'; ; createTableIfNotExists($tn);",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "update_membership_cache();"
+    ],
+    "see_also": [
+      "updateField",
+      "createTableIfNotExists"
+    ]
+  },
+  {
+    "function_name": "thisOr",
+    "description": "Function starts with: return ($this_val != '' ? $this_val : $or);",
+    "parameters": [
+      {
+        "name": "this_val",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "or_param",
+        "type": "mixed",
+        "description": "Optional. Default: '&nbsp;'.",
+        "example": "'&nbsp;'"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: ($this_val != '' ? $this_val : $or)"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "thisOr(null, '&nbsp;');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "getUploadedFile",
+    "description": "Function starts with: if(empty($_FILES) || empty($_FILES[$FieldName])) ; return 'Your php settings don\\'t allow file uploads.';",
+    "parameters": [
+      {
+        "name": "FieldName",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "MaxSize",
+        "type": "mixed",
+        "description": "Optional. Default: 0.",
+        "example": "0"
+      },
+      {
+        "name": "FileTypes",
+        "type": "mixed",
+        "description": "Optional. Default: 'csv|txt'.",
+        "example": "'csv|txt'"
+      },
+      {
+        "name": "NoRename",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      },
+      {
+        "name": "dir",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "getUploadedFile(null, 0, 'csv|txt', false, '');"
+    ],
+    "see_also": [
+      "toBytes"
+    ]
+  },
+  {
+    "function_name": "toBytes",
+    "description": "Function starts with: $val = trim($val); ; $last = strtolower($val[strlen($val) - 1]);",
+    "parameters": [
+      {
+        "name": "val",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $val"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "toBytes(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "convertLegacyOptions",
+    "description": "Function starts with: $CSVList=str_replace(';;;', ';||', $CSVList); ; $CSVList=str_replace(';;', '||', $CSVList);",
+    "parameters": [
+      {
+        "name": "CSVList",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: trim($CSVList, '|')"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "convertLegacyOptions(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "getValueGivenCaption",
+    "description": "Function starts with: if(!preg_match('/select\\s+(.*?)\\s*,\\s*(.*?)\\s+from\\s+(.*?)\\s+order by.*/i', $query, $m)) { ; if(!preg_match('/select\\s+(.*?)\\s*,\\s*(.*?)\\s+from\\s+(.*)/i', $query, $m)) {",
+    "parameters": [
+      {
+        "name": "query",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "caption",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "getValueGivenCaption(null, null);"
+    ],
+    "see_also": [
+      "sqlValue",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "time24",
+    "description": "Function starts with: if($t === false) $t = date('Y-m-d H:i:s'); // time now if $t not passed ; elseif(!$t) return ''; // empty string if $t empty",
+    "parameters": [
+      {
+        "name": "t",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "time24(false);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "time12",
+    "description": "Function starts with: if($t === false) $t = date('Y-m-d H:i:s'); // time now if $t not passed ; elseif(!$t) return ''; // empty string if $t empty",
+    "parameters": [
+      {
+        "name": "t",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "time12(false);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "normalize_path",
+    "description": "Function starts with: // Adapted from https://developer.wordpress.org/reference/functions/wp_normalize_path/ ; // Standardise all paths to use /",
+    "parameters": [
+      {
+        "name": "path",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $path"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "normalize_path(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "application_url",
+    "description": "Function starts with: if($s === false) $s = $_SERVER; ; $ssl = (",
+    "parameters": [
+      {
+        "name": "page",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      },
+      {
+        "name": "s_param",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": "Returns a literal value: \"{$http}//{$host}{$uri}{$page}\""
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "application_url('', false);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "application_uri",
+    "description": "Function starts with: $url = application_url($page); ; return trim(parse_url($url, PHP_URL_PATH), '/');",
+    "parameters": [
+      {
+        "name": "page",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: trim(parse_url($url, PHP_URL_PATH), '/')"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "application_uri('');"
+    ],
+    "see_also": [
+      "application_url"
+    ]
+  },
+  {
+    "function_name": "is_ajax",
+    "description": "Function starts with: return (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "is_ajax();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "is_allowed_username",
+    "description": "Function starts with: $username = trim(strtolower($username)); ; if(!preg_match('/^[a-z0-9][a-z0-9 _.@]{3,100}$/', $username) || preg_match('/(@@|  |\\.\\.|___)/', $username)) return false;",
+    "parameters": [
+      {
+        "name": "username",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "exception",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "is_allowed_username(null, false);"
+    ],
+    "see_also": [
+      "sqlValue"
+    ]
+  },
+  {
+    "function_name": "csrf_token",
+    "description": "Function starts with: // a long token age is better for UX with SPA and browser back/forward buttons ; // and it would expire when the session ends anyway",
+    "parameters": [
+      {
+        "name": "validate",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      },
+      {
+        "name": "token_only",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "csrf_token(false, false);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "get_plugins",
+    "description": "Function starts with: $plugins = []; ; $plugins_path = __DIR__ . '/../plugins/';",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "get_plugins();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "maintenance_mode",
+    "description": "Function starts with: $maintenance_file = __DIR__ . '/.maintenance'; ; if($new_status === true) {",
+    "parameters": [
+      {
+        "name": "new_status",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: is_file($maintenance_file)"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "maintenance_mode('');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "handle_maintenance",
+    "description": "Function starts with: if(!maintenance_mode()) return; ; global $Translation;",
+    "parameters": [
+      {
+        "name": "echo_param",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: ($echo ? '<div class=\"alert alert-danger\" style=\"margin: 5em auto -5em"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "handle_maintenance(false);"
+    ],
+    "see_also": [
+      "getLoggedAdmin",
+      "maintenance_mode"
+    ]
+  },
+  {
+    "function_name": "html_attr",
+    "description": "Function starts with: if(version_compare(PHP_VERSION, '5.2.3') >= 0) return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding, false); ; return htmlspecialchars($str, ENT_QUOTES, datalist_db_encoding);",
+    "parameters": [
+      {
+        "name": "str",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "html_attr(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "html_attr_tags_ok",
+    "description": "Function starts with: // use this instead of html_attr() if you don't want html tags to be escaped ; $new_str = html_attr($str);",
+    "parameters": [
+      {
+        "name": "str",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: str_replace(['&lt"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "html_attr_tags_ok(null);"
+    ],
+    "see_also": [
+      "html_attr"
+    ]
+  },
+  {
+    "function_name": "prepare_sql_set",
+    "description": "@brief Prepares data for a SET or WHERE clause, to be used in an INSERT/UPDATE query",
+    "parameters": [
+      {
+        "name": "set_array",
+        "type": "[in]",
+        "description": "Assoc array of field names => values",
+        "example": "null"
+      },
+      {
+        "name": "glue",
+        "type": "[in]",
+        "description": "optional glue. Set to ' AND ' or ' OR ' if preparing a WHERE clause, or to ',' (default) for a SET clause Optional. Default: ','.",
+        "example": "', '"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": "containing the prepared SET or WHERE clause"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "prepare_sql_set(null, ', ');"
+    ],
+    "see_also": [
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "insert",
+    "description": "@brief Inserts a record to the database",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "[in]",
+        "description": "table name where the record would be inserted",
+        "example": "null"
+      },
+      {
+        "name": "set_array",
+        "type": "[in]",
+        "description": "Assoc array of field names => values to be inserted",
+        "example": "null"
+      },
+      {
+        "name": "error",
+        "type": "[out]",
+        "description": "optional string containing error message if insert fails",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "boolean",
+      "description": "indicating success/failure"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "insert(null, null, '');"
+    ],
+    "see_also": [
+      "sql",
+      "prepare_sql_set"
+    ]
+  },
+  {
+    "function_name": "update",
+    "description": "@brief Updates a record in the database",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "[in]",
+        "description": "table name where the record would be updated",
+        "example": "null"
+      },
+      {
+        "name": "set_array",
+        "type": "[in]",
+        "description": "Assoc array of field names => values to be updated",
+        "example": "null"
+      },
+      {
+        "name": "where_array",
+        "type": "[in]",
+        "description": "Assoc array of field names => values used to build the WHERE clause",
+        "example": "null"
+      },
+      {
+        "name": "error",
+        "type": "[out]",
+        "description": "optional string containing error message if insert fails",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "boolean",
+      "description": "indicating success/failure"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "update(null, null, null, '');"
+    ],
+    "see_also": [
+      "sql",
+      "prepare_sql_set"
+    ]
+  },
+  {
+    "function_name": "set_record_owner",
+    "description": "@brief Set/update the owner of given record",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "[in]",
+        "description": "name of table",
+        "example": "null"
+      },
+      {
+        "name": "pk",
+        "type": "[in]",
+        "description": "primary key value",
+        "example": "null"
+      },
+      {
+        "name": "user",
+        "type": "[in]",
+        "description": "username to set as owner. If not provided (or false), update dateUpdated only Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "boolean",
+      "description": "indicating success/failure"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "set_record_owner(null, null, false);"
+    ],
+    "see_also": [
+      "sql",
+      "prepare_sql_set",
+      "update",
+      "insert",
+      "backtick_keys_once"
+    ]
+  },
+  {
+    "function_name": "app_datetime_format",
+    "description": "@brief get date/time format string for use in different cases.",
+    "parameters": [
+      {
+        "name": "destination",
+        "type": "[in]",
+        "description": "string, one of these: 'php' (see date function), 'mysql', 'moment' Optional. Default: 'php'.",
+        "example": "'php'"
+      },
+      {
+        "name": "datetime",
+        "type": "[in]",
+        "description": "string, one of these: 'd' = date, 't' = time, 'dt' = both Optional. Default: 'd'.",
+        "example": "'d'"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": ""
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "app_datetime_format('php', 'd');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "test",
+    "description": "@brief perform a test and return results",
+    "parameters": [
+      {
+        "name": "subject",
+        "type": "[in]",
+        "description": "string used as title of test",
+        "example": "null"
+      },
+      {
+        "name": "test_param",
+        "type": "[in]",
+        "description": "callable function containing the test to be performed, should return true on success, false or a log string on error",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "test",
+      "description": "result"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "test(null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "invoke_method",
+    "description": "@brief invoke a method of an object -- useful to call private/protected methods",
+    "parameters": [
+      {
+        "name": "object",
+        "type": "[in]",
+        "description": "instance of object containing the method",
+        "example": "null"
+      },
+      {
+        "name": "methodName",
+        "type": "[in]",
+        "description": "string name of method to invoke",
+        "example": "null"
+      },
+      {
+        "name": "parameters",
+        "type": "array",
+        "description": "array of parameters to pass to the method Optional. Default: [].",
+        "example": "[]"
+      }
+    ],
+    "return_value": {
+      "type": "the",
+      "description": "returned value from the invoked method"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "invoke_method(null, null, []);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "get_property",
+    "description": "@brief retrieve the value of a property of an object -- useful to retrieve private/protected props",
+    "parameters": [
+      {
+        "name": "object",
+        "type": "[in]",
+        "description": "instance of object containing the method",
+        "example": "null"
+      },
+      {
+        "name": "propName",
+        "type": "[in]",
+        "description": "string name of property to retrieve",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "the",
+      "description": "returned value of the given property, or null if property doesn't exist"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "get_property(null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "invoke_static_method",
+    "description": "@brief invoke a method of a static class -- useful to call private/protected methods",
+    "parameters": [
+      {
+        "name": "class_param",
+        "type": "[in]",
+        "description": "string name of the class containing the method",
+        "example": "null"
+      },
+      {
+        "name": "methodName",
+        "type": "[in]",
+        "description": "string name of method to invoke",
+        "example": "null"
+      },
+      {
+        "name": "parameters",
+        "type": "array",
+        "description": "array of parameters to pass to the method Optional. Default: [].",
+        "example": "[]"
+      }
+    ],
+    "return_value": {
+      "type": "the",
+      "description": "returned value from the invoked method"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "invoke_static_method(null, null, []);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "mysql_datetime",
+    "description": "Function starts with: $app_datetime = trim($app_datetime); ; if($date_format === null) $date_format = app_datetime_format('php', 'd');",
+    "parameters": [
+      {
+        "name": "app_datetime_param",
+        "type": "[in]",
+        "description": "string, a datetime formatted in app-specific format",
+        "example": "null"
+      },
+      {
+        "name": "date_format",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      },
+      {
+        "name": "time_format",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "string,",
+      "description": "mysql-formatted datetime, 'yyyy-mm-dd H:i:s', or empty string on error"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "mysql_datetime(null, null, null);"
+    ],
+    "see_also": [
+      "app_datetime_format"
+    ]
+  },
+  {
+    "function_name": "app_datetime",
+    "description": "Function starts with: $pyear = $myear = substr($mysql_datetime, 0, 4); ; // if date is 0 (0000-00-00) return empty string",
+    "parameters": [
+      {
+        "name": "mysql_datetime_param",
+        "type": "[in]",
+        "description": "string, Mysql-formatted datetime",
+        "example": "null"
+      },
+      {
+        "name": "datetime_param",
+        "type": "[in]",
+        "description": "string, one of these: 'd' = date, 't' = time, 'dt' = both Optional. Default: 'd'.",
+        "example": "'d'"
+      }
+    ],
+    "return_value": {
+      "type": "string,",
+      "description": "app-formatted datetime, or empty string on error"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "app_datetime(null, 'd');"
+    ],
+    "see_also": [
+      "app_datetime_format"
+    ]
+  },
+  {
+    "function_name": "to_utf8",
+    "description": "converts string from app-configured encoding to utf8",
+    "parameters": [
+      {
+        "name": "str",
+        "type": "[in]",
+        "description": "string to convert to utf8",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "utf8-encoded",
+      "description": "string"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "to_utf8(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "from_utf8",
+    "description": "converts string from utf8 to app-configured encoding",
+    "parameters": [
+      {
+        "name": "str",
+        "type": "[in]",
+        "description": "string to convert from utf8",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": "utf8-decoded string"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "from_utf8(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "array_trim",
+    "description": "/* deep trimmer function",
+    "parameters": [
+      {
+        "name": "arr",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "array_trim(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "request_outside_admin_folder",
+    "description": "Function starts with: return (realpath(__DIR__) != realpath(dirname($_SERVER['SCRIPT_FILENAME'])));",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: (realpath(__DIR__) != realpath(dirname($_SERVER['SCRIPT_FILENAME'])))"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "request_outside_admin_folder();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "get_parent_tables",
+    "description": "Function starts with: /* parents array: ; * 'child table' => [parents], ...",
+    "parameters": [
+      {
+        "name": "table",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: isset($parents[$table]) ? $parents[$table] : []"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "get_parent_tables(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "backtick_keys_once",
+    "description": "Function starts with: return array_combine( ; /* add backticks to keys */",
+    "parameters": [
+      {
+        "name": "arr_data",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "string",
+      "description": "Returns a literal value: '`' . trim($e, '`') . '`'"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "backtick_keys_once(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "calculated_fields",
+    "description": "Function starts with: /* ; * calculated fields configuration array, $calc:",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "calculated_fields();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "update_calc_fields",
+    "description": "Function starts with: if($mi === false) $mi = getMemberInfo(); ; $pk = getPKFieldName($table);",
+    "parameters": [
+      {
+        "name": "table",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "id",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "formulas",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "mi",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $caluclations_made"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "update_calc_fields(null, null, null, false);"
+    ],
+    "see_also": [
+      "sql",
+      "sqlValue",
+      "getPKFieldName",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "existing_value",
+    "description": "Function starts with: /* cache results in records[tablename][id] */ ; static $record = [];",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "fn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "id",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "cache",
+        "type": "mixed",
+        "description": "Optional. Default: true.",
+        "example": "true"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "existing_value(null, null, null, true);"
+    ],
+    "see_also": [
+      "getRecord"
+    ]
+  },
+  {
+    "function_name": "checkAppRequirements",
+    "description": "Function starts with: global $Translation; ; $reqErrors = [];",
+    "parameters": [],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "checkAppRequirements();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "getRecord",
+    "description": "Function starts with: // get PK fieldname ; if(!$pk = getPKFieldName($table)) return false;",
+    "parameters": [
+      {
+        "name": "table",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "id",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "getRecord(null, null);"
+    ],
+    "see_also": [
+      "sql",
+      "getPKFieldName",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "guessMySQLDateTime",
+    "description": "Function starts with: // extract date and time, assuming a space separator ; list($date, $time, $ampm) = preg_split('/\\s+/', trim($dt));",
+    "parameters": [
+      {
+        "name": "dt",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "guessMySQLDateTime(null);"
+    ],
+    "see_also": [
+      "mysql_datetime",
+      "time12",
+      "time24"
+    ]
+  },
+  {
+    "function_name": "lookupQuery",
+    "description": "Function starts with: /* ; This is the query accessible from the 'Advanced' window under the 'Lookup field' tab in AppGini.",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "lookupField",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns the result of: $lookupQuery[$tn][$lookupField]"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "lookupQuery(null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "pkGivenLookupText",
+    "description": "Function starts with: static $cache = []; ; if(isset($cache[$tn][$lookupField][$val])) return $cache[$tn][$lookupField][$val];",
+    "parameters": [
+      {
+        "name": "val",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "tn",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "lookupField_param",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "falseIfNotFound",
+        "type": "mixed",
+        "description": "Optional. Default: false.",
+        "example": "false"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "pkGivenLookupText(null, null, null, false);"
+    ],
+    "see_also": [
+      "sqlValue",
+      "lookupQuery",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "userCanImport",
+    "description": "Function starts with: $mi = getMemberInfo(); ; $safeUser = makeSafe($mi['username']);",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "userCanImport();"
+    ],
+    "see_also": [
+      "sqlValue",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "parseTemplate",
+    "description": "Function starts with: if(trim($template) == '') return $template; ; global $Translation;",
+    "parameters": [
+      {
+        "name": "template",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "parseTemplate(null);"
+    ],
+    "see_also": [
+      "getUploadDir"
+    ]
+  },
+  {
+    "function_name": "getUploadDir",
+    "description": "Function starts with: if($dir == '') $dir = config('adminConfig')['baseUploadPath']; ; return rtrim($dir, '\\\\/') . DIRECTORY_SEPARATOR;",
+    "parameters": [
+      {
+        "name": "dir_param",
+        "type": "mixed",
+        "description": "Optional. Default: ''.",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: rtrim($dir, '\\\\/') . DIRECTORY_SEPARATOR"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "getUploadDir('');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "bgStyleToClass",
+    "description": "Function starts with: return preg_replace( ; '/ style=\"background-color: rgb\\((\\d+), (\\d+), (\\d+)\\);\"/',",
+    "parameters": [
+      {
+        "name": "html",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "bgStyleToClass(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "assocArrFilter",
+    "description": "Function starts with: if(!is_array($arr) || !count($arr)) return $arr; ; if(!is_callable($func)) return false;",
+    "parameters": [
+      {
+        "name": "arr",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "func",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "assocArrFilter(null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "setUserData",
+    "description": "Function starts with: $data = []; ; $user = makeSafe(getMemberInfo()['username']);",
+    "parameters": [
+      {
+        "name": "key",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "value",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "bool",
+      "description": "Returns a literal value: false"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "setUserData(null, null);"
+    ],
+    "see_also": [
+      "sqlValue",
+      "update",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "getUserData",
+    "description": "Function starts with: $user = makeSafe(getMemberInfo()['username']); ; if(!$user) return null;",
+    "parameters": [
+      {
+        "name": "key",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns different values based on conditions."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "getUserData(null);"
+    ],
+    "see_also": [
+      "sqlValue",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "breakpoint",
+    "description": "Function starts with: if(!DEBUG_MODE) return; ; if(strpos($_SERVER['PHP_SELF'], 'ajax_check_login.php') !== false) return;",
+    "parameters": [
+      {
+        "name": "file",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "line",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      },
+      {
+        "name": "msg",
+        "type": "mixed",
+        "description": "",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "breakpoint(null, null, null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "denyAccess",
+    "description": "Function starts with: @header($_SERVER['SERVER_PROTOCOL'] . ' 403 Access Denied'); ; die($msg);",
+    "parameters": [
+      {
+        "name": "msg",
+        "type": "mixed",
+        "description": "Optional. Default: null.",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "denyAccess(null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "is_xhr",
+    "description": "Function starts with: return (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');",
+    "parameters": [],
+    "return_value": {
+      "type": "mixed",
+      "description": "Returns a literal value: (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "is_xhr();"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "json_response",
+    "description": "send a json response to the client and terminate",
+    "parameters": [
+      {
+        "name": "dataOrMsg",
+        "type": "[in]",
+        "description": "mixed, either an array of data to send, or a string error message",
+        "example": "null"
+      },
+      {
+        "name": "isError",
+        "type": "[in]",
+        "description": "bool, true if $dataOrMsg is an error message, false if it's data Optional. Default: false.",
+        "example": "false"
+      },
+      {
+        "name": "errorStatusCode",
+        "type": "[in]",
+        "description": "int, HTTP status code to send Optional. Default: 400.",
+        "example": "400"
+      }
+    ],
+    "return_value": {
+      "type": "void",
+      "description": "This function does not return a value."
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "json_response(null, false, 400);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "httpRequest",
+    "description": "Check if a string is alphanumeric.\nWe're defining it here in case it's not defined by some PHP installations.\nIt's reuired by PHPMailer.\n\nPerform an HTTP request and return the response, including headers and body, with support to cookies",
+    "parameters": [
+      {
+        "name": "url",
+        "type": "string",
+        "description": "URL to request",
+        "example": "''"
+      },
+      {
+        "name": "payload",
+        "type": "array",
+        "description": "payload to send with the request Optional. Default: [].",
+        "example": "[]"
+      },
+      {
+        "name": "headers",
+        "type": "array",
+        "description": "headers to send with the request, in the format ['header' => 'value'] Optional. Default: [].",
+        "example": "[]"
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "request type, either 'GET' or 'POST' Optional. Default: 'GET'.",
+        "example": "'GET'"
+      },
+      {
+        "name": "cookieJar",
+        "type": "string",
+        "description": "path to a file to read/store cookies in Optional. Default: null.",
+        "example": "null"
+      }
+    ],
+    "return_value": {
+      "type": "array",
+      "description": "response, including `'headers'` and `'body'`, or error info if request failed"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Contains loop(s) for iteration. Uses conditional logic.",
+    "examples_of_usage": [
+      "httpRequest('', [], [], 'GET', null);"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "getRecordOwner",
+    "description": "Retrieve owner username of the record with the given primary key value",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "string",
+        "description": "table name",
+        "example": "''"
+      },
+      {
+        "name": "pkValue",
+        "type": "string",
+        "description": "primary key value",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "string|null",
+      "description": "username of the record owner, or null if not found"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code. Involves database operations. Uses conditional logic.",
+    "examples_of_usage": [
+      "getRecordOwner('', '');"
+    ],
+    "see_also": [
+      "sqlValue",
+      "makeSafe"
+    ]
+  },
+  {
+    "function_name": "tableRecordOwner",
+    "description": "Retrieve lookup field name that determines record owner of the given table",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "string",
+        "description": "table name",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "string|null",
+      "description": "lookup field name, or null if default (record owner is user that creates the record)"
+    },
+    "how_it_works": "A relatively short function. Details about internal logic are inferred from the code.",
+    "examples_of_usage": [
+      "tableRecordOwner('');"
+    ],
+    "see_also": []
+  },
+  {
+    "function_name": "notNullFields",
+    "description": "Retrieve not-nullable fields of the given table",
+    "parameters": [
+      {
+        "name": "tn",
+        "type": "string",
+        "description": "table name",
+        "example": "''"
+      }
+    ],
+    "return_value": {
+      "type": "array",
+      "description": "list of not-nullable fields"
+    },
+    "how_it_works": "Details about internal logic are inferred from the code. Uses conditional logic.",
+    "examples_of_usage": [
+      "notNullFields('');"
+    ],
+    "see_also": [
+      "get_table_fields"
+    ]
+  }
+]

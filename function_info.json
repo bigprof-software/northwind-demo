@@ -1,0 +1,662 @@
+[
+  {
+    "name": "set_headers",
+    "start_line": 88,
+    "end_line": 92,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "get_tables_info",
+    "start_line": 94,
+    "end_line": 175,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getTableList",
+    "start_line": 177,
+    "end_line": 222,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "getThumbnailSpecs",
+    "start_line": 224,
+    "end_line": 232,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "createThumbnail",
+    "start_line": 240,
+    "end_line": 242,
+    "comment": "/** Alias for `Thumbnail::create()`. Create a thumbnail of an image. The thumbnail is saved in the same directory as the original image, with the same name, suffixed with `$specs['identifier']`\n\t * @param string $img - path to image file\n\t * @param array $specs - array with thumbnail specs as returned by getThumbnailSpecs()\n\t * @return bool - true on success, false on failure*/"
+  },
+  {
+    "name": "formatUri",
+    "start_line": 244,
+    "end_line": 247,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "makeSafe",
+    "start_line": 249,
+    "end_line": 265,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "checkPermissionVal",
+    "start_line": 267,
+    "end_line": 276,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "dieErrorPage",
+    "start_line": 278,
+    "end_line": 297,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "openDBConnection",
+    "start_line": 299,
+    "end_line": 338,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "sql",
+    "start_line": 340,
+    "end_line": 389,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "logSlowQuery",
+    "start_line": 391,
+    "end_line": 416,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "logErrorQuery",
+    "start_line": 418,
+    "end_line": 443,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "stripParams",
+    "start_line": 452,
+    "end_line": 480,
+    "comment": "/** Strip specified parameters from a URL\n\t * @param string $uri - the URL to strip parameters from, could be a full URL or just a URI\n\t * @param array $paramsToRemove - an array of parameter names to remove\n\t * @return string - the URL with specified parameters removed*/"
+  },
+  {
+    "name": "createQueryLogTable",
+    "start_line": 482,
+    "end_line": 490,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "sqlValue",
+    "start_line": 493,
+    "end_line": 499,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getLoggedAdmin",
+    "start_line": 501,
+    "end_line": 503,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "initSession",
+    "start_line": 505,
+    "end_line": 507,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "jwt_key",
+    "start_line": 509,
+    "end_line": 512,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "jwt_token",
+    "start_line": 514,
+    "end_line": 525,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "jwt_header",
+    "start_line": 527,
+    "end_line": 552,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "jwt_check_login",
+    "start_line": 554,
+    "end_line": 574,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "curl_insert_handler",
+    "start_line": 576,
+    "end_line": 617,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "curl_batch",
+    "start_line": 619,
+    "end_line": 639,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "logOutUser",
+    "start_line": 641,
+    "end_line": 643,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getPKFieldName",
+    "start_line": 645,
+    "end_line": 658,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getCSVData",
+    "start_line": 660,
+    "end_line": 677,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "errorMsg",
+    "start_line": 679,
+    "end_line": 681,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "redirect",
+    "start_line": 683,
+    "end_line": 694,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "htmlRadioGroup",
+    "start_line": 696,
+    "end_line": 721,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "htmlSelect",
+    "start_line": 723,
+    "end_line": 735,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "htmlSQLSelect",
+    "start_line": 737,
+    "end_line": 749,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "bootstrapSelect",
+    "start_line": 751,
+    "end_line": 765,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "bootstrapSQLSelect",
+    "start_line": 767,
+    "end_line": 780,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "isEmail",
+    "start_line": 782,
+    "end_line": 787,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "notifyMemberApproval",
+    "start_line": 789,
+    "end_line": 801,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "setupMembership",
+    "start_line": 803,
+    "end_line": 842,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "membership_table_functions",
+    "start_line": 844,
+    "end_line": 850,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "configure_anonymous_group",
+    "start_line": 852,
+    "end_line": 887,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "configure_admin_group",
+    "start_line": 889,
+    "end_line": 932,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "get_table_keys",
+    "start_line": 934,
+    "end_line": 941,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "get_table_fields",
+    "start_line": 943,
+    "end_line": 1684,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "updateField",
+    "start_line": 1686,
+    "end_line": 1713,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "addIndex",
+    "start_line": 1716,
+    "end_line": 1784,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "createTableIfNotExists",
+    "start_line": 1787,
+    "end_line": 1802,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_groups",
+    "start_line": 1805,
+    "end_line": 1812,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_users",
+    "start_line": 1814,
+    "end_line": 1826,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_userrecords",
+    "start_line": 1828,
+    "end_line": 1838,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_grouppermissions",
+    "start_line": 1840,
+    "end_line": 1845,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_userpermissions",
+    "start_line": 1847,
+    "end_line": 1853,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_usersessions",
+    "start_line": 1855,
+    "end_line": 1873,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "update_membership_cache",
+    "start_line": 1875,
+    "end_line": 1880,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "thisOr",
+    "start_line": 1882,
+    "end_line": 1884,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getUploadedFile",
+    "start_line": 1886,
+    "end_line": 1925,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "toBytes",
+    "start_line": 1927,
+    "end_line": 1942,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "convertLegacyOptions",
+    "start_line": 1944,
+    "end_line": 1948,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "getValueGivenCaption",
+    "start_line": 1950,
+    "end_line": 1967,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "time24",
+    "start_line": 1969,
+    "end_line": 1973,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "time12",
+    "start_line": 1975,
+    "end_line": 1979,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "normalize_path",
+    "start_line": 1981,
+    "end_line": 1996,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "application_url",
+    "start_line": 1998,
+    "end_line": 2022,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "application_uri",
+    "start_line": 2024,
+    "end_line": 2027,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "is_ajax",
+    "start_line": 2029,
+    "end_line": 2031,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "is_allowed_username",
+    "start_line": 2033,
+    "end_line": 2041,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "csrf_token",
+    "start_line": 2056,
+    "end_line": 2085,
+    "comment": ""
+  },
+  {
+    "name": "get_plugins",
+    "start_line": 2087,
+    "end_line": 2106,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "maintenance_mode",
+    "start_line": 2108,
+    "end_line": 2121,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "handle_maintenance",
+    "start_line": 2123,
+    "end_line": 2137,
+    "comment": "########################################################################"
+  },
+  {
+    "name": "html_attr",
+    "start_line": 2139,
+    "end_line": 2142,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "html_attr_tags_ok",
+    "start_line": 2144,
+    "end_line": 2148,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "prepare_sql_set",
+    "start_line": 2419,
+    "end_line": 2434,
+    "comment": "/**  @brief Notification::show($options) displays a notification\n\t\t *  \n\t\t *  @param $options assoc array\n\t\t *  \n\t\t *  @return html code for displaying the notifcation\n\t\t */\n\t\tpublic static function show($options = []) {\n\t\t\tself::default_options($options);\n\n\t\t\tob_start();\n\t\t\t?>\n\t\t\t<script>\n\t\t\t\t$j(function() {\n\t\t\t\t\tshow_notification(<?php echo json_encode($options); ?>);\n\t\t\t\t})\n\t\t\t</script>\n\t\t\t<?php\n\n\t\t\treturn ob_get_clean();\n\t\t}\n\t}\n\t#########################################################\n\tfunction addMailRecipients(&$pm, $recipients, $type = 'to') {\n\t\tif(empty($recipients)) return;\n\n\t\t$func = [];\n\n\t\tswitch(strtolower($type)) {\n\t\t\tcase 'cc':\n\t\t\t\t$func = [$pm, 'addCC'];\n\t\t\t\tbreak;\n\t\t\tcase 'bcc':\n\t\t\t\t$func = [$pm, 'addBCC'];\n\t\t\t\tbreak;\n\t\t\tcase 'to':\n\t\t\tdefault:\n\t\t\t\t$func = [$pm, 'addAddress'];\n\t\t\t\tbreak;\n\t\t}\n\n\t\t// if recipients is a str, arrayify it!\n\t\tif(is_string($recipients)) $recipients = [[$recipients]];\n\t\tif(!is_array($recipients)) return;\n\n\t\t// if recipients is an array, loop thru and add emails/names\n\t\tforeach ($recipients as $rcpt) {\n\t\t\t// if rcpt is string, add as email\n\t\t\tif(is_string($rcpt) && isEmail($rcpt))\n\t\t\t\tcall_user_func_array($func, [$rcpt]);\n\n\t\t\t// else if rcpt is array [email, name], or just [email]\n\t\t\telseif(is_array($rcpt) && isEmail($rcpt[0]))\n\t\t\t\tcall_user_func_array($func, [$rcpt[0], empty($rcpt[1]) ? '' : $rcpt[1]]);\n\t\t}\n\t}\n\t#########################################################\n\tfunction sendmail($mail) {\n\t\tif(empty($mail['to'])) return 'No recipient defined';\n\n\t\t// convert legacy 'to' and 'name' to new format [[to, name]]\n\t\tif(is_string($mail['to']))\n\t\t\t$mail['to'] = [\n\t\t\t\t[\n\t\t\t\t\t$mail['to'], \n\t\t\t\t\tempty($mail['name']) ? '' : $mail['name']\n\t\t\t\t]\n\t\t\t];\n\n\t\tif(!isEmail($mail['to'][0][0])) return 'Invalid recipient email';\n\n\t\t$cfg = config('adminConfig');\n\t\t$smtp = ($cfg['mail_function'] == 'smtp');\n\n\t\t$pm = new PHPMailer\\PHPMailer\\PHPMailer;\n\t\t$pm->CharSet = datalist_db_encoding;\n\n\t\tif($smtp) {\n\t\t\t$pm->isSMTP();\n\t\t\t$pm->SMTPDebug = isset($mail['debug']) ? min(4, max(0, intval($mail['debug']))) : 0;\n\t\t\t$pm->Debugoutput = 'html';\n\t\t\t$pm->Host = $cfg['smtp_server'];\n\t\t\t$pm->Port = $cfg['smtp_port'];\n\t\t\t$pm->SMTPAuth = !empty($cfg['smtp_user']) || !empty($cfg['smtp_pass']);\n\t\t\t$pm->SMTPSecure = $cfg['smtp_encryption'];\n\t\t\t$pm->SMTPAutoTLS = $cfg['smtp_encryption'] ? true : false;\n\t\t\t$pm->Username = $cfg['smtp_user'];\n\t\t\t$pm->Password = $cfg['smtp_pass'];\n\t\t}\n\n\t\t$pm->setFrom($cfg['senderEmail'], $cfg['senderName']);\n\t\t$pm->Subject = isset($mail['subject']) ? $mail['subject'] : '';\n\n\t\t// handle recipients\n\t\taddMailRecipients($pm, $mail['to']);\n\t\tif(!empty($mail['cc'])) addMailRecipients($pm, $mail['cc'], 'cc');\n\t\tif(!empty($mail['bcc'])) addMailRecipients($pm, $mail['bcc'], 'bcc');\n\n\t\t/* if message already contains html tags, don't apply nl2br */\n\t\t$mail['message'] = isset($mail['message']) ? $mail['message'] : '';\n\t\tif($mail['message'] == strip_tags($mail['message']))\n\t\t\t$mail['message'] = nl2br($mail['message']);\n\n\t\t$pm->msgHTML($mail['message'], realpath(__DIR__ . '/..'));\n\n\t\t/*\n\t\t * pass 'tag' as-is if provided in $mail .. \n\t\t * this is useful for passing any desired values to sendmail_handler\n\t\t */\n\t\tif(!empty($mail['tag'])) $pm->tag = $mail['tag'];\n\n\t\t/* if sendmail_handler(&$pm) is defined (in hooks/__global.php) */\n\t\tif(function_exists('sendmail_handler')) sendmail_handler($pm);\n\n\t\tif(!$pm->send()) return $pm->ErrorInfo;\n\n\t\treturn true;\n\t}\n\t#########################################################\n\tfunction safe_html($str, $preserveNewLines = false) {\n\t\t/* if $str has no HTML tags, apply nl2br */\n\t\tif($str == strip_tags($str)) return $preserveNewLines ? $str : nl2br($str);\n\n\t\t$hc = new CI_Input(datalist_db_encoding);\n\t\t$str = $hc->xss_clean(bgStyleToClass($str));\n\n\t\t// sandbox iframes if they aren't already\n\t\t$str = preg_replace('/(<|&lt;)iframe(\\s+sandbox)*(.*?)(>|&gt;)/i', '$1iframe sandbox$3$4', $str);\n\n\t\treturn $str;\n\t}\n\t#########################################################\n\tfunction getLoggedGroupID() {\n\t\treturn Authentication::getLoggedGroupId();\n\t}\n\t#########################################################\n\tfunction getLoggedMemberID() {\n\t\t$u = Authentication::getUser();\n\t\treturn $u ? $u['username'] : false;\n\t}\n\t#########################################################\n\tfunction setAnonymousAccess() {\n\t\treturn Authentication::setAnonymousAccess();\n\t}\n\t#########################################################\n\tfunction getMemberInfo($memberID = null) {\n\t\tif($memberID === null) {\n\t\t\t$u = Authentication::getUser();\n\t\t\tif(!$u) return [];\n\n\t\t\t$memberID = $u['username'];\n\t\t}\n\n\t\treturn Authentication::getMemberInfo($memberID);\n\t}\n\t#########################################################\n\tfunction get_group_id($user = null) {\n\t\t$mi = getMemberInfo($user);\n\t\treturn $mi['groupID'];\n\t}\n\t#########################################################\n\t/**\n\t *  @brief Prepares data for a SET or WHERE clause, to be used in an INSERT/UPDATE query\n\t *  \n\t *  @param [in] $set_array Assoc array of field names => values\n\t *  @param [in] $glue optional glue. Set to ' AND ' or ' OR ' if preparing a WHERE clause, or to ',' (default) for a SET clause\n\t *  @return string containing the prepared SET or WHERE clause*/"
+  },
+  {
+    "name": "insert",
+    "start_line": 2444,
+    "end_line": 2454,
+    "comment": "/**  @brief Inserts a record to the database\n\t *  \n\t *  @param [in] $tn table name where the record would be inserted\n\t *  @param [in] $set_array Assoc array of field names => values to be inserted\n\t *  @param [out] $error optional string containing error message if insert fails\n\t *  @return boolean indicating success/failure*/"
+  },
+  {
+    "name": "update",
+    "start_line": 2465,
+    "end_line": 2478,
+    "comment": "/**  @brief Updates a record in the database\n\t *  \n\t *  @param [in] $tn table name where the record would be updated\n\t *  @param [in] $set_array Assoc array of field names => values to be updated\n\t *  @param [in] $where_array Assoc array of field names => values used to build the WHERE clause\n\t *  @param [out] $error optional string containing error message if insert fails\n\t *  @return boolean indicating success/failure*/"
+  },
+  {
+    "name": "set_record_owner",
+    "start_line": 2488,
+    "end_line": 2516,
+    "comment": "/**  @brief Set/update the owner of given record\n\t *  \n\t *  @param [in] $tn name of table\n\t *  @param [in] $pk primary key value\n\t *  @param [in] $user username to set as owner. If not provided (or false), update dateUpdated only\n\t *  @return boolean indicating success/failure*/"
+  },
+  {
+    "name": "app_datetime_format",
+    "start_line": 2525,
+    "end_line": 2548,
+    "comment": "/**  @brief get date/time format string for use in different cases.\n\t *  \n\t *  @param [in] $destination string, one of these: 'php' (see date function), 'mysql', 'moment'\n\t *  @param [in] $datetime string, one of these: 'd' = date, 't' = time, 'dt' = both\n\t *  @return string*/"
+  },
+  {
+    "name": "test",
+    "start_line": 2557,
+    "end_line": 2569,
+    "comment": "/**  @brief perform a test and return results\n\t *  \n\t *  @param [in] $subject string used as title of test\n\t *  @param [in] $test callable function containing the test to be performed, should return true on success, false or a log string on error\n\t *  @return test result*/"
+  },
+  {
+    "name": "invoke_method",
+    "start_line": 2579,
+    "end_line": 2585,
+    "comment": "/**  @brief invoke a method of an object -- useful to call private/protected methods\n\t *  \n\t *  @param [in] $object instance of object containing the method\n\t *  @param [in] $methodName string name of method to invoke\n\t *  @param [in] $parameters array of parameters to pass to the method\n\t *  @return the returned value from the invoked method*/"
+  },
+  {
+    "name": "get_property",
+    "start_line": 2594,
+    "end_line": 2605,
+    "comment": "/**  @brief retrieve the value of a property of an object -- useful to retrieve private/protected props\n\t *  \n\t *  @param [in] $object instance of object containing the method\n\t *  @param [in] $propName string name of property to retrieve\n\t *  @return the returned value of the given property, or null if property doesn't exist*/"
+  },
+  {
+    "name": "invoke_static_method",
+    "start_line": 2616,
+    "end_line": 2622,
+    "comment": "/**  @brief invoke a method of a static class -- useful to call private/protected methods\n\t *  \n\t *  @param [in] $class string name of the class containing the method\n\t *  @param [in] $methodName string name of method to invoke\n\t *  @param [in] $parameters array of parameters to pass to the method\n\t *  @return the returned value from the invoked method*/"
+  },
+  {
+    "name": "mysql_datetime",
+    "start_line": 2628,
+    "end_line": 2683,
+    "comment": "/**  @param [in] $app_datetime string, a datetime formatted in app-specific format\n\t *  @return string, mysql-formatted datetime, 'yyyy-mm-dd H:i:s', or empty string on error*/"
+  },
+  {
+    "name": "app_datetime",
+    "start_line": 2692,
+    "end_line": 2708,
+    "comment": "/**  @param [in] $mysql_datetime string, Mysql-formatted datetime\n\t *  @param [in] $datetime string, one of these: 'd' = date, 't' = time, 'dt' = both\n\t *  @return string, app-formatted datetime, or empty string on error\n\t *  \n\t *  @details works for formatting date, time and datetime, based on 2nd param*/"
+  },
+  {
+    "name": "to_utf8",
+    "start_line": 2718,
+    "end_line": 2722,
+    "comment": "/**  @brief converts string from app-configured encoding to utf8\n\t *  \n\t *  @param [in] $str string to convert to utf8\n\t *  @return utf8-encoded string\n\t *  \n\t *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned*/"
+  },
+  {
+    "name": "from_utf8",
+    "start_line": 2732,
+    "end_line": 2737,
+    "comment": "/**  @brief converts string from utf8 to app-configured encoding\n\t *  \n\t *  @param [in] $str string to convert from utf8\n\t *  @return string utf8-decoded string\n\t *  \n\t *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned*/"
+  },
+  {
+    "name": "array_trim",
+    "start_line": 2740,
+    "end_line": 2743,
+    "comment": "/* deep trimmer function */"
+  },
+  {
+    "name": "request_outside_admin_folder",
+    "start_line": 2745,
+    "end_line": 2747,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "get_parent_tables",
+    "start_line": 2749,
+    "end_line": 2775,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "backtick_keys_once",
+    "start_line": 2777,
+    "end_line": 2787,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "calculated_fields",
+    "start_line": 2789,
+    "end_line": 2835,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "update_calc_fields",
+    "start_line": 2837,
+    "end_line": 2874,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "existing_value",
+    "start_line": 2876,
+    "end_line": 2883,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "checkAppRequirements",
+    "start_line": 2885,
+    "end_line": 2919,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "getRecord",
+    "start_line": 2921,
+    "end_line": 2929,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "guessMySQLDateTime",
+    "start_line": 2931,
+    "end_line": 2948,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "lookupQuery",
+    "start_line": 2950,
+    "end_line": 2993,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "pkGivenLookupText",
+    "start_line": 2996,
+    "end_line": 3038,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "userCanImport",
+    "start_line": 3040,
+    "end_line": 3058,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "parseTemplate",
+    "start_line": 3060,
+    "end_line": 3078,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "getUploadDir",
+    "start_line": 3080,
+    "end_line": 3084,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "bgStyleToClass",
+    "start_line": 3086,
+    "end_line": 3092,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "assocArrFilter",
+    "start_line": 3094,
+    "end_line": 3104,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "setUserData",
+    "start_line": 3106,
+    "end_line": 3125,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "getUserData",
+    "start_line": 3127,
+    "end_line": 3140,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "breakpoint",
+    "start_line": 3146,
+    "end_line": 3174,
+    "comment": ""
+  },
+  {
+    "name": "denyAccess",
+    "start_line": 3176,
+    "end_line": 3179,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "is_xhr",
+    "start_line": 3181,
+    "end_line": 3183,
+    "comment": "#########################################################"
+  },
+  {
+    "name": "json_response",
+    "start_line": 3197,
+    "end_line": 3214,
+    "comment": "/** @brief send a json response to the client and terminate\n\t * \n\t * @param [in] $dataOrMsg mixed, either an array of data to send, or a string error message\n\t * @param [in] $isError bool, true if $dataOrMsg is an error message, false if it's data\n\t * @param [in] $errorStatusCode int, HTTP status code to send\n\t * \n\t * @details if $isError is true, $dataOrMsg is assumed to be an error message and $errorStatusCode is sent as the HTTP status code\n\t *     example error response: `{\"status\":\"error\",\"message\":\"Access denied\"}`\n\t *     if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored\n\t *     example success response: `{\"status\":\"success\",\"data\":{\"id\":1,\"name\":\"John Doe\"}}`*/"
+  },
+  {
+    "name": "httpRequest",
+    "start_line": 3241,
+    "end_line": 3302,
+    "comment": "/** @brief Check if a string is alphanumeric.\n\t *        We're defining it here in case it's not defined by some PHP installations.\n\t *        It's reuired by PHPMailer.\n\t *  \n\t * @param [in] $str string to check\n\t * @return bool, true if $str is alphanumeric, false otherwise\n\t */\n\tif(!function_exists('ctype_alnum')) {\n\t\tfunction ctype_alnum($str) {\n\t\t\treturn preg_match('/^[a-zA-Z0-9]+$/', $str);\n\t\t}\n\t}\n\n\t/**\n\t * Perform an HTTP request and return the response, including headers and body, with support to cookies\n\t * \n\t * @param string $url  URL to request\n\t * @param array $payload  payload to send with the request\n\t * @param array $headers  headers to send with the request, in the format ['header' => 'value']\n\t * @param string $type  request type, either 'GET' or 'POST'\n\t * @param string $cookieJar  path to a file to read/store cookies in\n\t * \n\t * @return array  response, including `'headers'` and `'body'`, or error info if request failed*/"
+  },
+  {
+    "name": "getRecordOwner",
+    "start_line": 3311,
+    "end_line": 3318,
+    "comment": "/** @brief Retrieve owner username of the record with the given primary key value\n\t * \n\t * @param $tn string table name\n\t * @param $pkValue string primary key value\n\t * @return string|null username of the record owner, or null if not found*/"
+  },
+  {
+    "name": "tableRecordOwner",
+    "start_line": 3326,
+    "end_line": 3331,
+    "comment": "/** @brief Retrieve lookup field name that determines record owner of the given table\n\t * \n\t * @param $tn string table name\n\t * @return string|null lookup field name, or null if default (record owner is user that creates the record)*/"
+  },
+  {
+    "name": "notNullFields",
+    "start_line": 3339,
+    "end_line": 3353,
+    "comment": "/** @brief Retrieve not-nullable fields of the given table\n\t * \n\t * @param $tn string table name\n\t * @return array list of not-nullable fields*/"
+  }
+]
