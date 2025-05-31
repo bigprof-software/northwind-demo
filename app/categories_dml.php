@@ -77,7 +77,7 @@ function categories_delete($selected_id, $AllowDeleteOfParents = false, $skipChe
 			return $Translation['Couldn\'t delete this record'] . (
 				!empty($args['error_message']) ?
 					'<div class="text-bold">' . strip_tags($args['error_message']) . '</div>'
-					: '' 
+					: ''
 			);
 	}
 
@@ -191,9 +191,9 @@ function categories_update(&$selected_id, &$error_message = '') {
 	}
 
 	if(!update(
-		'categories', 
-		backtick_keys_once($set), 
-		['`CategoryID`' => $selected_id], 
+		'categories',
+		backtick_keys_once($set),
+		['`CategoryID`' => $selected_id],
 		$error_message
 	)) {
 		echo $error_message;
@@ -344,14 +344,14 @@ function categories_form($selectedId = '', $allowUpdate = true, $allowInsert = t
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
 		elseif($separateDV)
 			$templateCode = str_replace(
-				'<%%DESELECT_BUTTON%%>', 
+				'<%%DESELECT_BUTTON%%>',
 				'<button
-					type="submit" 
-					class="btn btn-default" 
-					id="deselect" 
-					name="deselect_x" 
-					value="1" 
-					onclick="' . $backAction . '" 
+					type="submit"
+					class="btn btn-default"
+					id="deselect"
+					name="deselect_x"
+					value="1"
+					onclick="' . $backAction . '"
 					title="' . html_attr($Translation['Back']) . '">
 						<i class="glyphicon glyphicon-chevron-left"></i> ' .
 						$Translation['Back'] .
@@ -418,7 +418,7 @@ function categories_form($selectedId = '', $allowUpdate = true, $allowInsert = t
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(CategoryName)%%>', html_attr($row['CategoryName']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(CategoryName)%%>', urlencode($urow['CategoryName']), $templateCode);
 		if($fieldsAreEditable) {
-			$templateCode = str_replace('<%%HTMLAREA(Description)%%>', '<textarea name="Description" id="Description" rows="5">' . safe_html(htmlspecialchars_decode($row['Description'])) . '</textarea>', $templateCode);
+			$templateCode = str_replace('<%%HTMLAREA(Description)%%>', '<textarea maxlength="65500" name="Description" id="Description" rows="5">' . safe_html(htmlspecialchars_decode($row['Description'])) . '</textarea>', $templateCode);
 		} else {
 			$templateCode = str_replace('<%%HTMLAREA(Description)%%>', '<div id="Description" class="form-control-static">' . $row['Description'] . '</div>', $templateCode);
 		}
@@ -430,7 +430,7 @@ function categories_form($selectedId = '', $allowUpdate = true, $allowInsert = t
 		$templateCode = str_replace('<%%VALUE(Picture)%%>', 'blank.gif', $templateCode);
 		$templateCode = str_replace('<%%VALUE(CategoryName)%%>', '', $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(CategoryName)%%>', urlencode(''), $templateCode);
-		$templateCode = str_replace('<%%HTMLAREA(Description)%%>', '<textarea name="Description" id="Description" rows="5"></textarea>', $templateCode);
+		$templateCode = str_replace('<%%HTMLAREA(Description)%%>', '<textarea maxlength="65500" name="Description" id="Description" rows="5"></textarea>', $templateCode);
 	}
 
 	// process translations

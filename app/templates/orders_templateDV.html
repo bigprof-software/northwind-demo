@@ -72,7 +72,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="OrderTime">Order Time</label>
 					<div class="col-lg-9">
-						<input type="text" class="form-control" name="OrderTime" id="OrderTime" value="<%%VALUE(OrderTime)%%>">
+						<input maxlength="11" type="text" class="form-control" name="OrderTime" id="OrderTime" value="<%%VALUE(OrderTime)%%>">
 					</div>
 				</div>
 
@@ -108,7 +108,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="Freight">Freight</label>
 					<div class="col-lg-9">
-						<input maxlength="13" type="text" class="form-control" name="Freight" id="Freight" value="<%%VALUE(Freight)%%>">
+						<input maxlength="12" type="text" class="form-control" name="Freight" id="Freight" value="<%%VALUE(Freight)%%>">
 					</div>
 				</div>
 
@@ -198,7 +198,7 @@
 
 		<!-- DV action buttons -->
 		<hr class="hidden-md hidden-lg">
-		<div class="col-md-4 col-lg-2" id="orders_dv_action_buttons">
+		<div class="col-md-4 col-lg-2 dv-action-buttons" id="orders_dv_action_buttons">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
 					<%%UPDATE_BUTTON%%>

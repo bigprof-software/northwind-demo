@@ -75,7 +75,7 @@ function orders_delete($selected_id, $AllowDeleteOfParents = false, $skipChecks 
 			return $Translation['Couldn\'t delete this record'] . (
 				!empty($args['error_message']) ?
 					'<div class="text-bold">' . strip_tags($args['error_message']) . '</div>'
-					: '' 
+					: ''
 			);
 	}
 
@@ -158,9 +158,9 @@ function orders_update(&$selected_id, &$error_message = '') {
 	}
 
 	if(!update(
-		'orders', 
-		backtick_keys_once($set), 
-		['`OrderID`' => $selected_id], 
+		'orders',
+		backtick_keys_once($set),
+		['`OrderID`' => $selected_id],
 		$error_message
 	)) {
 		echo $error_message;
@@ -610,14 +610,14 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
 		elseif($separateDV)
 			$templateCode = str_replace(
-				'<%%DESELECT_BUTTON%%>', 
+				'<%%DESELECT_BUTTON%%>',
 				'<button
-					type="submit" 
-					class="btn btn-default" 
-					id="deselect" 
-					name="deselect_x" 
-					value="1" 
-					onclick="' . $backAction . '" 
+					type="submit"
+					class="btn btn-default"
+					id="deselect"
+					name="deselect_x"
+					value="1"
+					onclick="' . $backAction . '"
 					title="' . html_attr($Translation['Back']) . '">
 						<i class="glyphicon glyphicon-chevron-left"></i> ' .
 						$Translation['Back'] .
@@ -651,7 +651,7 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	} else {
 		// temporarily disable form change handler till time and datetime pickers are enabled
 		$jsEditable = "\t\$j('form').eq(0).data('already_changed', true);";
-		$jsEditable .= "\t\$j('#OrderTime').addClass('always_shown').timepicker({ defaultTime: false, showSeconds: true, showMeridian: true, showInputs: false, disableFocus: true, minuteStep: 5 });";
+		$jsEditable .= "\t\$j('#OrderTime').addClass('always_shown').timepicker({ defaultTime: false, showSeconds: true, showMeridian: true, showInputs: false, disableFocus: true, minuteStep: AppGini.config.timeFieldMinutesStep || 5 });";
 		$jsEditable .= "\t\$j('form').eq(0).data('already_changed', false);"; // re-enable form change handler
 	}
 
@@ -663,23 +663,23 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	$templateCode = str_replace('<%%COMBOTEXT(EmployeeID)%%>', $combo_EmployeeID->MatchText, $templateCode);
 	$templateCode = str_replace('<%%URLCOMBOTEXT(EmployeeID)%%>', urlencode($combo_EmployeeID->MatchText), $templateCode);
 	$templateCode = str_replace(
-		'<%%COMBO(OrderDate)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_OrderDate->GetHTML(true) . '</div>' : 
+		'<%%COMBO(OrderDate)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_OrderDate->GetHTML(true) . '</div>' :
 			$combo_OrderDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(OrderDate)%%>', $combo_OrderDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
-		'<%%COMBO(RequiredDate)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_RequiredDate->GetHTML(true) . '</div>' : 
+		'<%%COMBO(RequiredDate)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_RequiredDate->GetHTML(true) . '</div>' :
 			$combo_RequiredDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(RequiredDate)%%>', $combo_RequiredDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
-		'<%%COMBO(ShippedDate)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_ShippedDate->GetHTML(true) . '</div>' : 
+		'<%%COMBO(ShippedDate)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_ShippedDate->GetHTML(true) . '</div>' :
 			$combo_ShippedDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(ShippedDate)%%>', $combo_ShippedDate->GetHTML(true), $templateCode);
@@ -687,9 +687,9 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 	$templateCode = str_replace('<%%COMBOTEXT(ShipVia)%%>', $combo_ShipVia->MatchText, $templateCode);
 	$templateCode = str_replace('<%%URLCOMBOTEXT(ShipVia)%%>', urlencode($combo_ShipVia->MatchText), $templateCode);
 	$templateCode = str_replace(
-		'<%%COMBO(added_date)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_added_date->GetHTML(true) . '</div>' : 
+		'<%%COMBO(added_date)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_added_date->GetHTML(true) . '</div>' :
 			$combo_added_date->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(added_date)%%>', $combo_added_date->GetHTML(true), $templateCode);

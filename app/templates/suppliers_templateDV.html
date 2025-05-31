@@ -63,7 +63,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="Address">Address</label>
 					<div class="col-lg-9">
-						<textarea class="form-control" name="Address" id="Address" rows=" 2"><%%VALUE(Address)%%></textarea>
+						<textarea maxlength="50" class="form-control" name="Address" id="Address" rows=" 2"><%%VALUE(Address)%%></textarea>
 					</div>
 				</div>
 
@@ -127,7 +127,7 @@
 					<label class="control-label col-lg-3" for="HomePage">HomePage</label>
 					<div class="col-lg-9">
 						<div class="input-group">
-							<input maxlength="0" type="text" class="form-control" name="HomePage" id="HomePage" value="<%%VALUE(HomePage)%%>">
+							<input maxlength="65500" type="text" class="form-control" name="HomePage" id="HomePage" value="<%%VALUE(HomePage)%%>">
 							<span class="input-group-btn">
 								<button id="HomePage-link" class="btn btn-default" type="button" title="<%%VALUE(HomePage)%%>" onclick="if(this.title) window.open(this.title, '_blank')"><i class="glyphicon glyphicon-new-window"></i></button>
 							</span>
@@ -140,7 +140,7 @@
 
 		<!-- DV action buttons -->
 		<hr class="hidden-md hidden-lg">
-		<div class="col-md-4 col-lg-2" id="suppliers_dv_action_buttons">
+		<div class="col-md-4 col-lg-2 dv-action-buttons" id="suppliers_dv_action_buttons">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
 					<%%UPDATE_BUTTON%%>

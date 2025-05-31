@@ -61,7 +61,7 @@ function shippers_delete($selected_id, $AllowDeleteOfParents = false, $skipCheck
 			return $Translation['Couldn\'t delete this record'] . (
 				!empty($args['error_message']) ?
 					'<div class="text-bold">' . strip_tags($args['error_message']) . '</div>'
-					: '' 
+					: ''
 			);
 	}
 
@@ -137,9 +137,9 @@ function shippers_update(&$selected_id, &$error_message = '') {
 	}
 
 	if(!update(
-		'shippers', 
-		backtick_keys_once($set), 
-		['`ShipperID`' => $selected_id], 
+		'shippers',
+		backtick_keys_once($set),
+		['`ShipperID`' => $selected_id],
 		$error_message
 	)) {
 		echo $error_message;
@@ -290,14 +290,14 @@ function shippers_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
 		elseif($separateDV)
 			$templateCode = str_replace(
-				'<%%DESELECT_BUTTON%%>', 
+				'<%%DESELECT_BUTTON%%>',
 				'<button
-					type="submit" 
-					class="btn btn-default" 
-					id="deselect" 
-					name="deselect_x" 
-					value="1" 
-					onclick="' . $backAction . '" 
+					type="submit"
+					class="btn btn-default"
+					id="deselect"
+					name="deselect_x"
+					value="1"
+					onclick="' . $backAction . '"
 					title="' . html_attr($Translation['Back']) . '">
 						<i class="glyphicon glyphicon-chevron-left"></i> ' .
 						$Translation['Back'] .

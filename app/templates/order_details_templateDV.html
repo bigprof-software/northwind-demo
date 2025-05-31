@@ -62,7 +62,7 @@
 					<label class="control-label col-lg-3" for="UnitPrice">Unit Price <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#UnitPrice-description"></i></label>
 					<div class="col-lg-9">
 						<span class="help-block bspacer-xs collapse" id="UnitPrice-description"><div class="alert alert-info bspacer-xs">This field will appear formatted as US currency in the table view.</div></span>
-						<input maxlength="13" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
+						<input maxlength="12" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
 					</div>
 				</div>
 
@@ -72,7 +72,7 @@
 					<label class="control-label col-lg-3" for="Quantity">Quantity <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#Quantity-description"></i></label>
 					<div class="col-lg-9">
 						<span class="help-block bspacer-xs collapse" id="Quantity-description"><div class="alert alert-info bspacer-xs">The table view displays the sum of all item quantities below the quantity column. Although meaningless, this just shows the sum feature provided by AppGini.</div></span>
-						<input type="text" class="form-control" name="Quantity" id="Quantity" value="<%%VALUE(Quantity)%%>">
+						<input maxlength="6" type="text" class="form-control" name="Quantity" id="Quantity" value="<%%VALUE(Quantity)%%>">
 					</div>
 				</div>
 
@@ -82,7 +82,7 @@
 					<label class="control-label col-lg-3" for="Discount">Discount <i class="glyphicon glyphicon-info-sign text-info" data-toggle="collapse" data-target="#Discount-description"></i></label>
 					<div class="col-lg-9">
 						<span class="help-block bspacer-xs collapse" id="Discount-description"><div class="alert alert-info bspacer-xs">Enter a discount amount here rather than a percentage or ratio. This field will appear formatted as US currency in the table view.</div></span>
-						<input maxlength="13" type="text" class="form-control" name="Discount" id="Discount" value="<%%VALUE(Discount)%%>">
+						<input maxlength="12" type="text" class="form-control" name="Discount" id="Discount" value="<%%VALUE(Discount)%%>">
 					</div>
 				</div>
 
@@ -100,7 +100,7 @@
 
 		<!-- DV action buttons -->
 		<hr class="hidden-md hidden-lg">
-		<div class="col-md-4 col-lg-2" id="order_details_dv_action_buttons">
+		<div class="col-md-4 col-lg-2 dv-action-buttons" id="order_details_dv_action_buttons">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
 					<%%UPDATE_BUTTON%%>

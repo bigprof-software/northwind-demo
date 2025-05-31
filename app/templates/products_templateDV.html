@@ -72,7 +72,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="UnitPrice">Unit Price</label>
 					<div class="col-lg-9">
-						<input maxlength="13" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
+						<input maxlength="12" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
 					</div>
 				</div>
 
@@ -81,7 +81,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="UnitsInStock">Units In Stock</label>
 					<div class="col-lg-9">
-						<input type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>">
+						<input maxlength="6" type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>">
 					</div>
 				</div>
 
@@ -99,7 +99,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="ReorderLevel">Reorder Level</label>
 					<div class="col-lg-9">
-						<input type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>">
+						<input maxlength="6" type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>">
 					</div>
 				</div>
 
@@ -149,7 +149,7 @@
 
 		<!-- DV action buttons -->
 		<hr class="hidden-md hidden-lg">
-		<div class="col-md-4 col-lg-2" id="products_dv_action_buttons">
+		<div class="col-md-4 col-lg-2 dv-action-buttons" id="products_dv_action_buttons">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
 					<%%UPDATE_BUTTON%%>

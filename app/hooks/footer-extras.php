@@ -13,22 +13,22 @@
 	</div>
 	
 	<div id="demo-tools" class="hidden text-center">
-		<div class="btn-group" style="width: 98%; max-width: 900px;">
-			<button type="button" onclick="location.assign('https://bigprof.com/appgini/');" class="btn btn-default" style="width: 33%">
+		<div class="btn-group">
+			<button type="button" onclick="location.assign('https://bigprof.com/appgini/');" class="btn btn-default">
 				<span class="hidden-xs hidden-sm"><i class="glyphicon glyphicon-heart"></i> Powered by</span>
 				AppGini <span class="appgini-version"></span>
 			</button>
 
-			<button type="button" class="btn btn-default" id="prev-theme" title="Previous theme" style="width: 5%"><i class="glyphicon glyphicon-triangle-left"></i></button>
-			<button type="button" class="btn btn-default active" id="demo-options" style="width: 24%">
+			<button type="button" class="btn btn-default" id="prev-theme" title="Previous theme"><i class="glyphicon glyphicon-triangle-left"></i></button>
+			<button type="button" class="btn btn-default active" id="demo-options">
 				<span class="hidden-xs hidden-sm">Active theme</span>
 				<span class="badge" id="demo-theme-name">Bootstrap</span>
 			</button>
-			<button type="button" class="btn btn-default" id="next-theme" title="Next theme" style="width: 5%"><i class="glyphicon glyphicon-triangle-right"></i></button>
+			<button type="button" class="btn btn-default" id="next-theme" title="Next theme"><i class="glyphicon glyphicon-triangle-right"></i></button>
 
-			<button type="button" class="btn btn-default" id="compact-toggle" title="Compact/Large" style="width: 5%"><i class="glyphicon glyphicon-resize-full"></i></button>
+			<button type="button" class="btn btn-default hidden-xs" id="compact-toggle" title="Compact/Large"><i class="glyphicon glyphicon-resize-full"></i></button>
 			
-			<button type="button" class="btn btn-default" id="show-more-info" style="width: 18%">
+			<button type="button" class="btn btn-default" id="show-more-info" title="About this demo">
 				<i class="glyphicon glyphicon-info-sign"></i>
 				<span class="hidden-xs hidden-sm"> More info</span>
 			</button>
@@ -40,7 +40,7 @@
 	</div>
 
 	<div id="restore-demo-tools" class="hidden text-left">
-		<button type="button" class="btn btn-default" title="Change theme"><i class="glyphicon glyphicon-cog"></i></button>
+		<button type="button" class="btn btn-default" title="Change theme"><i class="glyphicon glyphicon-adjust"></i></button>
 	</div>
 	
 	<style>
@@ -53,14 +53,17 @@
 		}
 		#demo-tools, #restore-demo-tools {
 			position: fixed;
-			bottom: 0;
 			left: 0;
 			right: 0;
 			z-index: 1030;
 			padding: 5px;
 		}
+		#demo-tools {
+			bottom: 0;
+		}
 		#restore-demo-tools {
 			width: 100px;
+			bottom: 80px;
 		}
 		#restore-demo-tools button {
 			box-shadow: 0px 0px 10px 1px #000;
@@ -76,18 +79,33 @@
 	<script>
 		var notEmbedded = true;
 
+		function getNavbarBGColor() {
+			var navbar = $j('.navbar-fixed-top');
+			var bg = navbar.css('background-color');
+
+			console.log(bg);
+			
+			// remove transparency if any
+			if(bg.indexOf('rgba') > -1) {
+				bg = bg.replace(/rgba\((\d+),\s*(\d+),\s*(\d+),\s*(\d+(\.\d+)?)\)/, 'rgb($1, $2, $3)');
+				console.log(`Adjusted bg color: ${bg}`);
+			}
+
+			return bg;
+		}
+
 		$j(function(){
 			/* Get AppGini version */
 			var appginiVersion = $j('.navbar-fixed-bottom small a').text().replace(/[a-z ]*/i, '');
 			$j('.appgini-version').html(appginiVersion);
 			
 			/* Remove the bottom nav */
-			$j('.navbar-fixed-bottom').remove();
+			$j('.navbar-fixed-bottom:has(small)').remove();
 			
 			/* Apply navbar color, bgcolor and border styles to #demo-tools */
 			$j('#demo-tools').css({
 				'border': $j('.navbar').css('border'),
-				'background-color': $j('.navbar').css('background-color')
+				'background-color': getNavbarBGColor(),
 			});
 			
 			/* Same height for all #demo-tools buttons */
@@ -201,7 +219,7 @@
 		/* Apply navbar color, bgcolor and border styles to #demo-tools */
 		$j('#demo-tools').css({
 			'border': $j('.navbar').css('border'),
-			'background-color': $j('.navbar').css('background-color')
+			'background-color': getNavbarBGColor(),
 		});
 	}
 
@@ -260,7 +278,7 @@
 
 	function demoToolsSameHeight() {
 		if(notEmbedded === undefined) return;
-		var max_height = 30;
+		var max_height = screen_size('xs') ? 40 : 30;
 		$j('#demo-tools .btn').each(function(){
 			var bh = $j(this).height();
 			if(bh > max_height) max_height = bh;
@@ -296,7 +314,10 @@
 	$j(function() {
 		getThemeFromUrl();
 		applyTheme();
-		applyDemoToolsVisibility();
+		if(screen_size('xs')) 
+			applyDemoToolsVisibility('off');
+		else
+			applyDemoToolsVisibility();
 		compact();
 		showDemoInfoOnce();
 		showInfoInLoginPage();

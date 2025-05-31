@@ -89,7 +89,7 @@ function employees_delete($selected_id, $AllowDeleteOfParents = false, $skipChec
 			return $Translation['Couldn\'t delete this record'] . (
 				!empty($args['error_message']) ?
 					'<div class="text-bold">' . strip_tags($args['error_message']) . '</div>'
-					: '' 
+					: ''
 			);
 	}
 
@@ -235,9 +235,9 @@ function employees_update(&$selected_id, &$error_message = '') {
 	}
 
 	if(!update(
-		'employees', 
-		backtick_keys_once($set), 
-		['`EmployeeID`' => $selected_id], 
+		'employees',
+		backtick_keys_once($set),
+		['`EmployeeID`' => $selected_id],
 		$error_message
 	)) {
 		echo $error_message;
@@ -464,14 +464,14 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 			$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '', $templateCode);
 		elseif($separateDV)
 			$templateCode = str_replace(
-				'<%%DESELECT_BUTTON%%>', 
+				'<%%DESELECT_BUTTON%%>',
 				'<button
-					type="submit" 
-					class="btn btn-default" 
-					id="deselect" 
-					name="deselect_x" 
-					value="1" 
-					onclick="' . $backAction . '" 
+					type="submit"
+					class="btn btn-default"
+					id="deselect"
+					name="deselect_x"
+					value="1"
+					onclick="' . $backAction . '"
 					title="' . html_attr($Translation['Back']) . '">
 						<i class="glyphicon glyphicon-chevron-left"></i> ' .
 						$Translation['Back'] .
@@ -514,16 +514,16 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 
 	// process combos
 	$templateCode = str_replace(
-		'<%%COMBO(BirthDate)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_BirthDate->GetHTML(true) . '</div>' : 
+		'<%%COMBO(BirthDate)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_BirthDate->GetHTML(true) . '</div>' :
 			$combo_BirthDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(BirthDate)%%>', $combo_BirthDate->GetHTML(true), $templateCode);
 	$templateCode = str_replace(
-		'<%%COMBO(HireDate)%%>', 
-		(!$fieldsAreEditable ? 
-			'<div class="form-control-static">' . $combo_HireDate->GetHTML(true) . '</div>' : 
+		'<%%COMBO(HireDate)%%>',
+		(!$fieldsAreEditable ?
+			'<div class="form-control-static">' . $combo_HireDate->GetHTML(true) . '</div>' :
 			$combo_HireDate->GetHTML()
 		), $templateCode);
 	$templateCode = str_replace('<%%COMBOTEXT(HireDate)%%>', $combo_HireDate->GetHTML(true), $templateCode);
@@ -621,7 +621,7 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 		if(!$dvprint) $templateCode = str_replace('<%%VALUE(Extension)%%>', html_attr($row['Extension']), $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(Extension)%%>', urlencode($urow['Extension']), $templateCode);
 		if($fieldsAreEditable) {
-			$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<textarea name="Notes" id="Notes" rows="5">' . safe_html(htmlspecialchars_decode($row['Notes'])) . '</textarea>', $templateCode);
+			$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<textarea maxlength="65500" name="Notes" id="Notes" rows="5">' . safe_html(htmlspecialchars_decode($row['Notes'])) . '</textarea>', $templateCode);
 		} else {
 			$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<div id="Notes" class="form-control-static">' . $row['Notes'] . '</div>', $templateCode);
 		}
@@ -664,7 +664,7 @@ function employees_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 		$templateCode = str_replace('<%%URLVALUE(HomePhone)%%>', urlencode(''), $templateCode);
 		$templateCode = str_replace('<%%VALUE(Extension)%%>', '', $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(Extension)%%>', urlencode(''), $templateCode);
-		$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<textarea name="Notes" id="Notes" rows="5"></textarea>', $templateCode);
+		$templateCode = str_replace('<%%HTMLAREA(Notes)%%>', '<textarea maxlength="65500" name="Notes" id="Notes" rows="5"></textarea>', $templateCode);
 		$templateCode = str_replace('<%%VALUE(ReportsTo)%%>', '', $templateCode);
 		$templateCode = str_replace('<%%URLVALUE(ReportsTo)%%>', urlencode(''), $templateCode);
 		$templateCode = str_replace('<%%VALUE(Age)%%>', '', $templateCode);
