@@ -3,6 +3,12 @@
 
 	error_reporting(E_ERROR | E_PARSE);
 
+	// no direct access to this file
+	if(basename($_SERVER['SCRIPT_NAME']) == basename(__FILE__)) {
+		header('Location: index.php');
+		exit;
+	}
+
 	// if hooks/__bootstrap.php is found, it's included before any other files
 	// to define the very first booting steps performed by app. Useful for controlling
 	// session behavior, overriding definitions ... etc.
@@ -164,7 +170,7 @@
 		foreach($config_array['adminConfig'] as $admin_var => $admin_val)
 			$new_admin_config .= "\t\t'" . addslashes($admin_var) . "' => \"" . str_replace(["\n", "\r", '"', '$'], ['\n', '\r', '\"', '\$'], $admin_val) . "\",\n";
 
-		$new_config = "<?php\n" . 
+		$new_config = "<?php\n" .
 			"\t\$dbServer = '" . addslashes($config_array['dbServer']) . "';\n" .
 			"\t\$dbUsername = '" . addslashes($config_array['dbUsername']) . "';\n" .
 			"\t\$dbPassword = '" . addslashes($config_array['dbPassword']) . "';\n" .
@@ -174,7 +180,7 @@
 			(isset($config_array['appURI']) ? "\t\$appURI = '" . addslashes($config_array['appURI']) . "';\n" : '') .
 			(isset($config_array['host']) ? "\t\$host = '" . addslashes($config_array['host']) . "';\n" : '') .
 
-			"\n\t\$adminConfig = [\n" . 
+			"\n\t\$adminConfig = [\n" .
 				$new_admin_config .
 			"\t];";
 
@@ -220,7 +226,7 @@
 
 	/**
 	 *  check if given password matches given hash, preserving backward compatibility with MD5
-	 *  
+	 *
 	 *  @param [in] $password Description for $password
 	 *  @param [in] $hash Description for $hash
 	 *  @return Boolean indicating match or no match
@@ -232,7 +238,7 @@
 
 	/**
 	 *  Migrate MD5 pass hashes to BCrypt if supported
-	 *  
+	 *
 	 *  @param [in] $user username to migrate
 	 *  @param [in] $pass current password
 	 *  @param [in] $hash stored hash of password

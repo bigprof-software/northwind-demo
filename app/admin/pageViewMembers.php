@@ -118,7 +118,7 @@
 <div class="page-header">
 	<h1>
 		<?php echo $Translation['members']; ?>
-		<div class="pull-right">
+		<div class="pull-right flip">
 			<a href="pageEditMember.php" class="btn btn-success btn-lg"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['add new member']; ?></a>
 		</div>
 	</h1>
@@ -132,11 +132,11 @@
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
-			<th colspan="10" align="center">
+			<th colspan="10" class="text-center">
 				<input type="hidden" name="page" value="1">
 
 				<div class="form-group">
-					<?php 
+					<?php
 						$originalValues =  array ('<SEARCH>','<HTMLSELECT>');
 						$searchValue = '<input class="form-control" type="text" name="searchMembers" value="' . $searchHTML . '">';
 						$arrFields = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -189,7 +189,7 @@
 						if($sortDir == 'ASC') $nextSortDir = 'desc';
 					}
 					printf(
-						'<th><span class="sort-link" data-sort="%s" data-sortdir="%s">%s</span>%s</th>', 
+						'<th><span class="sort-link" data-sort="%s" data-sortdir="%s">%s</span>%s</th>',
 						$i, $nextSortDir, htmlspecialchars($title), $sortIcon
 					);
 				}
@@ -208,7 +208,7 @@
 	else
 		$sort++; // because sort index in MySQL is 1-based
 
-	$query = " 
+	$query = "
 		SELECT
 			$mviewFieldsStr
 		FROM
@@ -226,27 +226,27 @@
 		?>
 		<tr class="<?php echo $tr_class; ?>">
 			<?php if($adminConfig['anonymousMember'] == $row[0]) { ?>
-				<td class="text-left"><?php echo htmlspecialchars($row[0]); ?></td>
+				<td><?php echo htmlspecialchars($row[0]); ?></td>
 			<?php } else { ?>
-				<td class="text-left"><a href="pageEditMember.php?memberID=<?php echo urlencode($row[0]); ?>"><?php echo htmlspecialchars($row[0]); ?></a></td>
+				<td><a href="pageEditMember.php?memberID=<?php echo urlencode($row[0]); ?>"><?php echo htmlspecialchars($row[0]); ?></a></td>
 			<?php } ?>
-			<td class="text-left"><?php echo htmlspecialchars($row[1]); ?></td>
-			<td class="text-left"><?php echo htmlspecialchars($row[2]); ?></td>
-			<td class="text-left">
+			<td><?php echo htmlspecialchars($row[1]); ?></td>
+			<td><?php echo htmlspecialchars($row[2]); ?></td>
+			<td>
 				<?php if($adminConfig['anonymousMember'] != $row[0]) { ?>
 					<a
-						title="<?php echo html_attr($Translation["send message to member"]); ?>" 
+						title="<?php echo html_attr($Translation["send message to member"]); ?>"
 						href="pageMail.php?memberID=<?php echo urlencode($row[0]); ?>"><?php echo $row[3]; ?></a>
 				<?php } ?>
 			</td>
-			<td class="text-left"><?php echo htmlspecialchars($row[4]); ?></td>
-			<td class="text-left"><?php echo htmlspecialchars($row[5]); ?></td>
-			<td class="text-left"><?php echo htmlspecialchars($row[6]); ?></td>
-			<td class="text-left"><?php echo htmlspecialchars($row[7]); ?></td>
-			<td class="text-left">
+			<td><?php echo htmlspecialchars($row[4]); ?></td>
+			<td><?php echo htmlspecialchars($row[5]); ?></td>
+			<td><?php echo htmlspecialchars($row[6]); ?></td>
+			<td><?php echo htmlspecialchars($row[7]); ?></td>
+			<td>
 				<?php echo (($row[8] && $row[9]) ? $Translation['Banned'] : ($row[9] ? $Translation['active'] : $Translation['waiting approval'] )); ?>
 			</td>
-			<td class="text-center">
+			<td class="text-center h3">
 				<!-- edit -->
 				<?php if($adminConfig['anonymousMember'] == $row[0]) { ?>
 					<i class="glyphicon glyphicon-pencil text-muted"></i>
@@ -296,19 +296,19 @@
 							$prevPage = $page > 1 ? $page - 1 : false;
 							$nextPage = $page < ceil($numMembers / $adminConfig['membersPerPage']) ? $page + 1 : false;
 						?>
-						<td class="text-left" width="33%">
+						<td class="text-left flip" width="33%">
 							<?php if($prevPage) { ?>
 								<button type="submit" class="btn btn-default" name="page" value="<?php echo $prevPage; ?>"><?php echo $Translation['previous']; ?></button>
 							<?php } ?>
 						</td>
 						<td class="text-center" width="33%">
-							<?php 
+							<?php
 								$originalValues =  array ('<MEMBERNUM1>','<MEMBERNUM2>','<MEMBERS>' );
 								$replaceValues = array ( $start+1 , $start+db_num_rows($res) , $numMembers );
 								echo str_replace ( $originalValues , $replaceValues , $Translation['displaying members'] );
 							?>
 						</td>
-						<td class="text-right">
+						<td class="text-right flip">
 							<?php if($nextPage) { ?>
 								<button type="submit" class="btn btn-default" name="page" value="<?php echo $nextPage; ?>"><?php echo $Translation['next']; ?></button>
 							<?php } ?>

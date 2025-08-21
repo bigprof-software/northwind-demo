@@ -350,7 +350,9 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 				AppGini.current_CustomerID__RAND__.value = e.added.id;
 				AppGini.current_CustomerID__RAND__.text = e.added.text;
 				$j('[name="CustomerID"]').val(e.added.id);
-				if(e.added.id == '<?php echo empty_lookup_value; ?>') { $j('.btn[id=customers_view_parent]').hide(); } else { $j('.btn[id=customers_view_parent]').show(); }
+				$j(this).parents('.form-group')
+					.find('.btn[id=customers_view_parent]')
+					.toggleClass('hidden', e.added.id == '<?php echo empty_lookup_value; ?>');
 
 
 				if(typeof(CustomerID_update_autofills__RAND__) == 'function') CustomerID_update_autofills__RAND__();
@@ -427,7 +429,9 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 				AppGini.current_EmployeeID__RAND__.value = e.added.id;
 				AppGini.current_EmployeeID__RAND__.text = e.added.text;
 				$j('[name="EmployeeID"]').val(e.added.id);
-				if(e.added.id == '<?php echo empty_lookup_value; ?>') { $j('.btn[id=employees_view_parent]').hide(); } else { $j('.btn[id=employees_view_parent]').show(); }
+				$j(this).parents('.form-group')
+					.find('.btn[id=employees_view_parent]')
+					.toggleClass('hidden', e.added.id == '<?php echo empty_lookup_value; ?>');
 
 
 				if(typeof(EmployeeID_update_autofills__RAND__) == 'function') EmployeeID_update_autofills__RAND__();
@@ -509,7 +513,9 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 				AppGini.current_ShipVia__RAND__.value = e.added.id;
 				AppGini.current_ShipVia__RAND__.text = e.added.text;
 				$j('[name="ShipVia"]').val(e.added.id);
-				if(e.added.id == '<?php echo empty_lookup_value; ?>') { $j('.btn[id=shippers_view_parent]').hide(); } else { $j('.btn[id=shippers_view_parent]').show(); }
+				$j(this).parents('.form-group')
+					.find('.btn[id=shippers_view_parent]')
+					.toggleClass('hidden', e.added.id == '<?php echo empty_lookup_value; ?>');
 
 
 				if(typeof(ShipVia_update_autofills__RAND__) == 'function') ShipVia_update_autofills__RAND__();
@@ -595,7 +601,7 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 		else
 			$templateCode = str_replace('<%%DELETE_BUTTON%%>', '', $templateCode);
 
-		$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '<button type="submit" class="btn btn-default" id="deselect" name="deselect_x" value="1" onclick="' . $backAction . '" title="' . html_attr($Translation['Back']) . '"><i class="glyphicon glyphicon-chevron-left"></i> ' . $Translation['Back'] . '</button>', $templateCode);
+		$templateCode = str_replace('<%%DESELECT_BUTTON%%>', '<button type="submit" class="btn btn-default ltr" id="deselect" name="deselect_x" value="1" onclick="' . $backAction . '" title="' . html_attr($Translation['Back']) . '"><i class="glyphicon glyphicon-chevron-left"></i> ' . $Translation['Back'] . '</button>', $templateCode);
 	} else {
 		$templateCode = str_replace('<%%UPDATE_BUTTON%%>', '', $templateCode);
 		$templateCode = str_replace('<%%DELETE_BUTTON%%>', '', $templateCode);
@@ -613,7 +619,7 @@ function orders_form($selectedId = '', $allowUpdate = true, $allowInsert = true,
 				'<%%DESELECT_BUTTON%%>',
 				'<button
 					type="submit"
-					class="btn btn-default"
+					class="btn btn-default ltr"
 					id="deselect"
 					name="deselect_x"
 					value="1"

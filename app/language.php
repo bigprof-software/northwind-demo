@@ -946,4 +946,17 @@ $Translation = [
 	'my account' => 'My account',
 	'exit' => 'Exit',
 	'click mobile home button to exit' => 'To close this app, swipe up or press the Home button to return to your Home screen.',
+
+	// Added in 25.13
+	'vertical menu' => 'Vertical menu',
+	'horizontal menu' => 'Horizontal menu',
+	'setup captcha trouble' => 'If you are having trouble with the captcha, you can disable it by changing the line %s in %s to %s',
+	'show navigation menu' => 'Show navigation menu',
+	'hide navigation menu' => 'Hide navigation menu',
+	'you made changes without saving' => 'You made changes to this record without saving. Do you want to discard these changes?',
+	'open in new tab' => 'Open in new tab',
+	'navigate to action buttons' => 'Navigate to action buttons',
+	'next/previous page' => 'Next/Previous page',
+	'go to first record' => 'Go to first (child) record',
+	'go to child links' => 'Go to child links',
 ];

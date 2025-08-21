@@ -15,10 +15,10 @@
 		<td id="employees-Age-<%%VALUE(EmployeeID)%%>" class="employees-Age text-right text-bold"><%%VALUE(Age)%%></td>
 		<td id="employees-TotalSales-<%%VALUE(EmployeeID)%%>" class="employees-TotalSales text-right text-bold"><%%VALUE(TotalSales)%%></td>
 		<td class="child-employees-ReportsTo child-records-info" data-id="<%%VALUE(EmployeeID)%%>" data-table="employees" data-lookup-field="ReportsTo">
-			<a href="employees_view.php?filterer_ReportsTo=<%%VALUE(EmployeeID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Subordinates)" class="modal-link children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="employees_view.php?filterer_ReportsTo=<%%VALUE(EmployeeID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Subordinates)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="employees_view.php?filterer_ReportsTo=<%%VALUE(EmployeeID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Subordinates)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>
 		<td class="child-orders-EmployeeID child-records-info" data-id="<%%VALUE(EmployeeID)%%>" data-table="orders" data-lookup-field="EmployeeID">
-			<a href="orders_view.php?filterer_EmployeeID=<%%VALUE(EmployeeID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Initiated orders)" class="modal-link children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="orders_view.php?filterer_EmployeeID=<%%VALUE(EmployeeID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Initiated orders)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="orders_view.php?filterer_EmployeeID=<%%VALUE(EmployeeID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Initiated orders)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>

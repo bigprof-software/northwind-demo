@@ -15,6 +15,6 @@
 		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry"><%%SELECT%%><%%VALUE(ShipCountry)%%><%%ENDSELECT%%></td>
 		<td id="orders-Total-<%%VALUE(OrderID)%%>" class="orders-Total text-right"><%%SELECT%%><%%VALUE(Total)%%><%%ENDSELECT%%></td>
 		<td class="child-order_details-OrderID child-records-info" data-id="<%%VALUE(OrderID)%%>" data-table="order_details" data-lookup-field="OrderID">
-			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Order Items)" class="modal-link children-count" style="visibility: hidden;"><span class="count-children">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
+			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Order Items)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Order Items)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>
 		</td>

@@ -65,7 +65,7 @@
 
 		/**
 		 *  discover the public functions in this class that can act as controllers
-		 *  
+		 *
 		 *  @return array of public function names
 		 */
 		protected function controllers() {
@@ -104,7 +104,7 @@
 		/**
 		 *  UTF8-encodes a string/array
 		 *  @see https://stackoverflow.com/a/26760943/1945185
-		 *  
+		 *
 		 *  @param [in] $mixed string or array of strings to be UTF8-encoded
 		 *  @return UTF8-encoded array/string
 		 */
@@ -119,7 +119,7 @@
 
 		/**
 		 *  Retrieves and validates user-specified md5_hash and checks if it matches a backup file
-		 *  
+		 *
 		 *  @return False on error, backup file full path on success.
 		 */
 		protected function get_specified_backup_file() {
@@ -189,20 +189,20 @@
 				<script>
 					$j(function() {
 						/* language strings */
-						var create_backup = <?php echo json_encode($this->lang['create backup file']); ?>;
-						var please_wait = <?php echo json_encode($this->lang['please wait']); ?>;
-						var finished = <?php echo json_encode($this->lang['done!']); ?>;
-						var error = <?php echo json_encode($this->lang['error']); ?>;
-						var no_matches = <?php echo json_encode($this->lang['no backups found']); ?>;
-						var restore_backup = <?php echo json_encode($this->lang['restore backup']); ?>;
-						var delete_backup = <?php echo json_encode($this->lang['delete backup']); ?>;
-						var confirm_backup = <?php echo json_encode($this->lang['confirm backup']); ?>;
-						var confirm_restore = <?php echo json_encode($this->lang['confirm restore']); ?>;
-						var confirm_delete = <?php echo json_encode($this->lang['confirm delete backup']); ?>;
-						var backup_restored = <?php echo json_encode($this->lang['backup restored']); ?>;
-						var backup_deleted = <?php echo json_encode($this->lang['backup deleted']); ?>;
-						var delete_error = <?php echo json_encode($this->lang['backup delete error']); ?>;
-						var restore_error = <?php echo json_encode($this->lang['restore error']); ?>;
+						const create_backup = AppGini.Translate._map['create backup file'],
+							please_wait = AppGini.Translate._map['please wait'],
+							finished = AppGini.Translate._map['done!'],
+							error_title = AppGini.Translate._map['error'],
+							no_matches = AppGini.Translate._map['no backups found'],
+							restore_backup = AppGini.Translate._map['restore backup'],
+							delete_backup = AppGini.Translate._map['delete backup'],
+							confirm_backup = AppGini.Translate._map['confirm backup'],
+							confirm_restore = AppGini.Translate._map['confirm restore'],
+							confirm_delete = AppGini.Translate._map['confirm delete backup'],
+							backup_restored = AppGini.Translate._map['backup restored'],
+							backup_deleted = AppGini.Translate._map['backup deleted'],
+							delete_error = AppGini.Translate._map['backup delete error'],
+							restore_error = AppGini.Translate._map['restore error'];
 
 						var page = '<?php echo $this->curr_page; ?>';
 						var backup_files_list = $j('#backup-files-list');
@@ -223,7 +223,7 @@
 										backup_files_list.html('');
 										for(var i = 0; i < list.length; i++) {
 											backup_files_list.append(
-												'<h4 class="hspacer-lg backup-file">' + 
+												'<h4 class="hspacer-lg backup-file">' +
 													'<div class="btn-group hspacer-lg">' +
 														'<button type="button" class="btn btn-default restore" data-md5_hash="' + list[i].md5_hash + '"><i class="glyphicon glyphicon-download-alt"></i> ' + restore_backup + '</button>' +
 														'<button type="button" class="btn btn-default delete" data-md5_hash="' + list[i].md5_hash + '"><i class="glyphicon glyphicon-trash"></i> ' + delete_backup + '</button>' +
@@ -255,11 +255,11 @@
 											dismiss_seconds: 30
 										});
 									},
-									error: function() {
+									error: function(xhr, status, error) {
 										show_notification({
-											message: restore_error,
+											message: `<b>${restore_error}</b><pre>${xhr.responseText || error}</pre>`,
 											class: 'danger',
-											dismiss_seconds: 30
+											dismiss_seconds: 120
 										});
 									},
 									complete: display_backups
@@ -279,11 +279,11 @@
 											dismiss_seconds: 30
 										});
 									},
-									error: function() {
+									error: function(xhr, status, error) {
 										show_notification({
-											message: delete_error,
+											message: `<b>${delete_error}</b><pre>${xhr.responseText || error}</pre>`,
 											class: 'danger',
-											dismiss_seconds: 30
+											dismiss_seconds: 120
 										});
 									},
 									complete: display_backups
@@ -309,8 +309,11 @@
 								success: function() {
 									btn.removeClass('btn-warning btn-primary').addClass('btn-success').html('<i class="glyphicon glyphicon-ok"></i> ' + finished);
 								},
-								error: function() {
-									btn.removeClass('btn-warning btn-primary').addClass('btn-danger').html('<i class="glyphicon glyphicon-remove"></i> ' + error);
+								error: function(xhr, status, error) {
+									btn
+										.removeClass('btn-warning btn-primary')
+										.addClass('btn-danger')
+										.html('<i class="glyphicon glyphicon-remove"></i> ' + error_title);
 								},
 								complete: function(jx) {
 									if(jx.responseText.length > 0) $j('#backup-log').html(jx.responseText).removeClass('hidden');
@@ -342,9 +345,9 @@
 
 		/**
 		 *  Retrieve a list of available backup files, with dates and times
-		 *  
+		 *
 		 *  @return Array of backup files [[md5_hash => '', datetime => 'y-m-d H:i:s', size => '659888'], ..]
-		 *  
+		 *
 		 *  @details Backup files are those found in the folder 'backups' named as an md5 hash with .sql extension.
 		 */
 		public function get_backup_files() {
@@ -375,9 +378,9 @@
 
 		/**
 		 *  create a new backup file
-		 *  
+		 *
 		 *  @return Boolean indicating success or failure
-		 *  
+		 *
 		 *  @details Uses mysqldump (if available) to create a new backup file
 		 */
 		public function create_backup() {
@@ -404,9 +407,9 @@
 
 		/**
 		 *  Restores a given backup file
-		 *  
+		 *
 		 *  @return Boolean indicating success or failure
-		 *  
+		 *
 		 *  @details Overwrites existing data in the database, including users and groups.
 		 */
 		public function restore() {
@@ -416,22 +419,24 @@
 			$config = ['dbServer' => '', 'dbUsername' => '', 'dbPassword' => '', 'dbDatabase' => '', 'dbPort' => ''];
 			foreach($config as $k => $v) $config[$k] = escapeshellarg(config($k));
 
-			$out = $ret = null;
+			$out = []; $ret = null;
 			maintenance_mode(true);
 			$pass_param = ($config['dbPassword'] ? " -p{$config['dbPassword']}" : '');
 			$port_param = ($config['dbPort'] && $config['dbPort'] != ini_get('mysqli.default_port') ? " -P {$config['dbPort']}" : '');
-			$cmd = "mysql -u{$config['dbUsername']}{$pass_param}{$port_param} -h{$config['dbServer']} {$config['dbDatabase']} < {$bfile}";
+			$cmd = "mysql -u{$config['dbUsername']}{$pass_param}{$port_param} -h{$config['dbServer']} {$config['dbDatabase']} < {$bfile} 2>&1";
 			@exec($cmd, $out, $ret);
+			// redact password to avoid revealing it on error
+			if($pass_param !== '') $cmd = str_replace($pass_param, ' -p**** ', $cmd);
 			maintenance_mode(false);
 
-			if($ret) { echo $cmd; return false; }
+			if($ret) { echo $cmd . "\n" . implode("\n", $out); return false; }
 
 			return true;
 		}
 
 		/**
 		 *  Deletes a given backup file
-		 *  
+		 *
 		 *  @return Boolean indicating success or failure
 		 */
 		public function delete() {
@@ -448,11 +453,11 @@
 
 			/* create .htaccess file preventing direct download of backup files */
 			if(!is_file("{$bdir}/.htaccess"))
-				@file_put_contents("{$bdir}/.htaccess", 
+				@file_put_contents("{$bdir}/.htaccess",
 					"<FilesMatch \"\\.(sql)\$\">\n" .
 					"   Order allow,deny\n" .
 					"   Deny from all\n" .
-					"</FilesMatch>" 
+					"</FilesMatch>"
 				);
 
 			/* create index.html empty file to prevent directory browsing */

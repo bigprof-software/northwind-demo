@@ -13,7 +13,7 @@
 			$this->lang = $Translation;
 
 			/* process request to retrieve $this->request, and then execute the requested action */
-			$this->process_request($request);          
+			$this->process_request($request);
 			echo call_user_func_array([$this, $this->request['action']], []);
 		}
 
@@ -27,7 +27,7 @@
 
 		/**
 		 *  discover the public functions in this class that can act as controllers
-		 *  
+		 *
 		 *  @return array of public function names
 		 */
 		protected function controllers() {
@@ -55,10 +55,10 @@
 
 			<div class="dropdown pull-right invisible" id="admin-tools-menu-button">
 				<button
-					type="button" 
-					data-toggle="dropdown" 
-					class="btn btn-danger btn-xs" 
-					title="<?php echo html_attr($this->lang['Admin Information']); ?>" 
+					type="button"
+					data-toggle="dropdown"
+					class="btn btn-danger btn-xs"
+					title="<?php echo html_attr($this->lang['Admin Information']); ?>"
 				>
 					<i class="glyphicon glyphicon-option-vertical"></i>
 				</button>

@@ -273,7 +273,7 @@ class DataList {
 			foreach($this->filterers as $filterer => $caption) {
 				if(Request::val('filterer_' . $filterer) != '') $filtersGET .= '&filterer_' . $filterer . '=' . urlencode(Request::val('filterer_' . $filterer));
 			}
-			for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
+			for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
 				if($this->isValidFilter($i)) {
 					$filtersGET .= "&FilterAnd[{$i}]={$this->FilterAnd[$i]}&FilterField[{$i}]={$this->FilterField[$i]}&FilterOperator[{$i}]={$this->FilterOperator[$i]}&FilterValue[{$i}]=" . urlencode($this->FilterValue[$i]);
 				}
@@ -356,7 +356,7 @@ class DataList {
 			foreach($this->filterers as $filterer => $caption) {
 				if(Request::val('filterer_' . $filterer) != '') $filtersGET .= '&filterer_' . $filterer . '=' . urlencode(Request::val('filterer_' . $filterer));
 			}
-			for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
+			for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
 				if($this->isValidFilter($i)) {
 					$filtersGET .= "&FilterAnd[{$i}]={$this->FilterAnd[$i]}&FilterField[{$i}]={$this->FilterField[$i]}&FilterOperator[{$i}]={$this->FilterOperator[$i]}&FilterValue[{$i}]=" . urlencode($this->FilterValue[$i]);
 				}
@@ -390,7 +390,7 @@ class DataList {
 
 		elseif($SaveFilter_x != '' && $this->AllowSavingFilters) {
 			$filter_link = $_SERVER['HTTP_REFERER'] . '?SortField=' . urlencode($SortField) . '&SortDirection=' . $SortDirection . '&';
-			for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
+			for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
 				if($this->isValidFilter($i)) {
 					$filter_link .= urlencode("FilterAnd[$i]") . '=' . urlencode($this->FilterAnd[$i]) . '&';
 					$filter_link .= urlencode("FilterField[$i]") . '=' . urlencode($this->FilterField[$i]) . '&';
@@ -477,7 +477,7 @@ class DataList {
 
 		elseif($NoFilter_x != '') {
 			// clear all filters ...
-			for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
+			for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
 				$this->FilterField[$i] = '';
 				$this->FilterOperator[$i] = '';
 				$this->FilterValue[$i] = '';
@@ -534,7 +534,7 @@ class DataList {
 			// set query filters
 
 			$filterGroups = [];
-			for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i += FILTERS_PER_GROUP) { // Number of filters allowed
+			for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i += FILTERS_PER_GROUP) { // Number of filters allowed
 				// test current filter group
 				$GroupHasFilters = 0;
 				for($j = 0; $j < FILTERS_PER_GROUP; $j++) {
@@ -724,7 +724,7 @@ class DataList {
 			if($current_view == 'DV' && !$Embedded) {
 				$this->HTML .= '<div class="page-header">';
 					$this->HTML .= '<h1>';
-						$this->HTML .= '<a class="table-title" href="' . $this->TableName . '_view.php?' . WindowMessages::windowIdQuery() . '"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
+						$this->HTML .= '<a class="table-title" href="' . $this->TableName . '_view.php?' . WindowMessages::windowIdQuery() . '" onclick="if($j(`#deselect`).length) { $j(`#deselect`).click(); return false; }"><img src="' . $this->TableIcon . '"> ' . $this->TableTitle . '</a>';
 						/* show add new button if user can insert and there is a selected record */
 						if($SelectedID && $this->Permissions['insert'] && $this->SeparateDV && $this->AllowInsert) {
 							$this->HTML .= ' <button type="submit" id="addNew" name="addNew_x" value="1" class="btn btn-success"><i class="glyphicon glyphicon-plus-sign"></i> ' . $this->translation['Add New'] . '</button>';
@@ -765,9 +765,13 @@ class DataList {
 						'title' => $this->translation['Change owner'],
 						'icon' => 'user'
 					];
+
+					$muLink = adminMassUpdateLink();
+					if($muLink) $selected_records_more[] = $muLink;
+
 					$selected_records_more[] = [
 						'function' => 'add_more_actions_link',
-						'title' => $this->translation['Add more actions'],
+						'title' => $this->translation['Add more actions'] . ' <i class="glyphicon glyphicon-new-window"></i>',
 						'icon' => 'question-sign',
 						'class' => 'text-info'
 					];
@@ -872,7 +876,7 @@ class DataList {
 				$this->HTML .= '<div class="table-responsive"><table data-tablename="' . $this->TableName . '" class="table table-striped table-bordered table-hover">';
 
 				$this->HTML .= '<thead><tr>';
-				if(!$Print_x) $this->HTML .= '<th style="width: 18px;" class="text-center"><input class="hidden-print" type="checkbox" title="' . html_attr($this->translation['Select all records']) . '" id="select_all_records"></th>';
+				if(!$Print_x) $this->HTML .= '<th style="width: 18px;" class="text-center"><input class="hidden-print select_all_records" type="checkbox" title="' . html_attr($this->translation['Select all records']) . '" id="select_all_records"></th>';
 
 				// Templates
 				$rowTemplate = $selrowTemplate = '';
@@ -1176,7 +1180,7 @@ class DataList {
 
 		// hidden variables: filters ...
 		$FiltersCode = '';
-		for($i = 1; $i <= (datalist_filters_count * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
+		for($i = 1; $i <= (FILTER_GROUPS * FILTERS_PER_GROUP); $i++) { // Number of filters allowed
 			if($i % FILTERS_PER_GROUP == 1 && $i != 1 && $this->FilterAnd[$i] != '') {
 				$FiltersCode .= "<input name=\"FilterAnd[$i]\" value=\"{$this->FilterAnd[$i]}\" type=\"hidden\">\n";
 			}
@@ -1234,7 +1238,7 @@ class DataList {
 				if(Request::val('record-added-ok') && $Embedded && $SelectedID) {
 					ob_start();
 					?><script>
-						localStorage.setItem(
+						AppGini.localStorage.setItem(
 							`${AppGini.currentTableName()}_last_added_id`,
 							<?php echo json_encode($SelectedID); ?>
 						);
@@ -1291,9 +1295,8 @@ class DataList {
 			}
 		}
 
-		if($tvRowNeedsClosing) $this->HTML .= "</div>";
-		$this->HTML .= "</form>";
-		$this->HTML .= '</div><div class="col-xs-1 md-hidden lg-hidden"></div></div>';
+		if($tvRowNeedsClosing) $this->HTML .= '</div>';
+		$this->HTML .= '</form></div></div>';
 
 		if($dvShown && $tvShown) $this->ContentType = 'tableview+detailview';
 		if($dvprint_x != '') $this->ContentType = 'print-detailview';
@@ -1378,7 +1381,7 @@ class DataList {
 
 		/* clear fand, ffield and fop for filters having no value or no field */
 		/* assume equal-to op and 'and' if missing */
-		for($i = 1; $i <= datalist_filters_count * FILTERS_PER_GROUP; $i++) {
+		for($i = 1; $i <= FILTER_GROUPS * FILTERS_PER_GROUP; $i++) {
 			if(!isset($fand[$i]) && !isset($ffield[$i]) && !isset($fop[$i]) && !isset($fvalue[$i])) continue;
 
 			if(($fvalue[$i] == '' && !in_array($fop[$i], ['is-empty', 'is-not-empty'])) || !$ffield[$i]) {
@@ -1391,7 +1394,7 @@ class DataList {
 		}
 
 		/* empty FilterAnd for empty groups or set to 'and' if empty while group not empty */
-		for($i = 1; $i <= datalist_filters_count * FILTERS_PER_GROUP; $i += FILTERS_PER_GROUP) {
+		for($i = 1; $i <= FILTER_GROUPS * FILTERS_PER_GROUP; $i += FILTERS_PER_GROUP) {
 			$empty_group = true;
 
 			for($j = $i; $j < ($i + FILTERS_PER_GROUP); $j++) {
@@ -1462,21 +1465,21 @@ class DataList {
 					col_class = col_class.split(/\s+/).shift(); // take only first class
 
 					var cn = 'columns-' + location.pathname.split(/\//).pop().split(/\./).shift(); // cookie name
-					var c = JSON.parse(localStorage.getItem(cn)) || {};
+					var c = AppGini.localStorage.getItem(cn) || {};
 
 					/* if no cookie, create it and set it to val (or true if no val) */
 					if(c[col_class] === undefined) {
 						if(val === undefined) val = true;
 
 						c[col_class] = val;
-						localStorage.setItem(cn, JSON.stringify(c));
+						AppGini.localStorage.setItem(cn, c);
 						return val;
 					}
 
 					/* if cookie found and val provided, set cookie to new val */
 					if(val !== undefined) {
 						c[col_class] = val;
-						localStorage.setItem(cn, JSON.stringify(c));
+						AppGini.localStorage.setItem(cn, c);
 						return val;
 					}
 
@@ -1807,7 +1810,7 @@ class DataList {
 				style="width: 100%; margin: 0; margin-top: 10px;">
 				<?php if($btnPrev) { ?>
 					<button
-						class="btn btn-default previous-record"
+						class="btn btn-default previous-record ltr"
 						type="submit" style="width: 100%;"
 						name="<?php echo $actionPrev; ?>" value="1"
 						><i class="glyphicon glyphicon-step-backward"></i>
@@ -1816,7 +1819,7 @@ class DataList {
 				<?php } ?>
 				<?php if($btnNext) { ?>
 					<button
-						class="btn btn-default next-record"
+						class="btn btn-default next-record ltr"
 						type="submit" style="width: 100%;"
 						name="<?php echo $actionNext; ?>" value="1"
 						><?php echo $this->translation['Next']; ?>
@@ -1949,8 +1952,8 @@ class DataList {
 					// if no insert, hide .new-child from all els
 					allEls.find('.new-child').css('visibility', childTables[tn][lfn].insert ? 'visible' : 'hidden');
 
-					// if no view, hide .children-count from all els
-					allEls.find('.children-count').css('visibility', childTables[tn][lfn].view ? 'visible' : 'hidden');
+					// if no view, hide .children-count-link from all els
+					allEls.find('.children-count-link').css('visibility', childTables[tn][lfn].view ? 'visible' : 'hidden');
 				});
 			})
 		</script>

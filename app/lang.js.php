@@ -36,7 +36,7 @@ var AppGini = AppGini || {};
 
 /* translation strings */
 AppGini.Translate = {
-	_map: <?php echo json_encode($translationUTF8, JSON_PRETTY_PRINT); ?>,
+	_map: <?php echo str_replace('\\\\n', '\n', json_encode($translationUTF8, JSON_PRETTY_PRINT)); ?>,
 	_encoding: '<?php echo datalist_db_encoding; ?>',
 	apply: () => {
 		// find elements with data-translate attribute that don't have .translated class

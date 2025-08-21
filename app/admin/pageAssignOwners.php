@@ -57,7 +57,7 @@
 					$tempStatus = $Translation["assigned table records to group and member"];
 					$tempStatus = str_replace ( "<MEMBERID>" , $memberID , $tempStatus );
 				} else {
-					$tempStatus = $Translation["assigned table records to group"];   
+					$tempStatus = $Translation["assigned table records to group"];
 				}
 
 				$originalValues =  array ('<NUMBER>','<TABLE>' , '<GROUP>' );
@@ -67,7 +67,7 @@
 				$tempStatus = str_replace ( $originalValues , $replaceValues , $tempStatus );
 
 				$status.= $tempStatus. ".<br>";
-			} 
+			}
 		}
 
 		// refresh the list of tables with records that have no owners

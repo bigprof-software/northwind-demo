@@ -27,6 +27,7 @@
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
 		<script src="toolTips.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
+		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo filemtime( __DIR__ . '/../language.php'); ?>"></script>
 		<script>
 
 			// VALIDATION FUNCTIONS FOR VARIOUS PAGES
@@ -86,7 +87,7 @@
 				if((dmm || dm) && sm!='-1') {
 
 					confirmMessage = '<?php echo addslashes($Translation['sure move data of member']); ?>';
-					confirmMessage = confirmMessage.replace(/<OLDMEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWMEMBER>/, dm).replace(/<NEWGROUP>/, dg);                 
+					confirmMessage = confirmMessage.replace(/<OLDMEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWMEMBER>/, dm).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
 
@@ -133,8 +134,6 @@
 			});
 
 		</script>
-
-		<link rel="stylesheet" href="adminStyles.css">
 
 		<style>
 			.dialog-box{
@@ -255,7 +254,7 @@
 					</li>
 				</ul>
 
-				<div class="navbar-right">
+				<div class="navbar-right flip">
 					<a href="<?php echo PREPEND_PATH; ?>index.php" class="btn btn-success navbar-btn"><?php echo $Translation["user's area"] ; ?></a>
 					<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1" class="btn btn-warning navbar-btn"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation["sign out"] ; ?></a>
 				</div>

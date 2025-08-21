@@ -105,7 +105,7 @@
 		];
 
 		$all_tables = [
-			/* ['table_name' => [table props assoc array] */   
+			/* ['table_name' => [table props assoc array] */
 				'customers' => [
 					'Caption' => 'Customers',
 					'Description' => 'The customers table contains a list of imaginary customers of the Northwind company.<br><br> You can also access the imaginary orders made by each customer here.',
@@ -177,7 +177,7 @@
 	function getTableList($skip_authentication = false, $include_internal_tables = false) {
 		$arrAccessTables = [];
 		$arrTables = [
-			/* 'table_name' => ['table caption', 'homepage description', 'icon', 'table group name'] */   
+			/* 'table_name' => ['table caption', 'homepage description', 'icon', 'table group name'] */
 			'customers' => ['Customers', 'The customers table contains a list of imaginary customers of the Northwind company.<br><br> You can also access the imaginary orders made by each customer here.', 'resources/table_icons/account_balances.png', 'Sales'],
 			'employees' => ['Employees', 'This table lists the employees of \'Northwind\', sorted by last name.<br><br> When you click an employee name to view his/her details, you can also view the orders processed by them. <br><br>And if the selected employee has other employees reporting to him/her, you can view them <br>by clicking the Employees button.', 'resources/table_icons/administrator.png', 'Operations'],
 			'orders' => ['Orders', 'Orders placed by customers, with newest orders listed first.<br> Order dates can be specified using<br> a friendly date picker that AppGini automatically generates for date fields.', 'resources/table_icons/cash_register.png', 'Sales'],
@@ -206,7 +206,7 @@
 
 				// format internal tables as 'tn' => ['tn', '', icon, ''] and merge with user tables
 				$arrTables = array_merge($arrTables, array_combine(
-					$internalTables, 
+					$internalTables,
 					array_map(function($tn) use($internalIcon) { return [$tn, '', $internalIcon, '']; }, $internalTables)
 				));
 			}
@@ -369,7 +369,7 @@
 					logErrorQuery($statement, $o['error']);
 
 				if(getLoggedAdmin())
-					$o['error'] = htmlspecialchars($o['error']) . 
+					$o['error'] = htmlspecialchars($o['error']) .
 						"<pre class=\"ltr\">{$Translation['query:']}\n" . htmlspecialchars($statement) . '</pre>' .
 						"<p><i class=\"text-right\">{$Translation['admin-only info']}</i></p>" .
 						"<p><a href=\"" . application_url('admin/pageRebuildFields.php') . "\">{$Translation['try rebuild fields']}</a></p>";
@@ -565,7 +565,7 @@
 
 		Authentication::signInAs($payload['user']);
 
-		// for API calls that just trigger an action and then close connection, 
+		// for API calls that just trigger an action and then close connection,
 		// we need to continue running
 		@ignore_user_abort(true);
 		@set_time_limit(120);
@@ -598,7 +598,7 @@
 			/* this is a localhost request so need to verify SSL */
 			CURLOPT_SSL_VERIFYPEER => false,
 
-			// the following option allows sending request and then 
+			// the following option allows sending request and then
 			// closing the connection without waiting for response
 			// see https://stackoverflow.com/a/10895361/1945185
 			CURLOPT_TIMEOUT => 8,
@@ -805,16 +805,16 @@
 
 		/* abort if current page is one of the following exceptions */
 		if(in_array(basename($_SERVER['PHP_SELF']), [
-			'pageEditMember.php', 
-			'membership_passwordReset.php', 
-			'membership_profile.php', 
-			'membership_signup.php', 
-			'pageChangeMemberStatus.php', 
-			'pageDeleteGroup.php', 
-			'pageDeleteMember.php', 
-			'pageEditGroup.php', 
-			'pageEditMemberPermissions.php', 
-			'pageRebuildFields.php', 
+			'pageEditMember.php',
+			'membership_passwordReset.php',
+			'membership_profile.php',
+			'membership_signup.php',
+			'pageChangeMemberStatus.php',
+			'pageDeleteGroup.php',
+			'pageDeleteMember.php',
+			'pageEditGroup.php',
+			'pageEditMemberPermissions.php',
+			'pageRebuildFields.php',
 			'pageSettings.php',
 			'ajax_check_login.php',
 			'parent-children.php',
@@ -861,27 +861,27 @@
 
 		/* create anonymous group if not there and get its ID */
 		$same_fields = "`allowSignup`=0, `needsApproval`=0";
-		sql("INSERT INTO `membership_groups` SET 
-				`name`='{$anon_group_safe}', {$same_fields}, 
+		sql("INSERT INTO `membership_groups` SET
+				`name`='{$anon_group_safe}', {$same_fields},
 				`description`='Anonymous group created automatically on {$today}'
-			ON DUPLICATE KEY UPDATE {$same_fields}", 
+			ON DUPLICATE KEY UPDATE {$same_fields}",
 		$eo);
 
 		$anon_group_id = sqlValue("SELECT `groupID` FROM `membership_groups` WHERE `name`='{$anon_group_safe}'");
 		if(!$anon_group_id) return;
 
 		/* create guest user if not there or if guest name in config differs from that in db */
-		$anon_user_db = sqlValue("SELECT LCASE(`memberID`) FROM `membership_users` 
+		$anon_user_db = sqlValue("SELECT LCASE(`memberID`) FROM `membership_users`
 			WHERE `groupID`='{$anon_group_id}'");
 		if(!$anon_user_db || $anon_user_db != $anon_user) {
 			sql("DELETE FROM `membership_users` WHERE `groupID`='{$anon_group_id}'", $eo);
-			sql("INSERT INTO `membership_users` SET 
-				`memberID`='{$anon_user_safe}', 
-				`signUpDate`='{$today}', 
-				`groupID`='{$anon_group_id}', 
-				`isBanned`=0, 
-				`isApproved`=1, 
-				`comments`='Anonymous member created automatically on {$today}'", 
+			sql("INSERT INTO `membership_users` SET
+				`memberID`='{$anon_user_safe}',
+				`signUpDate`='{$today}',
+				`groupID`='{$anon_group_id}',
+				`isBanned`=0,
+				`isApproved`=1,
+				`comments`='Anonymous member created automatically on {$today}'",
 			$eo);
 		}
 	}
@@ -898,24 +898,24 @@
 
 		/* create admin group if not there and get its ID */
 		$same_fields = "`allowSignup`=0, `needsApproval`=1";
-		sql("INSERT INTO `membership_groups` SET 
-				`name`='{$admin_group_safe}', {$same_fields}, 
+		sql("INSERT INTO `membership_groups` SET
+				`name`='{$admin_group_safe}', {$same_fields},
 				`description`='Admin group created automatically on {$today}'
-			ON DUPLICATE KEY UPDATE {$same_fields}", 
+			ON DUPLICATE KEY UPDATE {$same_fields}",
 		$eo);
 		$admin_group_id = sqlValue("SELECT `groupID` FROM `membership_groups` WHERE `name`='{$admin_group_safe}'");
 		if(!$admin_group_id) return;
 
 		/* create super-admin user if not there (if exists, query would abort with suppressed error) */
-		sql("INSERT INTO `membership_users` SET 
-			`memberID`='{$admin_user_safe}', 
-			`passMD5`='{$admin_hash_safe}', 
-			`email`='{$admin_email_safe}', 
-			`signUpDate`='{$today}', 
-			`groupID`='{$admin_group_id}', 
-			`isBanned`=0, 
-			`isApproved`=1, 
-			`comments`='Admin member created automatically on {$today}'", 
+		sql("INSERT INTO `membership_users` SET
+			`memberID`='{$admin_user_safe}',
+			`passMD5`='{$admin_hash_safe}',
+			`email`='{$admin_email_safe}',
+			`signUpDate`='{$today}',
+			`groupID`='{$admin_group_id}',
+			`isBanned`=0,
+			`isApproved`=1,
+			`comments`='Admin member created automatically on {$today}'",
 		$eo);
 
 		/* insert/update admin group permissions to allow full access to all tables */
@@ -2204,9 +2204,9 @@
 
 						/* append notification to notifications container */
 						$j(
-							'<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' + 
+							'<div class="alert alert-' + options['class'] + dismiss_class + '" id="' + notif_id + '">' +
 								dismiss_icon +
-								options.message + 
+								options.message +
 							'</div>'
 						).appendTo('#<?php echo self::$placeholder_id; ?>');
 
@@ -2250,9 +2250,9 @@
 
 		/**
 		 *  Notification::show($options) displays a notification
-		 *  
+		 *
 		 *  @param $options assoc array
-		 *  
+		 *
 		 *  @return html code for displaying the notifcation
 		 */
 		public static function show($options = []) {
@@ -2312,7 +2312,7 @@
 		if(is_string($mail['to']))
 			$mail['to'] = [
 				[
-					$mail['to'], 
+					$mail['to'],
 					empty($mail['name']) ? '' : $mail['name']
 				]
 			];
@@ -2354,7 +2354,7 @@
 		$pm->msgHTML($mail['message'], realpath(__DIR__ . '/..'));
 
 		/*
-		 * pass 'tag' as-is if provided in $mail .. 
+		 * pass 'tag' as-is if provided in $mail ..
 		 * this is useful for passing any desired values to sendmail_handler
 		 */
 		if(!empty($mail['tag'])) $pm->tag = $mail['tag'];
@@ -2411,7 +2411,7 @@
 	#########################################################
 	/**
 	 *  Prepares data for a SET or WHERE clause, to be used in an INSERT/UPDATE query
-	 *  
+	 *
 	 *  @param [in] $set_array Assoc array of field names => values
 	 *  @param [in] $glue optional glue. Set to ' AND ' or ' OR ' if preparing a WHERE clause, or to ',' (default) for a SET clause
 	 *  @return string containing the prepared SET or WHERE clause
@@ -2435,7 +2435,7 @@
 	#########################################################
 	/**
 	 *  Inserts a record to the database
-	 *  
+	 *
 	 *  @param [in] $tn table name where the record would be inserted
 	 *  @param [in] $set_array Assoc array of field names => values to be inserted
 	 *  @param [out] $error optional string containing error message if insert fails
@@ -2455,7 +2455,7 @@
 	#########################################################
 	/**
 	 *  Updates a record in the database
-	 *  
+	 *
 	 *  @param [in] $tn table name where the record would be updated
 	 *  @param [in] $set_array Assoc array of field names => values to be updated
 	 *  @param [in] $where_array Assoc array of field names => values used to build the WHERE clause
@@ -2479,7 +2479,7 @@
 	#########################################################
 	/**
 	 *  Set/update the owner of given record
-	 *  
+	 *
 	 *  @param [in] $tn name of table
 	 *  @param [in] $pk primary key value
 	 *  @param [in] $user username to set as owner. If not provided (or false), update dateUpdated only
@@ -2517,7 +2517,7 @@
 	#########################################################
 	/**
 	 *  get date/time format string for use in different cases.
-	 *  
+	 *
 	 *  @param [in] $destination string, one of these: 'php' (see date function), 'mysql', 'moment'
 	 *  @param [in] $datetime string, one of these: 'd' = date, 't' = time, 'dt' = both
 	 *  @return string
@@ -2549,7 +2549,7 @@
 	#########################################################
 	/**
 	 *  perform a test and return results
-	 *  
+	 *
 	 *  @param [in] $subject string used as title of test
 	 *  @param [in] $test callable function containing the test to be performed, should return true on success, false or a log string on error
 	 *  @return test result
@@ -2570,7 +2570,7 @@
 	#########################################################
 	/**
 	 *  invoke a method of an object -- useful to call private/protected methods
-	 *  
+	 *
 	 *  @param [in] $object instance of object containing the method
 	 *  @param [in] $methodName string name of method to invoke
 	 *  @param [in] $parameters array of parameters to pass to the method
@@ -2586,7 +2586,7 @@
 	#########################################################
 	/**
 	 *  retrieve the value of a property of an object -- useful to retrieve private/protected props
-	 *  
+	 *
 	 *  @param [in] $object instance of object containing the method
 	 *  @param [in] $propName string name of property to retrieve
 	 *  @return the returned value of the given property, or null if property doesn't exist
@@ -2607,7 +2607,7 @@
 	#########################################################
 	/**
 	 *  invoke a method of a static class -- useful to call private/protected methods
-	 *  
+	 *
 	 *  @param [in] $class string name of the class containing the method
 	 *  @param [in] $methodName string name of method to invoke
 	 *  @param [in] $parameters array of parameters to pass to the method
@@ -2642,9 +2642,9 @@
 		$time_regex = str_replace(
 			array('H', 'h', ':i', ':s'),
 			array(
-				'(1[0-9]|2[0-3]|0?[0-9])', 
-				'(1[012]|0?[0-9])', 
-				'(:([1-5][0-9]|0?[0-9]))', 
+				'(1[0-9]|2[0-3]|0?[0-9])',
+				'(1[012]|0?[0-9])',
+				'(:([1-5][0-9]|0?[0-9]))',
 				'(:([1-5][0-9]|0?[0-9]))?'
 			),
 			$time_format
@@ -2686,9 +2686,9 @@
 	 *  @param [in] $mysql_datetime string, Mysql-formatted datetime
 	 *  @param [in] $datetime string, one of these: 'd' = date, 't' = time, 'dt' = both
 	 *  @return string, app-formatted datetime, or empty string on error
-	 *  
+	 *
 	 *  @details works for formatting date, time and datetime, based on 2nd param
-	 */  
+	 */
 	function app_datetime($mysql_datetime, $datetime = 'd') {
 		$pyear = $myear = substr($mysql_datetime, 0, 4);
 
@@ -2709,10 +2709,10 @@
 	#########################################################
 	/**
 	 *  converts string from app-configured encoding to utf8
-	 *  
+	 *
 	 *  @param [in] $str string to convert to utf8
 	 *  @return utf8-encoded string
-	 *  
+	 *
 	 *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned
 	 */
 	function to_utf8($str) {
@@ -2723,10 +2723,10 @@
 	#########################################################
 	/**
 	 *  converts string from utf8 to app-configured encoding
-	 *  
+	 *
 	 *  @param [in] $str string to convert from utf8
 	 *  @return string utf8-decoded string
-	 *  
+	 *
 	 *  @details if the constant 'datalist_db_encoding' is not defined, original string is returned
 	 */
 	function from_utf8($str) {
@@ -2778,9 +2778,9 @@
 		return array_combine(
 			/* add backticks to keys */
 			array_map(
-				function($e) { return '`' . trim($e, '`') . '`'; }, 
+				function($e) { return '`' . trim($e, '`') . '`'; },
 				array_keys($arr_data)
-			), 
+			),
 			/* and combine with values */
 			array_values($arr_data)
 		);
@@ -2891,8 +2891,8 @@
 
 		if($phpVersion < $minPHP)
 			$reqErrors[] = str_replace(
-				['<PHP_VERSION>', '<minPHP>'], 
-				[$phpVersion, $minPHP], 
+				['<PHP_VERSION>', '<minPHP>'],
+				[$phpVersion, $minPHP],
 				$Translation['old php version']
 			);
 
@@ -2936,7 +2936,7 @@
 		if(!(preg_match('/^[0-9]{4}-(0?[1-9]|1[0-2])-([1-2][0-9]|30|31|0?[1-9])$/', $date) && strtotime($date)))
 			if(!$date = mysql_datetime($date)) return false;
 
-		// if time 
+		// if time
 		if($t = time12(trim("$time $ampm")))
 			$time = time24($t);
 		elseif($t = time24($time))
@@ -2948,7 +2948,7 @@
 	}
 	#########################################################
 	function lookupQuery($tn, $lookupField) {
-		/* 
+		/*
 			This is the query accessible from the 'Advanced' window under the 'Lookup field' tab in AppGini.
 			For auto-fill lookups, this is the same as the query of the main lookup field, except the second
 			column is replaced by the caption of the auto-fill lookup field.
@@ -3118,8 +3118,8 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		$data[$key] = $value;
 
 		return update(
-			'membership_users', 
-			['data' => @json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR)], 
+			'membership_users',
+			['data' => @json_encode($data, JSON_PARTIAL_OUTPUT_ON_ERROR)],
 			['memberID' => $user]
 		);
 	}
@@ -3184,11 +3184,11 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * send a json response to the client and terminate
-	 * 
+	 *
 	 * @param [in] $dataOrMsg mixed, either an array of data to send, or a string error message
 	 * @param [in] $isError bool, true if $dataOrMsg is an error message, false if it's data
 	 * @param [in] $errorStatusCode int, HTTP status code to send
-	 * 
+	 *
 	 * @details if $isError is true, $dataOrMsg is assumed to be an error message and $errorStatusCode is sent as the HTTP status code
 	 *     example error response: `{"status":"error","message":"Access denied"}`
 	 *     if $isError is false, $dataOrMsg is assumed to be data and $errorStatusCode is ignored
@@ -3217,7 +3217,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 	 * Check if a string is alphanumeric.
 	 *        We're defining it here in case it's not defined by some PHP installations.
 	 *        It's reuired by PHPMailer.
-	 *  
+	 *
 	 * @param [in] $str string to check
 	 * @return bool, true if $str is alphanumeric, false otherwise
 	 */
@@ -3229,13 +3229,13 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Perform an HTTP request and return the response, including headers and body, with support to cookies
-	 * 
+	 *
 	 * @param string $url  URL to request
 	 * @param array $payload  payload to send with the request
 	 * @param array $headers  headers to send with the request, in the format ['header' => 'value']
 	 * @param string $type  request type, either 'GET' or 'POST'
 	 * @param string $cookieJar  path to a file to read/store cookies in
-	 * 
+	 *
 	 * @return array  response, including `'headers'` and `'body'`, or error info if request failed
 	 */
 	function httpRequest($url, $payload = [], $headers = [], $type = 'GET', $cookieJar = null) {
@@ -3303,7 +3303,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Retrieve owner username of the record with the given primary key value
-	 * 
+	 *
 	 * @param $tn string table name
 	 * @param $pkValue string primary key value
 	 * @return string|null username of the record owner, or null if not found
@@ -3319,7 +3319,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Retrieve lookup field name that determines record owner of the given table
-	 * 
+	 *
 	 * @param $tn string table name
 	 * @return string|null lookup field name, or null if default (record owner is user that creates the record)
 	 */
@@ -3332,7 +3332,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Retrieve not-nullable fields of the given table
-	 * 
+	 *
 	 * @param $tn string table name
 	 * @return array list of not-nullable fields
 	 */
@@ -3354,7 +3354,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Get list of available themes
-	 * 
+	 *
 	 * @return array list of available themes
 	 */
 	function getThemesList() {
@@ -3380,7 +3380,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Get user's preferred theme
-	 * 
+	 *
 	 * @return string user's preferred theme, or default theme if not set or theme selection is disabled
 	 */
 	function getUserTheme() {
@@ -3395,7 +3395,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 
 	/**
 	 * Get the user's theme compact preference. If no user preference is set or theme selection is disabled, return the default theme compact preference.
-	 * 
+	 *
 	 * @return string 'theme-compact' if the user prefers a compact theme, or an empty string otherwise
 	 */
 	function getUserThemeCompact() {
@@ -3424,4 +3424,25 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		}
 	}
 
+
+	/**
+	 * Get a link to the Mass Update plugin if the user is an admin and the plugin is not installed
+	 *
+	 * @return array|null link to the Mass Update plugin, or null if not applicable
+	 */
+	function adminMassUpdateLink() {
+		if(!getLoggedAdmin()) return null;
+
+		$plugins = get_plugins();
+		foreach($plugins as $pl) {
+			if($pl['title'] == 'Mass Update') return null;
+		}
+
+		return [
+			'function' => 'linkToMassUpdatePlugin',
+			'title' => 'Want easy bulk updates? <i class="glyphicon glyphicon-new-window"></i>',
+			'icon' => 'plus-sign',
+			'class' => 'text-bold',
+		];
+	}
 

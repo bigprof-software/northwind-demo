@@ -53,10 +53,10 @@
 				break;
 			case 'new': /* new record */
 				var parentId = $j('[name=SelectedID]').val();
-				var url = param.ChildTable + '_view.php?' + 
+				var url = param.ChildTable + '_view.php?' +
 					'filterer_' + param.ChildLookupField + '=' + encodeURIComponent(parentId) +
-					'&addNew_x=1' + 
-					'&Embedded=1' + 
+					'&addNew_x=1' +
+					'&Embedded=1' +
 					(param.AutoClose ? '&AutoClose=1' : '');
 				modal_window({
 					url: url,
@@ -65,13 +65,14 @@
 							parentTable: $j('.detail_view').data('table'),
 							parentId: param.SelectedID,
 							childTable: param.ChildTable,
-							childId: localStorage.getItem(param.ChildTable + '_last_added_id')
+							childId: AppGini.localStorage.getItem(`${param.ChildTable}_last_added_id`)
 						});
-						localStorage.removeItem(param.ChildTable + '_last_added_id');
+						AppGini.localStorage.removeItem(`${param.ChildTable}_last_added_id`);
 						<?php echo $current_table; ?>GetChildrenRecordsList({ Verb: 'reload' });
 						AppGini.calculatedFields.init();
 						AppGini.scrollTo('children-tabs');
 					},
+					beforeClose: AppGini.confirmBeforeClosingModal,
 					size: 'full',
 					title: '<?php echo addslashes("{$config['tab-label']}: {$Translation['Add New']}"); ?>'
 				});
@@ -91,6 +92,7 @@
 						AppGini.calculatedFields.init();
 						AppGini.scrollTo('children-tabs');
 					},
+					beforeClose: AppGini.confirmBeforeClosingModal,
 					size: 'full',
 					title: '<?php echo addslashes($config['tab-label']); ?>'
 				});
@@ -133,7 +135,7 @@
 							<th>&nbsp;</th>
 						<?php } ?>
 						<?php if(is_array($config['display-fields'])) foreach($config['display-fields'] as $fieldIndex => $fieldLabel) { ?>
-							<th 
+							<th
 								<?php if($config['sortable-fields'][$fieldIndex]) { ?>
 									onclick="<?php echo $current_table; ?>GetChildrenRecordsList({
 										Verb: 'sort',
@@ -197,14 +199,14 @@
 			<div class="row hidden-print">
 				<div class="col-xs-12">
 					<button
-						type="button" 
-						class="btn btn-default btn-previous" 
+						type="button"
+						class="btn btn-default btn-previous"
 						<?php echo $parameters['Page'] <= 1 ? 'disabled' : ''; ?>
 						><i class="glyphicon glyphicon-chevron-left"></i>
 					</button>
 					<button
-						type="button" 
-						class="btn btn-default btn-next" 
+						type="button"
+						class="btn btn-default btn-next"
 						<?php echo ($firstRecord + count($records) - 1) == $totalMatches ? 'disabled' : ''; ?>
 						><i class="glyphicon glyphicon-chevron-right"></i>
 					</button>

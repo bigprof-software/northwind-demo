@@ -1,6 +1,7 @@
+<?php if(!isset($Translation)) { @header('Location: index.php'); exit; } ?>
 <?php if(function_exists('set_headers')) { set_headers(); } ?>
-<?php if(!isset($Translation)) die('No direct access allowed!'); ?><!DOCTYPE html>
 <?php if(!defined('PREPEND_PATH')) define('PREPEND_PATH', ''); ?>
+<!DOCTYPE html>
 <?php
 	$theme = getUserTheme();
 	$bootstrap3d = '';
@@ -84,24 +85,26 @@
 		<div class="users-area container theme-<?php echo $theme; ?> <?php echo getUserThemeCompact(); ?><?php echo BOOTSTRAP_3D_EFFECTS ? ' theme-3d' : ''; ?>">
 			<?php if(function_exists('handle_maintenance')) echo handle_maintenance(true); ?>
 
-			<?php if(!Request::val('Embedded')) { ?>
-				<?php if(function_exists('htmlUserBar')) echo htmlUserBar(); ?>
-				<div style="min-height: 70px;" class="hidden-print top-margin-adjuster"></div>
-			<?php } ?>
+			<?php if(function_exists('htmlUserBar')) echo htmlUserBar(); ?>
 
-			<?php echo WindowMessages::getHtml(); ?>
+			<?php echo VerticalNav::html(); ?>
 
-			<?php if(class_exists('Notification', false)) echo Notification::placeholder(); ?>
+			<div class="main-content">
 
-			<?php
-				// process notifications
-				if(function_exists('showNotifications')) echo showNotifications();
-			?>
+				<?php echo WindowMessages::getHtml(); ?>
 
-			<?php if(Request::val('Embedded')) { ?>
-				<div class="modal-top-spacer"></div>
-			<?php } ?>
+				<?php if(class_exists('Notification', false)) echo Notification::placeholder(); ?>
 
-			<?php if(!defined('APPGINI_SETUP') && is_file(__DIR__ . '/hooks/header-extras.php')) { include(__DIR__ . '/hooks/header-extras.php'); } ?>
-			<!-- Add header template below here .. -->
+				<?php
+					// process notifications
+					if(function_exists('showNotifications')) echo showNotifications();
+				?>
+
+				<?php if(Request::val('Embedded')) { ?>
+					<div class="modal-top-spacer"></div>
+				<?php } ?>
+
+				<?php if(!defined('APPGINI_SETUP') && is_file(__DIR__ . '/hooks/header-extras.php')) { include(__DIR__ . '/hooks/header-extras.php'); } ?>
+
+				<!-- Add header template below here .. -->
 

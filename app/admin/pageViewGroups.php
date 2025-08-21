@@ -35,7 +35,7 @@
 <div class="page-header">
 	<h1>
 		<?php echo $Translation['groups']; ?>
-		<span class="pull-right"><a href="pageEditGroup.php" class="btn btn-success btn-lg"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['add group']; ?></a></span>
+		<span class="pull-right flip"><a href="pageEditGroup.php" class="btn btn-success btn-lg"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['add group']; ?></a></span>
 		<div class="clearfix"></div>
 	</h1>
 </div>
@@ -84,15 +84,15 @@
 					<td><a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>"><?php echo htmlspecialchars($row[1]); ?></a></td>
 					<td><?php echo htmlspecialchars(trim($row[2] ?? '')); ?></td>
 					<td class="text-right"><?php echo $groupMembersCount; ?></td>
-					<td class="text-center">
+					<td class="text-center h3">
 						<!-- edit -->
 						<a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation['Edit group']; ?>"><i class="glyphicon glyphicon-pencil"></i></a>
 						<span class="hspacer-sm"></span>
 
 						<!-- delete -->
 						<?php if(!$groupMembersCount) { ?>
-							<a href="pageDeleteGroup.php?groupID=<?php echo $row[0]; ?>&csrf_token=<?php echo urlencode(csrf_token(false, true)); ?>" 
-								title="<?php echo $Translation['delete group'] ; ?>" 
+							<a href="pageDeleteGroup.php?groupID=<?php echo $row[0]; ?>&csrf_token=<?php echo urlencode(csrf_token(false, true)); ?>"
+								title="<?php echo $Translation['delete group'] ; ?>"
 								onClick="return confirm('<?php echo addslashes($Translation['confirm delete group']); ?>');">
 								<i class="glyphicon glyphicon-trash text-danger"></i>
 							</a>
@@ -149,7 +149,7 @@
 							<?php } ?>
 						</th>
 						<th class="text-center" width="33%">
-							<?php 
+							<?php
 								$originalValues = ['<GROUPNUM1>', '<GROUPNUM2>', '<GROUPS>'];
 								$replaceValues = [$start + 1, $start + db_num_rows($res), $numGroups];
 								echo str_replace($originalValues, $replaceValues, $Translation['displaying groups']);

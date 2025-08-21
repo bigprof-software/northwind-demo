@@ -11,7 +11,7 @@
 			<span id="table-title-img"><img src="<?php echo $this->TableIcon; ?>"></span> <?php echo sprintf($Translation['find records that match'], "<mark>{$this->TableTitle}</mark>"); ?>
 			<small class="checkbox match-all-groups-checkbox hidden">
 				<label>
-					<input type="checkbox" id="match-all-groups" style="margin-top: 1px;" 
+					<input type="checkbox" id="match-all-groups" style="margin-top: 1px;"
 						<?php echo $FilterAnd[1] != 'or' ? 'checked' : ''; ?>>
 					<?php echo $Translation['match all groups']; ?>
 				</label>
@@ -19,8 +19,6 @@
 		</h1></div>
 
 		<?php
-			$filterGroups = datalist_filters_count / FILTERS_PER_GROUP; // Number of filter groups
-
 			compactFilters($FilterAnd, $FilterField, $FilterOperator, $FilterValue);
 
 			$dataList = $this;
@@ -149,7 +147,7 @@
 			}
 		?>
 
-		<?php for($filterGroupIndex = 1; $filterGroupIndex <= $filterGroups; $filterGroupIndex++) { ?>
+		<?php for($filterGroupIndex = 1; $filterGroupIndex <= FILTER_GROUPS; $filterGroupIndex++) { ?>
 			<!-- filter group panel -->
 			<div class="panel panel-default filter-group hidden" data-group="<?php echo $filterGroupIndex; ?>">
 				<div class="panel-heading text-center">
@@ -159,11 +157,11 @@
 				<div class="panel-body">
 					<?php for($filterConditionIndex = 1; $filterConditionIndex <= FILTERS_PER_GROUP; $filterConditionIndex++) { ?>
 						<?php $filterIndex = (($filterGroupIndex - 1) * FILTERS_PER_GROUP) + $filterConditionIndex; ?>
-						<div 
-							class="row filter-condition hidden" 
-							data-group="<?php echo $filterGroupIndex; ?>" 
-							data-condition="<?php echo $filterConditionIndex; ?>" 
-							data-index="<?php echo $filterIndex; ?>" 
+						<div
+							class="row filter-condition hidden"
+							data-group="<?php echo $filterGroupIndex; ?>"
+							data-condition="<?php echo $filterConditionIndex; ?>"
+							data-index="<?php echo $filterIndex; ?>"
 						>
 							<div class="col-sm-4 vspacer-lg">
 								<input type="hidden" name="FilterAnd[<?php echo $filterIndex; ?>]" class="filter-and" value="<?php echo $FilterAnd[$filterIndex]; ?>">
@@ -325,7 +323,7 @@
 	$j(() => {
 		const FILTER_DEBUG = false; // set to true to enable debug mode
 		const filterConditionsPerGroup = <?php echo FILTERS_PER_GROUP; ?>;
-		const filterGroups = <?php echo $filterGroups; ?>;
+		const filterGroups = <?php echo FILTER_GROUPS; ?>;
 
 		const consoleLog = (...args) => FILTER_DEBUG && console.log(...args);
 
@@ -402,7 +400,7 @@
 		}
 
 		const filterGroupIsEmpty = () => {
-			// results array has {filters+1} elements, all initialized to true         
+			// results array has {filters+1} elements, all initialized to true
 			const results = Array(filterGroups + 1).fill(true);
 			const filterConditionEmpty = filterConditionIsEmpty();
 
@@ -726,7 +724,7 @@
 					filterOperator.select2('val', 'equal-to');
 				}
 				// focus on the operator field
-				filterOperator.select2('focus');
+				// filterOperator.select2('focus');
 
 				updateFiltersUI(filterIndex, filterGroupIndex);
 			});
@@ -748,9 +746,9 @@
 				consoleLog({action: 'operator selected', filterIndex, filterGroupIndex, filterField, filterOperator});
 
 				// if operator not empty, and not 'is-empty', and not 'is-not-empty', focus on the value field
-				if (filterOperator !== '' && filterOperator !== 'is-empty' && filterOperator !== 'is-not-empty') {
-					$j(this).closest('.filter-condition').find('.filter-value').focus();
-				}
+				// if (filterOperator !== '' && filterOperator !== 'is-empty' && filterOperator !== 'is-not-empty') {
+					// $j(this).closest('.filter-condition').find('.filter-value').focus();
+				// }
 
 				updateFiltersUI(filterIndex, filterGroupIndex);
 			});

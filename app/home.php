@@ -18,14 +18,33 @@
 			Panels: https://getbootstrap.com/components/#panels
 			Buttons: https://getbootstrap.com/css/#buttons
 	*/
+	$cols = HOMEPAGE_TABLES_PER_ROW;
+	$isDouble = HOMEPAGE_FIRST_TABLE_DOUBLE_WIDTH;
+
+	if ($isDouble) {
+		if ($cols > 3) { $grid_first = 'col-sm-12 col-md-8 col-lg-6'; }
+		elseif ($cols == 3) { $grid_first = 'col-md-12 col-lg-8'; }
+		else { $grid_first = 'col-lg-12'; }
+	} else {
+		if ($cols > 3) { $grid_first = 'col-sm-6 col-md-4 col-lg-3'; }
+		elseif ($cols == 3) { $grid_first = 'col-md-6 col-lg-4'; }
+		elseif ($cols == 2) { $grid_first = 'col-lg-6'; }
+		else { $grid_first = 'col-lg-12'; }
+	}
+
+	if ($cols > 3) { $grid_other = 'col-sm-6 col-md-4 col-lg-3'; }
+	elseif ($cols == 3) { $grid_other = 'col-md-6 col-lg-4'; }
+	elseif ($cols == 2) { $grid_other = 'col-lg-6'; }
+	else { $grid_other = 'col-lg-12'; }
+
 	$block_classes = [
 		'first' => [
-			'grid_column' => 'col-sm-12 col-md-8 col-lg-6',
+			'grid_column' => $grid_first,
 			'panel' => 'panel-warning',
 			'link' => 'btn-warning',
 		],
 		'other' => [
-			'grid_column' => 'col-sm-6 col-md-4 col-lg-3',
+			'grid_column' => $grid_other,
 			'panel' => 'panel-info',
 			'link' => 'btn-info',
 		],
@@ -35,7 +54,7 @@
 <style>
 	.panel-body-description{
 		margin-top: 10px;
-		height: 100px;
+		height: <?php echo HOMEPAGE_PANEL_HEIGHT; ?>px;
 		overflow: auto;
 	}
 	.panel-body .btn img{
@@ -84,11 +103,11 @@
 		foreach($tg as $tn => $tgroup) {
 			$tc = $arrTables[$tn];
 			/* is the current table filter-first? */
-			$tChkFF = array_search($tn, []);
+			$tChkFF = array_search($tn, tablesToFilterBeforeTV());
 			/* hide current table in homepage? */
-			$tChkHL = array_search($tn, ['order_details']);
+			$tChkHL = array_search($tn, tablesHiddenInHomepage());
 			/* allow homepage 'add new' for current table? */
-			$tChkAHAN = array_search($tn, ['orders','products']);
+			$tChkAHAN = array_search($tn, tablesWithAddNewInHomepage());
 
 			/* homepageShowCount for current table? */
 			$count_badge = '';
@@ -133,8 +152,8 @@
 									<?php if($can_insert && $tChkAHAN !== false && $tChkAHAN !== null) { ?>
 
 										<div class="btn-group" style="width: 100%;">
-										   <a style="width: calc(100% - 3.5em);" class="btn btn-lg <?php echo (!$i ? $block_classes['first']['link'] : $block_classes['other']['link']); ?>" title="<?php echo preg_replace("/&amp;(#[0-9]+|[a-z]+);/i", "&$1;", html_attr(strip_tags($tc['Description']))); ?>" href="<?php echo $tn; ?>_view.php<?php echo $searchFirst; ?>"><?php echo ($tc['tableIcon'] ? '<img src="' . $tc['tableIcon'] . '">' : '');?><strong class="table-caption"><?php echo $tc['Caption']; ?></strong><?php echo $count_badge; ?></a>
-										   <a id="<?php echo $tn; ?>_add_new" style="width: 3.5em; padding-right: 0.1rem; padding-left: 0.1rem;" class="btn btn-add-new btn-lg <?php echo (!$i ? $block_classes['first']['link'] : $block_classes['other']['link']); ?>" title="<?php echo html_attr($Translation['Add New']); ?>" href="<?php echo $tn; ?>_view.php?addNew_x=1"><i style="vertical-align: bottom;" class="glyphicon glyphicon-plus"></i></a>
+											<a style="width: calc(100% - 3.5em);" class="btn btn-lg <?php echo (!$i ? $block_classes['first']['link'] : $block_classes['other']['link']); ?>" title="<?php echo preg_replace("/&amp;(#[0-9]+|[a-z]+);/i", "&$1;", html_attr(strip_tags($tc['Description']))); ?>" href="<?php echo $tn; ?>_view.php<?php echo $searchFirst; ?>"><?php echo ($tc['tableIcon'] ? '<img src="' . $tc['tableIcon'] . '">' : '');?><strong class="table-caption"><?php echo $tc['Caption']; ?></strong><?php echo $count_badge; ?></a>
+											<a id="<?php echo $tn; ?>_add_new" style="width: 3.5em; padding-right: 0.1rem; padding-left: 0.1rem;" class="btn btn-add-new btn-lg <?php echo (!$i ? $block_classes['first']['link'] : $block_classes['other']['link']); ?>" title="<?php echo html_attr($Translation['Add New']); ?>" href="<?php echo $tn; ?>_view.php?addNew_x=1"><i style="vertical-align: bottom;" class="glyphicon glyphicon-plus"></i></a>
 										</div>
 									<?php } else { ?>
 

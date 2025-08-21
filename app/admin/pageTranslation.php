@@ -105,7 +105,7 @@
 		try {
 			$lang = eval($langCode);
 		} catch(Exception $e) {
-			return []; 
+			return [];
 		}
 
 		unset($lang['ImageFolder']);
@@ -138,8 +138,8 @@
 		<div class="page-header"><h1><?php echo $Translation['translation tool']; ?></h1></div>
 		<?php if(!empty($saveRes)) echo Notification::show($saveRes); ?>
 
-		<p class="lead">
-			<i class="text-info glyphicon glyphicon-globe" style="font-size: 5em; float: left; margin-right: 12px;"></i> 
+		<p class="lead ltr" style="min-height: 6em;">
+			<i class="text-info glyphicon glyphicon-globe" style="font-size: 5em; float: left; margin-right: 12px;"></i>
 			The purpose of this tool is to make it easier to translate the interface of this
 			AppGini app by displaying all the English strings to the left, and the corresponding
 			(translated) ones to the right in the table below. To translate a string, click on it
@@ -148,7 +148,7 @@
 			the remaining strings.
 		</p>
 
-		<div class="alert alert-info">
+		<div class="alert alert-info ltr">
 			<b>TIP:</b>
 			If you haven't already done so, please check the
 			<a href="https://bigprof.com/appgini/download-language-files" target="_blank" class="alert-link">language files page</a>
@@ -159,34 +159,34 @@
 		<form method="post" action="pageTranslation.php" class="table-responsive">
 			<?php echo csrf_token(); ?>
 
-			<table class="table table-bordered table-hover translation-table ltr">
+			<table class="table table-bordered table-hover translation-table">
 				<thead>
-					<tr>
-						<th width="20" class="text-center">#</th>
-						<th width="20%">English string<br>
+					<tr class="ltr">
+						<th style="width: 20px" class="text-center">#</th>
+						<th style="max-width: 40vw" class="text-center">English string<br>
 							Don't translate special words/symbols styled like <code>&lt;this&gt;</code> or <code>[that]</code> ... etc.</th>
-						<th>
+						<th style="max-width: 40vw" class="text-center">
 							Translation in <code>language.php</code> (<?php echo ucfirst($language['language']); ?>)
 						</th>
-						<th width="20"></th>
+						<th style="width: 20px"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php foreach($english as $key => $englishStr) {
 						if(in_array($key, IGNORE_KEYS)) continue;
 
-						$trClass = ''; $status = 'time'; $title = 'Not yet translated'; 
+						$trClass = ''; $status = 'time'; $title = 'Not yet translated';
 						if($englishStr != $language[$key] && !empty($language[$key])) {
 							$trClass = 'success';
 							$status = 'ok';
 							$title = 'Done';
 						}
 						?>
-						<tr class="<?php echo $trClass; ?>">
+						<tr>
 							<td class="text-right"><?php $i = $i ?? 1; echo $i++; ?></td>
-							<td><?php echo langStringFixed($englishStr); ?></td>
-							<td data-key="<?php echo html_attr($key); ?>" contenteditable onfocus="document.execCommand('selectAll', false, null);"><?php echo htmlspecialchars($language[$key] ?? ''); ?></td>
-							<td class="status" title="<?php echo $title; ?>"><i class="glyphicon glyphicon-<?php echo $status; ?>"></i></td>
+							<td class="ltr" style="max-width: 40vw;"><?php echo langStringFixed($englishStr); ?></td>
+							<td style="max-width: 40vw;" data-key="<?php echo html_attr($key); ?>" contenteditable onfocus="document.execCommand('selectAll', false, null);"><?php echo htmlspecialchars($language[$key] ?? ''); ?></td>
+							<td class="status <?php echo $trClass; ?>" title="<?php echo $title; ?>"><i class="glyphicon glyphicon-<?php echo $status; ?>"></i></td>
 						</tr>
 						<?php
 					} ?>
@@ -250,9 +250,8 @@
 					.on('blur', 'td[contenteditable]', function() {
 						let td = $j(this), isSame = (td.text() == td.prev('td:not([contenteditable])').text());
 						if(!td.text().length) isSame = true;
-						td.parent('tr')
-							.toggleClass('success', !isSame);
 						td.next('.status')
+							.toggleClass('success', !isSame)
 							.attr('title', isSame ? 'Not yet translated' : 'Done')
 							.children('.glyphicon')
 								.toggleClass('glyphicon-time', isSame)

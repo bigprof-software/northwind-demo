@@ -194,7 +194,7 @@
 				information_schema.`COLLATION_CHARACTER_SET_APPLICABILITY` c
 				WHERE c.collation_name = t.table_collation
 				AND t.table_schema = '$dbDatabase'
-				AND t.table_name = '$tn'" 
+				AND t.table_name = '$tn'"
 			);
 
 		$encodingError = (
@@ -208,7 +208,7 @@
 	<div class="alert alert-info alert-dismissable">
 		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		<i class="glyphicon glyphicon-info-sign"></i>
-		<?php 
+		<?php
 			$originalValues = ['<ACTION>', '<FIELD>', '<TABLE>', '<QUERY>'];
 			$action = ($fix_status == 2 ? 'create' : 'update');
 			$replaceValues = [$action, $fix_field, $fix_table, $qry];
@@ -265,7 +265,7 @@
 	<?php foreach($schema as $tn => $fields) { ?>
 		<tr class="info"><th colspan="5">
 			<h4>
-				<img src="../<?php echo $table_captions[$tn][2]; ?>" class="hspacer-md"> 
+				<img src="../<?php echo $table_captions[$tn][2]; ?>" class="hspacer-md">
 				<span  data-placement="auto top" data-toggle="tooltip" title="<?php echo html_attr(str_replace( "<TABLENAME>", $tn, $Translation['table name title'])); ?>">
 					<?php echo $table_captions[$tn][0]; ?>
 				</span>
@@ -276,7 +276,7 @@
 						<i class="glyphicon glyphicon-info-sign"></i> <span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu sql-display">
-						<li><?php echo createTableIfNotExists($tn, true); ?></li>
+						<li class="text-left ltr"><?php echo createTableIfNotExists($tn, true); ?></li>
 					</ul>
 				</div>
 			</h4>
@@ -359,8 +359,8 @@
 			$j('.summary')
 				.addClass('alert-warning')
 				.html(
-					fieldsCount + 
-					'<br><br>' + 
+					fieldsCount +
+					'<br><br>' +
 					'<a href="pageBackupRestore.php" class="alert-link">' +
 						'<b><?php echo addslashes($Translation['backup before fix']); ?></b>' +
 					'</a>'

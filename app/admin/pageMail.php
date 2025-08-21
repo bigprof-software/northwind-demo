@@ -139,7 +139,7 @@
 	$messages_plugin_installed = false;
 	$plugins = get_plugins();
 
-	foreach($plugins as $plugin) 
+	foreach($plugins as $plugin)
 		if($plugin['title'] == 'Messages')
 			$messages_plugin_installed = true;
 
@@ -147,11 +147,11 @@
 		<div class="row">
 			<div class="col-sm-8 col-sm-offset-4 col-md-9 col-md-offset-3 col-lg-6 col-lg-offset-4">
 				<a
-					type="button" 
-					style="white-space: normal; word-wrap: break-word; margin: 2em 0;" 
-					class="btn btn-success btn-lg btn-block" 
-					href="https://bigprof.com/appgini/applications/messages-plugin" 
-					target="_blank" 
+					type="button"
+					style="white-space: normal; word-wrap: break-word; margin: 2em 0;"
+					class="btn btn-success btn-lg btn-block"
+					href="https://bigprof.com/appgini/applications/messages-plugin"
+					target="_blank"
 					>&#128161; <?php echo $Translation['messages plugin cta']; ?> &#128172;
 				</a>
 			</div>

@@ -112,7 +112,7 @@
 
 	$res = sql(
 		"SELECT
-			r.recID, r.memberID, g.name, r.tableName, r.dateAdded, r.dateUpdated, r.pkValue 
+			r.recID, r.memberID, g.name, r.tableName, r.dateAdded, r.dateUpdated, r.pkValue
 		FROM
 			membership_userrecords r LEFT JOIN membership_groups g ON r.groupID=g.groupID
 		$whereStr $sortClause LIMIT $start, " . intval($adminConfig['recordsPerPage']),

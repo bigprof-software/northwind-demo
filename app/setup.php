@@ -34,7 +34,26 @@
 	// check if captcha supported and verified
 	if(FORCE_SETUP_CAPTCHA && Captcha::available() && !Captcha::verified()) {
 		http_response_code(401); // Unauthorized to allow blocking of brute force attacks in WAFs
-		die(Captcha::standAloneForm('setup.php'));
+
+		$errorHtml = '';
+		if($_SERVER['REQUEST_METHOD'] == 'POST') {
+			$errorHtml = '<div style="
+					color: #a40332;
+					border: 1px solid #a40332;
+					padding: 1em;
+					background-color: #fdf2f5;
+					border-radius: 4px;
+				">' .
+				sprintf(
+					$Translation['setup captcha trouble'],
+					"<pre>@define('FORCE_SETUP_CAPTCHA', true);</pre>",
+					'<code>definitions.php</code>',
+					"<pre>@define('FORCE_SETUP_CAPTCHA', false);</pre>"
+				) .
+				'</div>';
+		}
+
+		die(str_replace('</form>', "$errorHtml</form>", Captcha::standAloneForm('setup.php')));
 	}
 
 	/* include page header, unless we're testing db connection (ajax) */
@@ -395,7 +414,7 @@
 			<div class="row" style="margin-top: 2em;">
 				<div class="col-sm-offset-3 col-sm-6 col-lg-offset-4 col-lg-4">
 					<button class="btn btn-primary btn-lg btn-block" value="submit" id="submit" type="submit" name="submit">
-						<i class="glyphicon glyphicon-ok"></i> 
+						<i class="glyphicon glyphicon-ok"></i>
 						<?php echo $Translation['Submit']; ?>
 					</button>
 				</div>

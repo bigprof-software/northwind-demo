@@ -139,7 +139,7 @@
 			} else {
 				?>
 					<button type="submit" name="resetPermissions" value="1" class="btn btn-warning btn-lg reset-permissions">
-						<i class="glyphicon glyphicon-refresh"></i> 
+						<i class="glyphicon glyphicon-refresh"></i>
 						<?php echo html_attr($Translation['reset member permissions']); ?>
 					</button>
 				<?php

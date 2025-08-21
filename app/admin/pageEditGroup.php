@@ -68,7 +68,7 @@ if(Request::val('saveChanges')) {
 
 		// update group
 		update(
-			'membership_groups', 
+			'membership_groups',
 			compact('name', 'description', 'allowSignup', 'needsApproval', 'allowCSVImport'),
 			compact('groupID')
 		);
@@ -152,9 +152,9 @@ while($row = db_fetch_assoc($res)) {
 <div class="page-header">
 	<h1>
 		<?php echo($groupID ? preg_replace('/\'?<GROUPNAME>\'?/', '<span class="text-info text-bold">' . html_attr($name) . '</span>', $Translation['edit group']) : $Translation['add new group']); ?>
-		<div class="pull-right">
+		<div class="pull-right flip">
 			<div class="btn-group">
-				<a href="pageViewGroups.php" class="btn btn-default btn-lg">
+				<a href="pageViewGroups.php" class="btn btn-default btn-lg ltr">
 					<i class="glyphicon glyphicon-arrow-left"></i>
 					<span class="hidden-xs hidden-sm"><?php echo $Translation['back to groups']; ?></span>
 				</a>
@@ -180,9 +180,9 @@ while($row = db_fetch_assoc($res)) {
 
 <?php if($anonGroupID == $groupID) { ?>
 	<div class="alert alert-warning text-center"><?php echo $Translation['anonymous group attention']; ?></div>
-<?php } elseif($name == 'Admins') { ?> 
+<?php } elseif($name == 'Admins') { ?>
 	<div class="alert alert-warning text-center"><?php echo $Translation['admin group attention']; ?></div>
-<?php } ?> 
+<?php } ?>
 
 
 <form method="post" action="pageEditGroup.php" class="form-horizontal">
@@ -192,7 +192,7 @@ while($row = db_fetch_assoc($res)) {
 
 	<div class="row">
 		<div class=" col-lg-3 col-lg-offset-9 col-sm-4 col-sm-offset-8" >
-			<button type="submit" name="saveChanges" value="1" class="btn btn-primary btn-lg pull-right btn-block" style="max-width: 15em;"><i class="glyphicon glyphicon-ok"></i> <?php echo $Translation['save changes']; ?></button>
+			<button type="submit" name="saveChanges" value="1" class="btn btn-primary btn-lg pull-right flip btn-block" style="max-width: 15em;"><i class="glyphicon glyphicon-ok"></i> <?php echo $Translation['save changes']; ?></button>
 		</div>
 	</div>
 
@@ -259,7 +259,7 @@ while($row = db_fetch_assoc($res)) {
 							$Translation['admin add users'],
 							$Translation['admin approve users'],
 							$Translation['automatically approve users']
-						), 
+						),
 						($groupID ? $visitorSignup : $adminConfig['defaultSignUp'])
 					);
 				?>
@@ -277,8 +277,8 @@ while($row = db_fetch_assoc($res)) {
 	<div class="table-responsive">
 		<table class="table table-striped table-bordered table-hover">
 			<caption>
-				<h2 class="pull-left"><?php echo $Translation['group table permissions']; ?></h2>
-				<div class="pull-right vspacer-lg">
+				<h2 class="pull-left flip"><?php echo $Translation['group table permissions']; ?></h2>
+				<div class="pull-right flip vspacer-lg">
 					<label class="control-label"><?php echo $Translation['Copy permissions from another group']; ?></label>
 					<div style="display: flex; align-items: center; gap: .5em;">
 						<select id="copy-permissions" class="form-control" style="flex-grow: 1;">
@@ -296,7 +296,7 @@ while($row = db_fetch_assoc($res)) {
 						</button>
 					</div>
 				</div>
-				<div class="pull-right vspacer-lg hspacer-md" style="font-size: 2em;">&#128203;</div>
+				<div class="pull-right flip vspacer-lg hspacer-md" style="font-size: 2em;">&#128203;</div>
 				<div class="clearfix"></div>
 			</caption>
 			<thead>
@@ -396,7 +396,7 @@ while($row = db_fetch_assoc($res)) {
 
 	<div class="row">
 		<div class=" col-lg-3 col-lg-offset-9 col-sm-4 col-sm-offset-8 " >
-			<button type="submit" name="saveChanges" value="1" class="btn btn-primary btn-lg pull-right btn-block" style="max-width: 15em;"><i class="glyphicon glyphicon-ok"></i> <?php echo $Translation['save changes']; ?></button>
+			<button type="submit" name="saveChanges" value="1" class="btn btn-primary btn-lg pull-right flip btn-block" style="max-width: 15em;"><i class="glyphicon glyphicon-ok"></i> <?php echo $Translation['save changes']; ?></button>
 		</div>
 	</div>
 </form>
@@ -419,7 +419,7 @@ while($row = db_fetch_assoc($res)) {
 				var num = (
 					toWhat == 'owner' ? 1 : (
 					toWhat == 'group' ? 2 : (
-					toWhat == 'all'    ? 3 : 
+					toWhat == 'all'    ? 3 :
 					0 // no, default
 				)));
 				$j('.' + permission + '-permission input[type="radio"][value="' + num + '"]')
@@ -433,7 +433,7 @@ while($row = db_fetch_assoc($res)) {
 			var num = (
 				toWhat == 'owner' ? 1 : (
 				toWhat == 'group' ? 2 : (
-				toWhat == 'all'    ? 3 : 
+				toWhat == 'all'    ? 3 :
 				0 // no, default
 			)));
 

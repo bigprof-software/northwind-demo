@@ -23,7 +23,7 @@
 		<form method="get" action="pageRebuildThumbnails.php" target="_blank">
 			<?php echo $Translation['thumbnails utility']; ?><br><br>
 
-			<b><?php echo $Translation['rebuild thumbnails of table'] ; ?></b> 
+			<b><?php echo $Translation['rebuild thumbnails of table'] ; ?></b>
 			<?php echo htmlSelect('table', array_keys($p), array_keys($p), ''); ?>
 			<input type="submit" value="<?php echo $Translation['rebuild'] ; ?>">
 		</form>

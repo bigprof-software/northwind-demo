@@ -305,14 +305,21 @@
 	#########################################################
 
 	function htmlUserBar() {
+		if(Request::val('Embedded')) return ''; // skip if in embedded mode
+
 		global $Translation;
 		if(!defined('PREPEND_PATH')) define('PREPEND_PATH', '');
 
 		$mi = getMemberInfo();
-		$adminConfig = config('adminConfig');
-		$home_page = (basename($_SERVER['PHP_SELF']) == 'index.php');
-		ob_start();
+		$home_page = defined('HOMEPAGE') && HOMEPAGE;
 
+		$navMenu = getUserData('navMenu');
+		if(!$navMenu) {
+			setUserData('navMenu', DEFAULT_NAV_MENU);
+			$navMenu = DEFAULT_NAV_MENU;
+		}
+
+		ob_start();
 		?>
 		<nav class="navbar navbar-default navbar-fixed-top hidden-print" role="navigation">
 			<div class="navbar-header">
@@ -340,20 +347,8 @@
 					</ul>
 				<?php } ?>
 
-				<ul class="nav navbar-nav"><?php echo ($home_page && !HOMEPAGE_NAVMENUS ? '' : NavMenus()); ?></ul>
-
-				<?php if(userCanImport()){ ?>
-					<ul class="nav navbar-nav">
-						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn hidden-xs btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
-						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn visible-xs btn-lg btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
-					</ul>
-				<?php } ?>
-
-				<?php if(getLoggedAdmin() !== false) { ?>
-					<ul class="nav navbar-nav">
-						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn hidden-xs" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
-						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn visible-xs btn-lg" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
-					</ul>
+				<?php if(!$home_page || HOMEPAGE_NAVMENUS) { ?>
+					<ul class="nav navbar-nav horizontal-navlinks<?php echo $navMenu != 'horizontal' ? ' hidden' : ''; ?>"><?php echo NavMenus(); ?></ul>
 				<?php } ?>
 
 				<?php if(!Request::val('signIn') && !Request::val('loginFailed')) { ?>
@@ -411,6 +406,20 @@
 					<?php } ?>
 				<?php } ?>
 
+				<?php if(getLoggedAdmin() !== false) { ?>
+					<ul class="nav navbar-nav navbar-right">
+						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn hidden-xs btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
+						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn visible-xs btn-lg btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
+					</ul>
+				<?php } ?>
+
+				<?php if(userCanImport()){ ?>
+					<ul class="nav navbar-nav navbar-right">
+						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn hidden-xs btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
+						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn visible-xs btn-lg btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
+					</ul>
+				<?php } ?>
+
 				<ul class="nav navbar-nav">
 					<a href="#" title="<?php echo html_attr($Translation['exit']); ?>" class="btn btn-default navbar-btn btn-lg visible-xs hidden-browser exit-pwa">
 						<i class="glyphicon glyphicon-remove"></i>
@@ -437,8 +446,8 @@
 
 						// if user dismissed the install prompt, don't show it again for some time
 						if(
-							localStorage.getItem('AppGini.PWApromptDismissedAt')
-							&& (new Date().getTime() - localStorage.getItem('AppGini.PWApromptDismissedAt')) < silentPeriod
+							AppGini.localStorage.getItem('PWApromptDismissedAt')
+							&& (new Date().getTime() - AppGini.localStorage.getItem('PWApromptDismissedAt')) < silentPeriod
 						) return;
 
 						// unhide .install-pwa-btn by removing .hidden
@@ -451,7 +460,7 @@
 								e.prompt();
 
 								// add a localStorage item to prevent showing the install button for some time
-								localStorage.setItem('AppGini.PWApromptDismissedAt', new Date().getTime());
+								AppGini.localStorage.setItem('PWApromptDismissedAt', new Date().getTime());
 							});
 						});
 					});
@@ -463,6 +472,7 @@
 				</script>
 			</div>
 		</nav>
+		<div style="min-height: 70px;" class="hidden-print top-margin-adjuster"></div>
 		<?php
 
 		return ob_get_clean();
@@ -686,7 +696,7 @@
 
 	function addFilter($index, $filterAnd, $filterField, $filterOperator, $filterValue) {
 		// validate input
-		if($index < 1 || $index > 80 || !is_int($index)) return false;
+		if($index < 1 || $index > FILTER_GROUPS * FILTERS_PER_GROUP || !is_int($index)) return false;
 		if($filterAnd != 'or')   $filterAnd = 'and';
 		$filterField = intval($filterField);
 
@@ -715,7 +725,7 @@
 	#########################################################
 
 	function clearFilters() {
-		for($i=1; $i<=80; $i++) {
+		for($i = 1; $i <= FILTER_GROUPS * FILTERS_PER_GROUP; $i++) {
 			addFilter($i, '', 0, '', '');
 		}
 	}
@@ -1098,6 +1108,31 @@
 
 	#########################################################
 
+	function tablesHiddenInNavMenu() {
+		return ['order_details',];
+	}
+
+	#########################################################
+
+	function tablesHiddenInHomepage() {
+		return ['order_details',];
+	}
+
+
+	#########################################################
+
+	function tablesWithAddNewInHomepage() {
+		return ['orders','products',];
+	}
+
+	#########################################################
+
+	function tablesToFilterBeforeTV() {
+		return [];
+	}
+
+	#########################################################
+
 	function NavMenus($options = []) {
 		if(!defined('PREPEND_PATH')) define('PREPEND_PATH', '');
 		global $Translation;
@@ -1119,10 +1154,10 @@
 		if(is_array($arrTables)) {
 			foreach($arrTables as $tn => $tc) {
 				/* ---- list of tables where hide link in nav menu is set ---- */
-				$tChkHL = array_search($tn, ['order_details']);
+				$tChkHL = array_search($tn, tablesHiddenInNavMenu());
 
 				/* ---- list of tables where filter first is set ---- */
-				$tChkFF = array_search($tn, []);
+				$tChkFF = array_search($tn, tablesToFilterBeforeTV());
 				if($tChkFF !== false && $tChkFF !== null) {
 					$searchFirst = '&Filter_x=1';
 				} else {
@@ -1135,14 +1170,14 @@
 			}
 		}
 
-		// custom nav links, as defined in "hooks/links-navmenu.php"
+		// custom nav links, as defined in hooks/links-navmenu.php
 		global $navLinks;
 		if(is_array($navLinks)) {
 			$memberInfo = getMemberInfo();
 			$links_added = [];
 			foreach($navLinks as $link) {
 				if(!isset($link['url']) || !isset($link['title'])) continue;
-				if(getLoggedAdmin() !== false || @in_array($memberInfo['group'], $link['groups']) || @in_array('*', $link['groups'])) {
+				if(getLoggedAdmin() !== false || $link['groups'] == '*' || @in_array($memberInfo['group'], $link['groups']) || @in_array('*', $link['groups'])) {
 					$menu_index = intval($link['table_group']);
 					if(!$links_added[$menu_index]) $menu[$menu_index] .= '<li class="divider"></li>';
 
@@ -1681,19 +1716,15 @@ EOT;
 	 */
 	function compactFilters(&$FilterAnd, &$FilterField, &$FilterOperator, &$FilterValue) {
 
-		// TODO: move to definitions.php as constants
-		$filterConditionsPerGroup = 4; // Number of filter conditions per group
-		$filterGroups = datalist_filters_count / $filterConditionsPerGroup; // Number of filter groups
-
 		$filterConditionIsEmpty = function($i) use ($FilterField, $FilterOperator) {
 			// check if filter is empty
 			return !$FilterField[$i] || !$FilterOperator[$i];
 		};
 
-		$filterGroupIsEmpty = function($i) use ($filterConditionIsEmpty, $filterConditionsPerGroup) {
+		$filterGroupIsEmpty = function($i) use ($filterConditionIsEmpty) {
 			// check if filter group is empty
-			for($j = 1; $j <= $filterConditionsPerGroup; $j++) {
-				if(!$filterConditionIsEmpty(($i - 1) * $filterConditionsPerGroup + $j)) {
+			for($j = 1; $j <= FILTERS_PER_GROUP; $j++) {
+				if(!$filterConditionIsEmpty(($i - 1) * FILTERS_PER_GROUP + $j)) {
 					return false;
 				}
 			}
@@ -1702,10 +1733,10 @@ EOT;
 
 		// 'compact' filter conditions by removing gaps inside each group and removing empty groups
 		$compactedGroups = [];
-		for($gi = 1; $gi <= $filterGroups; $gi++) {
+		for($gi = 1; $gi <= FILTER_GROUPS; $gi++) {
 			$compactedGroups[$gi] = [];
-			for($fi = 1; $fi <= $filterConditionsPerGroup; $fi++) {
-				$filterIndex = (($gi - 1) * $filterConditionsPerGroup) + $fi;
+			for($fi = 1; $fi <= FILTERS_PER_GROUP; $fi++) {
+				$filterIndex = (($gi - 1) * FILTERS_PER_GROUP) + $fi;
 				if(!$filterConditionIsEmpty($filterIndex)) {
 					$compactedGroups[$gi][] = $filterIndex;
 				}
@@ -1724,7 +1755,7 @@ EOT;
 		$newFilterAnd = $newFilterField = $newFilterOperator = $newFilterValue = [];
 		foreach($compactedGroups as $gi0b => $group) {
 			foreach($group as $fi0b => $fi) {
-				$filterIndex = $gi0b * $filterConditionsPerGroup + $fi0b + 1;
+				$filterIndex = $gi0b * FILTERS_PER_GROUP + $fi0b + 1;
 				$newFilterAnd[$filterIndex] = $FilterAnd[$fi];
 				$newFilterField[$filterIndex] = $FilterField[$fi];
 				$newFilterOperator[$filterIndex] = $FilterOperator[$fi];

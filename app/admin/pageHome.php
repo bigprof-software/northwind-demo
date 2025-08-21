@@ -65,7 +65,7 @@
 		if($j(this).hasClass('locked_active') || $j(this).hasClass('unlocked_inactive')) {
 			if(confirm(<?php echo json_encode($Translation['enable maintenance mode?']); ?>)) {
 				$j.ajax({
-					url: 'ajax-maintenance-mode.php', 
+					url: 'ajax-maintenance-mode.php',
 					data: {
 						status: 'on',
 						csrf_token: '<?php echo csrf_token(false, true); ?>'
@@ -78,7 +78,7 @@
 		} else {
 			if(confirm(<?php echo json_encode($Translation['disable maintenance mode?']); ?>)) {
 				$j.ajax({
-					url: 'ajax-maintenance-mode.php', 
+					url: 'ajax-maintenance-mode.php',
 					data: {
 						status: 'off',
 						csrf_token: '<?php echo csrf_token(false, true); ?>'
@@ -229,7 +229,7 @@
 
 		<div class="col-md-4" id="twitter-feed">
 			<a class="twitter-timeline" data-dnt="true" data-theme="light" data-height="300" href="https://twitter.com/bigprof?ref_src=twsrc%5Etfw"><?php echo $Translation["BigProf tweets"]; ?></a>
-			<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+			<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 			<div class="text-right hidden" id="remove-feed-link"><a href="pageSettings.php?search-settings=twitter"><i class="glyphicon glyphicon-remove"></i> <?php echo $Translation["remove feed"]; ?></a></div>
 

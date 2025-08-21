@@ -101,7 +101,7 @@
 			$non_superadmin_sql = "passMD5=" . ($password != '' ? "'" . password_hash($password, PASSWORD_DEFAULT) . "'" : "passMD5") . ", email='{$email}', groupID='{$groupID}', isBanned='{$isBanned}', isApproved='{$isApproved}', ";
 			foreach($customs as $i => $cust_value) {
 				$customs_sql .= "custom{$i}='{$cust_value}', ";
-			}      
+			}
 
 			if($superadmin) {
 				$admin_pass_hash = makeSafe($adminConfig['adminPassword'], false);
@@ -199,7 +199,7 @@
 <div class="page-header">
 	<h1>
 		<?php echo ($memberID ? str_replace('<MEMBERID>', '<span class="text-primary">' . $memberID . '</span>', $Translation["edit member"]) : $Translation["add new member"] . $addend); ?>
-		<div class="pull-right">
+		<div class="pull-right flip">
 			<div class="btn-group">
 				<a href="pageViewMembers.php" class="btn btn-default btn-lg"><i class="glyphicon glyphicon-arrow-left"></i> <span class="hidden-xs hidden-sm"><?php echo $Translation['back to members']; ?></span></a>
 				<?php if($memberID) { ?>
