@@ -1,20 +1,31 @@
-/.idea
-setup.md5
-config.php
+# ignore files containing sensitive information
+app/config.php
+app/config.bak.php
+app/file-uploader.php
+app/admin/backups
+
+# ignore files generated dynamically by AppGini application
+app/setup.md5
+app/tmp
+app/admin/tmp
 app/plugins
 app/rand
+app/import-csv
+!app/import-csv/index.html
+!app/import-csv/.htaccess
+
+# ignore user-uploaded files
 app/images
 !app/images/index.html
-!app/images/blank*
+!app/images/blank.gif
+
+# ignore other common artifacts
 *.log
 *.cache
 *.zip
 !images.zip
 *.bat
-file-uploader.php
 test*
 app/Northwind.axp
-app/admin/backups/*
 *.sql
 !northwind.sql
-config.bak.php
