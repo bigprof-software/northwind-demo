@@ -5,7 +5,7 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '25.13');
+	@define('APP_VERSION', '25.14');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);
@@ -20,6 +20,7 @@
 	@define('FILTER_GROUPS', 20); // maximum number of filters groups
 	@define('datalist_filters_count', FILTER_GROUPS); // for backward compatibility
 	@define('FILTERS_PER_GROUP', 4); // changing this value might lead to unexpected behavior as it has not been tested with other values
+	@define('MAX_FILTER_LINKS_PER_USER', 100); // maximum number of saved filter links per user
 	@define('datalist_max_records_multi_selection', 1000);
 	@define('datalist_max_page_lump', 50);
 	@define('datalist_max_records_dv_print', 100);
@@ -55,4 +56,9 @@
 	@define('HOMEPAGE_FIRST_TABLE_DOUBLE_WIDTH', true);
 	@define('HOMEPAGE_TABLES_PER_ROW', 4);
 	@define('HOMEPAGE_PANEL_HEIGHT', 100);
+	@define('HOMEPAGE_QUICK_SEARCH_TABLES', true); // if true, the quick search box on homepage will search in user tables
 	@define('DEFAULT_NAV_MENU', 'vertical');
+
+	// default backup and restore commands, can be overridden in admin settings > Application tab
+	@define('DB_BACKUP_COMMAND', 'mysqldump -y -e --no-autocommit -q --single-transaction');
+	@define('DB_RESTORE_COMMAND', 'mysql');

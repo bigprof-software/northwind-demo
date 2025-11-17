@@ -464,6 +464,16 @@ function customers_form($selectedId = '', $allowUpdate = true, $allowInsert = tr
 	// process translations
 	$templateCode = parseTemplate($templateCode);
 
+	// populate autoCloseParentTables
+	$lookupFields = getLookupFields()['customers'] ?? [];
+	$autoCloseParentTables = [];
+	foreach($lookupFields as $field => $info) {
+		if($info['auto-close']) {
+			$autoCloseParentTables[] = $info['parent-table'];
+		}
+	}
+	$templateCode = str_replace('<%%AUTO_CLOSE_PARENT_TABLES%%>', json_encode($autoCloseParentTables), $templateCode);
+
 	// clear scrap
 	$templateCode = str_replace('<%%', '<!-- ', $templateCode);
 	$templateCode = str_replace('%%>', ' -->', $templateCode);

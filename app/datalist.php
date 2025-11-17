@@ -403,14 +403,20 @@ class DataList {
 			}
 			$filter_link = substr($filter_link, 0, -1); /* trim last '&' */
 
-			$this->HTML .= '<div id="saved_filter_source_code" class="row"><div class="col-md-6 col-md-offset-3">';
+			$this->HTML .= '<div id="save-filter-panel" class="row tspacer-lg"><div class="col-md-6 col-md-offset-3">';
 				$this->HTML .= '<div class="panel panel-info">';
-					$this->HTML .= '<div class="panel-heading"><h3 class="panel-title">' . $this->translation["saved filters title"] . "</h3></div>";
 					$this->HTML .= '<div class="panel-body">';
-						$this->HTML .= $this->translation["saved filters instructions"];
-						$this->HTML .= '<textarea rows="4" class="form-control vspacer-lg" style="width: 100%;" onfocus="$j(this).select();">' . "&lt;a href=\"{$filter_link}\"&gt;{$this->translation['saved filter link']}&lt;/a&gt;" . '</textarea>';
-						$this->HTML .= "<div><a href=\"{$filter_link}\" title=\"" . html_attr($filter_link) . "\">{$this->translation['permalink']}</a></div>";
-						$this->HTML .= '<button type="button" class="btn btn-default btn-block vspacer-lg" onclick="$j(\'#saved_filter_source_code\').remove();"><i class="glyphicon glyphicon-remove"></i> ' . $this->translation['hide code'] . '</button>';
+						$this->HTML .= '<div>';
+							$this->HTML .= '<a href="#" class="pull-right panel-close" onclick="$j(\'#save-filter-panel\').remove();">&times;</a>';
+							$this->HTML .= "<a href=\"{$filter_link}\" title=\"" . html_attr($this->translation['bookmark or share']) . "\" class=\"text-bold\" id=\"save-filter-link\"><i class=\"glyphicon glyphicon-link\"></i> {$this->translation['permalink']}</a>";
+							$this->HTML .= "<span class=\"text-muted hspacer-lg\">{$this->translation['bookmark or share']}</span>";
+						$this->HTML .= '</div>';
+						if(!Authentication::isGuest()) {
+							$this->HTML .= '<div class="well vspacer-lg">';
+								$this->HTML .= '<input type="text" class="form-control" placeholder="' . html_attr($this->translation['provide link title']) . '" id="save-filter-title">';
+							$this->HTML .= '</div>';
+							$this->HTML .= '<button type="button" class="btn btn-info btn-block vspacer-lg" disabled id="save-filter-btn"><i class="glyphicon glyphicon-ok"></i> ' . $this->translation['save filter link'] . '</button>';
+						}
 					$this->HTML .= '</div>';
 				$this->HTML .= '</div>';
 			$this->HTML .= '</div></div>';
@@ -857,10 +863,10 @@ class DataList {
 					$this->HTML .= '<script>jQuery(function() { jQuery("tbody a").removeAttr("href").removeAttr("rel"); });</script>';
 				}
 
-				// script for focusing into the search box on loading the page
+				// script for focusing into the filter title box if present, or the search box otherwise on loading the page
 				// and for declaring record action handlers
 				$this->HTML .= '<script>$j(() => { ' .
-						(!Request::val('noQuickSearchFocus') ? 'if(!screen_size("xs")) $j("input[name=SearchString]").focus();' : '') .
+						(!Request::val('noQuickSearchFocus') ? 'if(!screen_size("xs")) $j("#save-filter-title").length ? $j("#save-filter-title").focus() : $j("input[name=SearchString]").focus();' : '') .
 						$more_menu_js .
 					' });</script>';
 

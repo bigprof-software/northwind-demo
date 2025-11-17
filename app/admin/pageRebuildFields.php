@@ -298,9 +298,9 @@
 				<td class="<?php echo ($diff ? 'bold text-danger' : ''); ?>"><?php echo thisOr("<samp>{$fd['db']}</samp>", $Translation['does not exist']); ?></td>
 				<td>
 					<?php if($diff && $no_db) { ?>
-						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-success btn-xs btn_create" data-toggle="tooltip" data-placement="auto top" title="<?php echo $Translation['create field'] ; ?>"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['create it'] ; ?></a>
+						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-success btn-xs btn_create" data-toggle="tooltip" data-placement="auto top" title="<?php echo html_attr($Translation['create field']); ?>"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['create it'] ; ?></a>
 					<?php } elseif($diff) { ?>
-						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-warning btn-xs btn_update" data-toggle="tooltip" data-placement="auto top" title="<?php echo $Translation['fix field'] ; ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['fix it'] ; ?></a>
+						<a href="pageRebuildFields.php?t=<?php echo $tn; ?>&f=<?php echo $fn; ?>" class="btn btn-warning btn-xs btn_update" data-toggle="tooltip" data-placement="auto top" title="<?php echo html_attr($Translation['fix field']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['fix it'] ; ?></a>
 					<?php } ?>
 				</td>
 			</tr>
@@ -344,7 +344,7 @@
 		});
 
 		$j('.btn_update, #fix_all').click(function() {
-			return confirm('<?php echo addslashes($Translation['field update warning']); ?>');
+			return confirm(<?php echo json_encode($Translation['field update warning']); ?>);
 		});
 
 		var count_updates = $j('.btn_update').length;

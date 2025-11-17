@@ -16,7 +16,7 @@
 
 	<div class="row">
 		<!-- form inputs -->
-		<div class="col-md-8 col-lg-10" id="order_details_dv_form">
+		<div class="col-md-8 col-lg-9 dv-form" id="order_details_dv_form" data-tablename="order_details">
 			<fieldset class="form-horizontal">
 
 				<!-- Field: ID -->
@@ -100,7 +100,7 @@
 
 		<!-- DV action buttons -->
 		<hr class="hidden-md hidden-lg">
-		<div class="col-md-4 col-lg-2 dv-action-buttons" id="order_details_dv_action_buttons">
+		<div class="col-md-4 col-lg-3 dv-action-buttons" id="order_details_dv_action_buttons" data-tablename="order_details">
 			<div class="btn-toolbar">
 				<div class="btn-group-vertical btn-group-lg" style="width: 100%;">
 					<%%UPDATE_BUTTON%%>
@@ -158,13 +158,16 @@
 			$j('a[href="<%%BASE_UPLOAD_PATH%%>"]').click(function() { return false; });
 
 
+			const autoCloseTables = <%%AUTO_CLOSE_PARENT_TABLES%%>;
+
 			if(true /* !embedded_mode */) {
 				$j('.add_new_parent').click(function() {
 					const fieldId = $j(this).prevAll('input:hidden').eq(0).attr('id');
 					const pt = $j(this).attr('id').replace(/_add_new$/, '');
+					const autoCloseParam = (autoCloseTables.includes(pt) ? '&AutoClose=1' : '');
 
 					modal_window({
-						url: `${pt}_view.php?addNew_x=1&Embedded=1`,
+						url: `${pt}_view.php?addNew_x=1&Embedded=1${autoCloseParam}`,
 						close: function() {
 							$j(`#${fieldId}-container`).select2('focus').select2('focus');
 
@@ -194,6 +197,7 @@
 			$j('form').on('click', '.view_parent', function() {
 				const pt = $j(this).attr('id').replace(/_view_parent$/, '');
 				const fieldId = $j(this).prevAll('input:hidden').eq(0).attr('id');
+				const autoCloseParam = (autoCloseTables.includes(pt) ? '&AutoClose=1' : '');
 
 				let parent_id = '{empty_value}';
 				if(fieldId) {
@@ -211,7 +215,7 @@
 							break;
 						case 'view_parent_modal':
 							modal_window({
-								url: `${pt}_view.php?Embedded=1&SelectedID=${encodeURIComponent(parent_id)}`,
+								url: `${pt}_view.php?Embedded=1&SelectedID=${encodeURIComponent(parent_id)}${autoCloseParam}`,
 								close: function() {
 									$j(`#${fieldId}-container`).select2('focus').select2('focus');
 

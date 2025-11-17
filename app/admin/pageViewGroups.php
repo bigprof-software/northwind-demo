@@ -59,8 +59,8 @@
 			</th>
 		</tr>
 		<tr>
-			<th><?php echo $Translation["group"]  ; ?></th>
-			<th><?php echo $Translation["description"] ; ?></th>
+			<th><?php echo $Translation['group']  ; ?></th>
+			<th><?php echo $Translation['description'] ; ?></th>
 			<th><?php echo $Translation['members count'] ; ?></th>
 			<th>&nbsp;</th>
 		</tr>
@@ -86,14 +86,14 @@
 					<td class="text-right"><?php echo $groupMembersCount; ?></td>
 					<td class="text-center h3">
 						<!-- edit -->
-						<a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation['Edit group']; ?>"><i class="glyphicon glyphicon-pencil"></i></a>
+						<a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['Edit group']); ?>"><i class="glyphicon glyphicon-pencil"></i></a>
 						<span class="hspacer-sm"></span>
 
 						<!-- delete -->
 						<?php if(!$groupMembersCount) { ?>
 							<a href="pageDeleteGroup.php?groupID=<?php echo $row[0]; ?>&csrf_token=<?php echo urlencode(csrf_token(false, true)); ?>"
-								title="<?php echo $Translation['delete group'] ; ?>"
-								onClick="return confirm('<?php echo addslashes($Translation['confirm delete group']); ?>');">
+								title="<?php echo html_attr($Translation['delete group']); ?>"
+								onClick="return confirm(<?php echo json_encode($Translation['confirm delete group']); ?>);">
 								<i class="glyphicon glyphicon-trash text-danger"></i>
 							</a>
 						<?php } else { ?>
@@ -103,19 +103,19 @@
 
 						<!-- add member -->
 						<?php if(!$isAnonGroup) { ?>
-							<a href="pageEditMember.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation["add new member"]; ?>"><i class="glyphicon glyphicon-plus text-success"></i></a>
+							<a href="pageEditMember.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['add new member']); ?>"><i class="glyphicon glyphicon-plus text-success"></i></a>
 						<?php } else { ?>
 							<i class="glyphicon glyphicon-plus text-muted"></i>
 						<?php } ?>
 						<span class="hspacer-sm"></span>
 
 						<!-- view records -->
-						<a href="pageViewRecords.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation['view group records'] ; ?>"><i class="glyphicon glyphicon-th"></i></a>
+						<a href="pageViewRecords.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['view group records']); ?>"><i class="glyphicon glyphicon-th"></i></a>
 						<span class="hspacer-sm"></span>
 
 						<!-- view members -->
 						<?php if($groupMembersCount) { ?>
-							<a href="pageViewMembers.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation['view group members'] ; ?>"><i class="glyphicon glyphicon-user"></i></a>
+							<a href="pageViewMembers.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['view group members']); ?>"><i class="glyphicon glyphicon-user"></i></a>
 						<?php } else { ?>
 							<i class="glyphicon glyphicon-user text-muted"></i>
 						<?php } ?>
@@ -123,7 +123,7 @@
 
 						<!-- send message -->
 						<?php if($groupMembersCount && !$isAnonGroup) { ?>
-							<a href="pageMail.php?groupID=<?php echo $row[0]; ?>" title="<?php echo $Translation['send message to group']; ?>"><i class="glyphicon glyphicon-envelope"></i></a>
+							<a href="pageMail.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['send message to group']); ?>"><i class="glyphicon glyphicon-envelope"></i></a>
 						<?php } else { ?>
 							<i class="glyphicon glyphicon-envelope text-muted"></i>
 						<?php } ?>

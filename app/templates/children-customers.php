@@ -74,7 +74,7 @@
 					},
 					beforeClose: AppGini.confirmBeforeClosingModal,
 					size: 'full',
-					title: '<?php echo addslashes("{$config['tab-label']}: {$Translation['Add New']}"); ?>'
+					title: <?php echo json_encode("{$config['tab-label']}: {$Translation['Add New']}"); ?>
 				});
 				break;
 			case 'open': /* opens the detail view for given child record PK provided in 'ChildID' */
@@ -94,7 +94,7 @@
 					},
 					beforeClose: AppGini.confirmBeforeClosingModal,
 					size: 'full',
-					title: '<?php echo addslashes($config['tab-label']); ?>'
+					title: <?php echo json_encode($config['tab-label']); ?>
 				});
 				break;
 			case 'reload': /* just a way of refreshing children, retaining sorting and pagination & without reloading the whole page */

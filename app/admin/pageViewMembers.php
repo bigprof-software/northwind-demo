@@ -148,12 +148,12 @@
 				</div>
 
 				<div class="form-group">
-					<label for="groupID" class="control-label"><?php echo $Translation["group"]; ?></label>
+					<label for="groupID" class="control-label"><?php echo $Translation['group']; ?></label>
 					<?php echo htmlSQLSelect("groupID", "select groupID, name from membership_groups order by name", $groupID); ?>
 				</div>
 
 				<div class="form-group">
-					<label for="" class="control-label"><?php echo $Translation["Status"]; ?></label>
+					<label for="" class="control-label"><?php echo $Translation['Status']; ?></label>
 					<?php
 						$arrFields = [0, 1, 2, 3];
 						$arrFieldCaptions = [$Translation['any'], $Translation['waiting approval'], $Translation['active'], $Translation['Banned']];
@@ -235,7 +235,7 @@
 			<td>
 				<?php if($adminConfig['anonymousMember'] != $row[0]) { ?>
 					<a
-						title="<?php echo html_attr($Translation["send message to member"]); ?>"
+						title="<?php echo html_attr($Translation['send message to member']); ?>"
 						href="pageMail.php?memberID=<?php echo urlencode($row[0]); ?>"><?php echo $row[3]; ?></a>
 				<?php } ?>
 			</td>
@@ -251,7 +251,7 @@
 				<?php if($adminConfig['anonymousMember'] == $row[0]) { ?>
 					<i class="glyphicon glyphicon-pencil text-muted"></i>
 				<?php } else { ?>
-					<a href="pageEditMember.php?memberID=<?php echo urlencode($row[0]); ?>"><i class="glyphicon glyphicon-pencil" title="<?php echo $Translation['Edit member']; ?>"></i></a>
+					<a href="pageEditMember.php?memberID=<?php echo urlencode($row[0]); ?>"><i class="glyphicon glyphicon-pencil" title="<?php echo html_attr($Translation['Edit member']); ?>"></i></a>
 				<?php } ?>
 				<span class="hspacer-sm"></span>
 
@@ -261,16 +261,16 @@
 					<span class="hspacer-sm"></span>
 					<i class="glyphicon glyphicon-ban-circle text-muted"></i>
 				<?php } else { ?>
-					<a href="pageDeleteMember.php?memberID=<?php echo urlencode($row[0]); ?>&<?php echo $urlCsrfToken; ?>" onClick="return confirm('<?php echo addslashes(str_replace('<USERNAME>', $row[0], $Translation['sure delete user'])); ?>');"><i class="glyphicon glyphicon-trash text-danger" title="<?php echo $Translation['delete member']; ?>"></i></a>
+					<a href="pageDeleteMember.php?memberID=<?php echo urlencode($row[0]); ?>&<?php echo $urlCsrfToken; ?>" onClick="return confirm(<?php echo json_encode(str_replace('<USERNAME>', $row[0], $Translation['sure delete user'])); ?>);"><i class="glyphicon glyphicon-trash text-danger" title="<?php echo html_attr($Translation['delete member']); ?>"></i></a>
 					<span class="hspacer-sm"></span>
 					<?php
 						if(!$row[9]) { // if member is not approved, display approve link
-							?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&approve=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ok text-success" title="<?php echo $Translation["unban this member"]; ?>" title="<?php echo $Translation["approve this member"]; ?>"></i></a><?php
+							?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&approve=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ok text-success" title="<?php echo html_attr($Translation['unban this member']); ?>" title="<?php echo html_attr($Translation['approve this member']); ?>"></i></a><?php
 						} else {
 							if($row[8]) { // if member is banned, display unban link
-								?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&unban=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ok text-success" title="<?php echo $Translation["unban this member"]; ?>"></i></a><?php
+								?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&unban=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ok text-success" title="<?php echo html_attr($Translation['unban this member']); ?>"></i></a><?php
 							} else { // if member is not banned, display ban link
-								?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&ban=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ban-circle text-danger" title="<?php echo $Translation["ban this member"]; ?>"></i></a><?php
+								?><a href="pageChangeMemberStatus.php?memberID=<?php echo urlencode($row[0]); ?>&ban=1&<?php echo $urlCsrfToken; ?>"><i class="glyphicon glyphicon-ban-circle text-danger" title="<?php echo html_attr($Translation['ban this member']); ?>"></i></a><?php
 							}
 						}
 					?>
@@ -278,7 +278,7 @@
 				<span class="hspacer-sm"></span>
 
 				<!-- view records -->
-				<a href="pageViewRecords.php?memberID=<?php echo urlencode($row[0]); ?>"><i class="glyphicon glyphicon-th" title="<?php echo $Translation["View member records"]; ?>"></i></a>
+				<a href="pageViewRecords.php?memberID=<?php echo urlencode($row[0]); ?>"><i class="glyphicon glyphicon-th" title="<?php echo html_attr($Translation['View member records']); ?>"></i></a>
 			</td>
 		</tr>
 		<?php

@@ -115,6 +115,8 @@
 				'smtp_pass' => $post['smtp_pass'],
 				'googleAPIKey' => $post['googleAPIKey'],
 				'baseUploadPath' => ($post['baseUploadPath'] ? $post['baseUploadPath'] : 'images'),
+				'dbBackupCommand' => $post['dbBackupCommand'],
+				'dbRestoreCommand' => $post['dbRestoreCommand'],
 			],
 			LDAP::postToSettings($post)
 			),
@@ -411,6 +413,23 @@
 					$Translation['base upload path change warning'] .
 				'</div>'
 			); ?>
+
+			<hr>
+
+			<?php echo settings_textbox(
+				'dbBackupCommand',
+				$Translation['db backup command'],
+				thisOr($adminConfig['dbBackupCommand'], DB_BACKUP_COMMAND),
+				$Translation['db backup command hint']
+			); ?>
+
+			<?php echo settings_textbox(
+				'dbRestoreCommand',
+				$Translation['db restore command'],
+				thisOr($adminConfig['dbRestoreCommand'], DB_RESTORE_COMMAND),
+				$Translation['db restore command hint']
+			); ?>
+
 		</div>
 
 		<?php echo LDAP::settingsTabContent(); ?>

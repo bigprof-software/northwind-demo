@@ -249,6 +249,7 @@
 	function makeSafe($string, $is_gpc = true) {
 		static $cached = []; /* str => escaped_str */
 
+		if($string === null) return '';
 		if(!strlen($string)) return '';
 		if(is_numeric($string)) return db_escape($string); // don't cache numbers to avoid cases like '3.5' being equivelant to '3' in array indexes
 
@@ -1605,6 +1606,12 @@
 					'memberID' => "VARCHAR(200)",
 					'uri' => "VARCHAR(200)",
 				],
+				'appgini_saved_filters' => [
+					'username' => "VARCHAR(100) NOT NULL",
+					'title' => "VARCHAR(150) NOT NULL",
+					'link' => "TEXT NOT NULL",
+					'created_at' => "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
+				],
 				'membership_cache' => [
 					'request' => "VARCHAR(100) NOT NULL PRIMARY KEY",
 					'request_ts' => "INT",
@@ -1877,6 +1884,16 @@
 		createTableIfNotExists($tn);
 
 		updateField($tn, 'response', 'LONGTEXT');
+	}
+	########################################################################
+	function update_appgini_saved_filters() {
+		$tn = 'appgini_saved_filters';
+		createTableIfNotExists($tn);
+
+		// Create indexes
+		addIndex($tn, ['username', 'title'], true); // Primary key
+		addIndex($tn, 'username');
+		addIndex($tn, 'title');
 	}
 	########################################################################
 	function thisOr($this_val, $or = '&nbsp;') {
@@ -2339,6 +2356,7 @@
 		}
 
 		$pm->setFrom($cfg['senderEmail'], $cfg['senderName']);
+		$pm->addReplyTo($cfg['senderEmail'], $cfg['senderName']);
 		$pm->Subject = isset($mail['subject']) ? $mail['subject'] : '';
 
 		// handle recipients

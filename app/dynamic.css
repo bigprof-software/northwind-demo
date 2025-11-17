@@ -79,8 +79,8 @@ div.datePicker { font-size: 1.3em; }
 .always-shown-block { display: block !important; }
 .always-shown-inline { display: inline !important; }
 .always-shown-inline-block { display: inline-block !important; }
-.text-bold { font-weight: bold; }
-.text-italic { font-style: italic; }
+.text-bold { font-weight: bold !important; }
+.text-italic { font-style: italic !important; }
 
 /* .form-control, .help-block .alert { width: 90% !important; } */
 .input-group .form-control { width: 100% !important; }
@@ -169,7 +169,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 }
 
 /* continuous rotation animation */
-.loop-rotate {
+.loop-rotate, .spin {
 	animation: spin 2s linear infinite;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -810,7 +810,7 @@ td.row .img-responsive {
 	display: none;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
 	.detail_view-layout {
 		display: block;
 	}
@@ -824,7 +824,7 @@ td.row .img-responsive {
 	}
 }
 
-@media (min-width: 1700px) {
+@media (min-width: 1550px) {
 	.switch-to-triple-column-layout {
 		display: inline-block;
 	}
@@ -1079,8 +1079,8 @@ body > [unselectable] { color: black; }
 		}
 
 		.navbar-text {
-			margin-bottom: 12px;
-			margin-top: 14px;
+			margin-bottom: 6px;
+			margin-top: 8px;
 		}
 
 		.page-header {
@@ -1241,6 +1241,9 @@ body > [unselectable] { color: black; }
 	.dropdown-menu > li {
 		font-size: larger;
 	}
+	.filter-links {
+		max-width: 100% !important;
+	}
 }
 
 /* styles for rtl */
@@ -1308,13 +1311,13 @@ body > [unselectable] { color: black; }
 	}
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 900px) {
 	.theme-rtl .double-column-layout {
 		float: right;
 		padding: 0 0 0 1em;
 	}
 }
-@media (min-width: 1700px) {
+@media (min-width: 1550px) {
 	.theme-rtl .triple-column-layout {
 		float: right;
 		padding: 0 0 0 1em;
@@ -1400,5 +1403,23 @@ body:has(.theme-slate) {
 body:has(.theme-superhero) {
 	--navbar-border-color: #414951;
 	--tab-content-border-color: #4e5d6c;
+}
+.panel-close {
+	font-size: x-large;
+	text-decoration: none;
+	margin-top: -.5em;
+}
+.panel-close:hover {
+	text-shadow: 0 0 2px #999;
+	text-decoration: none;
+}
+
+.btn[disabled] {
+	cursor: not-allowed;
+	pointer-events: all !important;
+}
+
+.filter-links {
+	max-width: 5em;
 }
 

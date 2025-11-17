@@ -334,6 +334,11 @@
 			<div class="collapse navbar-collapse">
 
 				<?php if(!Authentication::isGuest()) { ?>
+					<div class="filter-links navbar-form navbar-text hidden">
+						<div class="form-group">
+							<input id="filter-links-select2-placeholder" type="hidden">
+						</div>
+					</div>
 					<ul class="nav navbar-nav visible-xs">
 						<div class="btn-group">
 							<a class="btn navbar-btn btn-default btn-lg signed-in-as" href="<?php echo PREPEND_PATH; ?>membership_profile.php">
@@ -1743,9 +1748,9 @@ EOT;
 			}
 		}
 
-		// rmove empty groups
+		// remove empty groups
 		$compactedGroups = array_filter($compactedGroups, function($group) {
-			return count($group) > 0;
+			return is_array($group) && count($group) > 0;
 		});
 
 		// re-index groups

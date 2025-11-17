@@ -25,7 +25,7 @@
 
 			<b><?php echo $Translation['rebuild thumbnails of table'] ; ?></b>
 			<?php echo htmlSelect('table', array_keys($p), array_keys($p), ''); ?>
-			<input type="submit" value="<?php echo $Translation['rebuild'] ; ?>">
+			<input type="submit" value="<?php echo html_attr($Translation['rebuild'] ); ?>">
 		</form>
 
 

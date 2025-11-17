@@ -25,6 +25,7 @@
 
 		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/<?php echo latest_jquery(); ?>"></script>
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
+		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
 		<script src="toolTips.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo filemtime( __DIR__ . '/../language.php'); ?>"></script>
@@ -43,7 +44,7 @@
 			}
 
 			function jsShowWait() {
-				return window.confirm('<?php echo addslashes($Translation['sending mails']); ?>');
+				return window.confirm(<?php echo json_encode($Translation['sending mails']); ?>);
 			}
 
 			function jsValidateAdminSettings() {
@@ -79,21 +80,21 @@
 
 				if(mm && sm!='-1') {
 
-					confirmMessage = '<?php echo addslashes($Translation['sure move member']); ?>';
+					confirmMessage = <?php echo json_encode($Translation['sure move member']); ?>;
 					confirmMessage = confirmMessage.replace(/<MEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 
 				}
 				if((dmm || dm) && sm!='-1') {
 
-					confirmMessage = '<?php echo addslashes($Translation['sure move data of member']); ?>';
+					confirmMessage = <?php echo json_encode($Translation['sure move data of member']); ?>;
 					confirmMessage = confirmMessage.replace(/<OLDMEMBER>/, sm).replace(/<OLDGROUP>/, sg).replace(/<NEWMEMBER>/, dm).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
 
 				if(mm) {
 
-					confirmMessage = '<?php echo addslashes($Translation['sure move all members']); ?>';
+					confirmMessage = <?php echo json_encode($Translation['sure move all members']); ?>;
 					confirmMessage = confirmMessage.replace(/<OLDGROUP>/, sg).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
@@ -101,7 +102,7 @@
 				if(dmm) {
 
 
-					confirmMessage = '<?php echo addslashes($Translation['sure move data of all members']); ?>';
+					confirmMessage = <?php echo json_encode($Translation['sure move data of all members']); ?>;
 					confirmMessage = confirmMessage.replace(/<OLDGROUP>/, sg).replace(/<MEMBER>/, dm).replace(/<NEWGROUP>/, dg);
 					return window.confirm(confirmMessage);
 				}
@@ -223,7 +224,7 @@
 					<?php $plugins = get_plugins(); ?>
 
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation["plugins"] ; ?> <b class="caret"></b></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-plus"></i> <?php echo $Translation['plugins'] ; ?> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li>
 								<a href="pageInstallPlugin.php">
@@ -256,7 +257,7 @@
 
 				<div class="navbar-right flip">
 					<a href="<?php echo PREPEND_PATH; ?>index.php" class="btn btn-success navbar-btn"><?php echo $Translation["user's area"] ; ?></a>
-					<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1" class="btn btn-warning navbar-btn"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation["sign out"] ; ?></a>
+					<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1" class="btn btn-warning navbar-btn"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation['sign out'] ; ?></a>
 				</div>
 			</div>
 		</nav>
@@ -287,7 +288,7 @@
 		$noSignup = true;
 		?>
 		<div class="alert alert-danger">
-			<p><strong><?php echo $Translation["attention"] ; ?></strong></p>
+			<p><strong><?php echo $Translation['attention'] ; ?></strong></p>
 			<p><?php if($adminConfig['adminUsername'] == 'admin') {
 					echo $Translation['security risk admin'];
 			} else {

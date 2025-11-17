@@ -322,7 +322,7 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 					});
 				},
 				width: '100%',
-				formatNoMatches: function(term) { return '<?php echo addslashes($Translation['No matches found!']); ?>'; },
+				formatNoMatches: function(term) { return <?php echo json_encode($Translation['No matches found!']); ?>; },
 				minimumResultsForSearch: 5,
 				loadMorePadding: 200,
 				ajax: {
@@ -401,7 +401,7 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 					});
 				},
 				width: '100%',
-				formatNoMatches: function(term) { return '<?php echo addslashes($Translation['No matches found!']); ?>'; },
+				formatNoMatches: function(term) { return <?php echo json_encode($Translation['No matches found!']); ?>; },
 				minimumResultsForSearch: 5,
 				loadMorePadding: 200,
 				ajax: {
@@ -667,6 +667,16 @@ function products_form($selectedId = '', $allowUpdate = true, $allowInsert = tru
 
 	// process translations
 	$templateCode = parseTemplate($templateCode);
+
+	// populate autoCloseParentTables
+	$lookupFields = getLookupFields()['products'] ?? [];
+	$autoCloseParentTables = [];
+	foreach($lookupFields as $field => $info) {
+		if($info['auto-close']) {
+			$autoCloseParentTables[] = $info['parent-table'];
+		}
+	}
+	$templateCode = str_replace('<%%AUTO_CLOSE_PARENT_TABLES%%>', json_encode($autoCloseParentTables), $templateCode);
 
 	// clear scrap
 	$templateCode = str_replace('<%%', '<!-- ', $templateCode);

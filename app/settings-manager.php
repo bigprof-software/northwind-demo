@@ -90,6 +90,8 @@
 				'smtp_pass' => '',
 				'googleAPIKey' => '',
 				'baseUploadPath' => 'images',
+				'dbBackupCommand' => DB_BACKUP_COMMAND,
+				'dbRestoreCommand' => DB_RESTORE_COMMAND,
 			]
 		];
 	}

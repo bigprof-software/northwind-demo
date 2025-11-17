@@ -8,7 +8,7 @@
 <div class="row">
 	<div class="col-md-8" id="filters-section">
 		<div class="page-header"><h1>
-			<span id="table-title-img"><img src="<?php echo $this->TableIcon; ?>"></span> <?php echo sprintf($Translation['find records that match'], "<mark>{$this->TableTitle}</mark>"); ?>
+			<span id="table-title-img"><img src="<?php echo $this->TableIcon; ?>"></span> <?php echo sprintf($Translation['find records that match'], "<b>{$this->TableTitle}</b>"); ?>
 			<small class="checkbox match-all-groups-checkbox hidden">
 				<label>
 					<input type="checkbox" id="match-all-groups" style="margin-top: 1px;"
@@ -174,11 +174,11 @@
 								<div class="input-group">
 									<input type="text" name="FilterValue[<?php echo $filterIndex; ?>]" class="filter-value form-control" value="<?php echo html_attr($FilterValue[$filterIndex]); ?>" placeholder="<?php echo html_attr($Translation['value']); ?>">
 									<span class="input-group-btn">
-										<button type="button" class="btn btn-default delete-filter" data-group="<?php echo $filterGroupIndex; ?>" data-condition="<?php echo $filterConditionIndex; ?>" data-index="<?php echo $filterIndex; ?>" title="<?php echo $Translation['remove this condition']; ?>">
-											<span class="glyphicon glyphicon-remove text-danger"></span>
-										</button>
-										<button type="button" class="btn btn-default add-filter" data-group="<?php echo $filterGroupIndex; ?>" data-condition="<?php echo $filterConditionIndex; ?>" data-index="<?php echo $filterIndex; ?>" title="<?php echo $Translation['add another condition to this group']; ?>">
+										<button type="button" class="btn btn-default add-filter" data-group="<?php echo $filterGroupIndex; ?>" data-condition="<?php echo $filterConditionIndex; ?>" data-index="<?php echo $filterIndex; ?>" title="<?php echo html_attr($Translation['add another condition to this group']); ?>">
 											<span class="glyphicon glyphicon-plus text-primary"></span>
+										</button>
+										<button type="button" class="btn btn-default delete-filter" data-group="<?php echo $filterGroupIndex; ?>" data-condition="<?php echo $filterConditionIndex; ?>" data-index="<?php echo $filterIndex; ?>" title="<?php echo html_attr($Translation['remove this condition']); ?>">
+											<span class="glyphicon glyphicon-remove text-danger"></span>
 										</button>
 									</span>
 								</div>
@@ -197,7 +197,7 @@
 							</div>
 						</div>
 						<div class="col-sm-6 text-right">
-							<button type="button" class="btn btn-default btn-lg add-group" data-group="<?php echo $filterGroupIndex; ?>" title="<?php echo $Translation['add another condition group']; ?>">
+							<button type="button" class="btn btn-default btn-lg add-group" data-group="<?php echo $filterGroupIndex; ?>" title="<?php echo html_attr($Translation['add another condition group']); ?>">
 								<span class="glyphicon glyphicon-plus"></span>
 							</button>
 						</div>
@@ -911,8 +911,10 @@
 	}
 	.group-and-or {
 		text-transform: uppercase;
-		margin-bottom: 20px;
+		margin: -20px 0 0;
 		font-size: large;
+		padding: 20px 0;
+		background-image: linear-gradient( to right, transparent calc(50% - 1px), #aaa 50%, transparent calc(50% + 1px) );
 	}
 	.page-header small.checkbox {
 		text-align: right;

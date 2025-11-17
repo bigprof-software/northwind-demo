@@ -122,7 +122,7 @@
 
 			$j(function() {
 				var tablename = '<?php echo $this->get_table(); ?>';
-				var record_id = '<?php echo addslashes($this->request['id']); ?>';
+				var record_id = <?php echo json_encode($this->request['id']); ?>;
 				var record_info = <?php echo $record_info; ?>;
 
 				let dvPanelTitle = $j('.detail_view .panel-title:first');

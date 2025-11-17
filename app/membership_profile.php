@@ -478,7 +478,7 @@
 
 				/* password strength feedback */
 				$j('#new-password').on('keyup', function() {
-					var ps = passwordStrength($j('#new-password').val(), '<?php echo addslashes($mi['username']); ?>');
+					var ps = passwordStrength($j('#new-password').val(), <?php echo json_encode($mi['username']); ?>);
 
 					if(ps == 'strong')
 						$j('#password-strength').html('<?php echo $Translation['Password strength: strong']; ?>').css({color: 'Green'});

@@ -222,17 +222,21 @@ class VerticalNav {
 					}
 					
 					const navbarTopHeight = $j('.navbar-fixed-top').outerHeight(true) ?? 0;
-					const headerTop = $j('.page-header h1').offset()?.top ?? 0;
+					const headerTop = (() => {
+						const ht = $j('.page-header h1').offset()?.top ?? 0; 
+						return ht < 200 ? ht : 0; // if the header is too far down (e.g. children in DVP), assume it's not there and set to 0
+					})();
 					const navbarBottomHeight = $j('.navbar-fixed-bottom').outerHeight(true) ?? 0;
 					const stickyTop = $j('.row').eq(0).offset().top ?? 0;
 
 					// set the vertical nav top padding to align with the page header
-					$vertNav.css({
-						'padding-top': (headerTop - navbarTopHeight) + 'px',
-						'min-height': `calc(100vh - ${headerTop}px - ${navbarBottomHeight}px)`,
-						height: `calc(100vh - ${headerTop}px - ${navbarBottomHeight}px)`,
-						top: stickyTop + 'px'
-					});
+					const vertNavCss = {
+						'padding-top': `${headerTop}px`,
+						'min-height': `calc(100vh - ${navbarBottomHeight}px - ${navbarTopHeight}px)`,
+						height: `calc(100vh - ${navbarBottomHeight}px - ${navbarTopHeight}px)`,
+						top: `${stickyTop}px`
+					};
+					$vertNav.css(vertNavCss);
 
 					$j('.horizontal-navlinks').addClass('hidden');
 
@@ -296,7 +300,8 @@ class VerticalNav {
 				};
 
 				const toggleNavbar = () => {
-					const alreadyHidden = $j('.vertical-nav').hasClass('hidden');
+					// check if the vertical nav is already hidden or media is print
+					const alreadyHidden = $j('.vertical-nav').hasClass('hidden') || window.matchMedia('print').matches;
 					$j('.vertical-nav').toggleClass('hidden', !alreadyHidden);
 					$j('.main-content')
 						.toggleClass('col-sm-9 col-md-10', alreadyHidden)
@@ -315,9 +320,9 @@ class VerticalNav {
 				// Make main container fluid
 				$j('body > .container').removeClass('container').addClass('container-fluid');
 
-				// move main container to the right of the vertical nav
+				// move main container to the right of the vertical nav unless in print media (where we hide the vertical nav)
 				$mainContent
-					.addClass('col-sm-9 col-md-10')
+					.toggleClass('col-sm-9 col-md-10', !window.matchMedia('print').matches)
 					.appendTo($vertNav.parent());
 
 				// move the import CSV and admin area buttons to the vertical nav

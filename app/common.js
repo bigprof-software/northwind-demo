@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 25.13;
+AppGini.version = 25.14;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;
@@ -356,6 +356,8 @@ $j(function() {
 	AppGini.handleLightbox();
 	AppGini.enhanceMobileUX();
 	AppGini.controlBackButtonBehavior();
+	AppGini.handleSaveFilters();
+	AppGini.handleSavedFiltersList();
 });
 
 /* show/hide TV action buttons based on whether records are selected or not */
@@ -2077,7 +2079,7 @@ AppGini.lockUpdatesOnUserRequest = function() {
 
 	$j('#update')
 		.addClass('locking-enabled')
-		.css({ width: '75%', overflow: 'hidden' })
+		.css({ width: 'calc(100% - 3em)', overflow: 'hidden' })
 		.after('<button type="button" class="btn btn-success btn-update-locker"><i class="glyphicon glyphicon-lock"></i></button>')
 		.parents('.btn-group-vertical')
 			.toggleClass('btn-group-vertical btn-group vspacer-lg')
@@ -2085,7 +2087,7 @@ AppGini.lockUpdatesOnUserRequest = function() {
 
 	$j('.btn-update-locker')
 		.css({
-			width: '25%',
+			width: '3em',
 			overflow: 'hidden',
 			'padding-right': 0,
 			'padding-left': 0
@@ -2808,9 +2810,9 @@ AppGini.renderDVLayoutToolbar = () => {
 
 	// apply user preference if found
 	const windowWidth = $j(window).width();
-	if(dvLayout == 'double-column-layout' && windowWidth >= 1200) {
+	if(dvLayout == 'double-column-layout' && windowWidth >= 900) {
 		AppGini.applyDoubleColumnLayout();
-	} else if(dvLayout == 'triple-column-layout' && windowWidth >= 1700) {
+	} else if(dvLayout == 'triple-column-layout' && windowWidth >= 1550) {
 		AppGini.applyTripleColumnLayout();
 	}
 
@@ -3683,7 +3685,7 @@ AppGini.fixDVActionButtonsToBottom = () => {
 
 		dvActionButtons
 			.addClass('navbar navbar-fixed-bottom')
-			.removeClass('col-md-4 col-lg-2')
+			.removeClass('col-md-4 col-lg-3')
 			.css({
 				padding: '.25em 0',
 				width: '100%',
@@ -4021,4 +4023,206 @@ const linkToMassUpdatePlugin = () => {
 
 	// open the link in a new tab
 	window.open(link, '_blank');
+}
+AppGini.handleSaveFilters = () => {
+	// run only once
+	if(AppGini._handleSaveFiltersApplied != undefined) return;
+	AppGini._handleSaveFiltersApplied = true;
+
+	// if no #save-filter-panel, return
+	const savedFilterPanel = $j('#save-filter-panel');
+	if(!savedFilterPanel.length) return;
+
+	const savedFilterTitle = $j('#save-filter-title'),
+		saveFilterBtn = $j('#save-filter-btn'),
+		savedFilterLink = $j('#save-filter-link');
+
+	// on type in savedFilterTitle, enable/disable saveFilterBtn if trimmed value is non-empty/empty
+	savedFilterTitle.on('input', function() {
+		const title = $j(this).val().trim();
+		saveFilterBtn.prop('disabled', title.length == 0);
+	});
+
+	// on click of saveFilterBtn, send ajax request to save the filter to ajax-save-filters.php
+	// and on success, hide the saved filter panel (TODO: reload saved filters menu)
+	saveFilterBtn.on('click', function() {
+		const title = savedFilterTitle.val().trim();
+		if(title.length == 0) return;
+
+		// get csrf token
+		const csrfToken = $j('input[name="csrf_token"]').val();
+		let link = savedFilterLink.attr('href');
+
+		$j.ajax({
+			url: `${AppGini.config.url}ajax-saved-filters.php`,
+			method: 'POST',
+			data: {
+				csrf_token: csrfToken,
+				title: title,
+				link: link,
+			},
+			success: function(response) {
+				// append `filterLinkTitle` parameter to the link then redirect to it
+				link += (link.includes('?') ? '&' : '?') + `filterLinkTitle=${encodeURIComponent(title)}`;
+				window.location.href = link;
+			},
+			error: function(xhr, status, error) {
+				AppGini.modalError(`${AppGini.Translate._map['Error saving filter']}: ${error}`);
+			},
+			complete: function() {
+				savedFilterPanel.remove();
+			}
+		});
+	});
+}
+
+AppGini.handleSavedFiltersList = () => {
+	// run only once
+	if(AppGini._handleSavedFiltersListApplied != undefined) return;
+	AppGini._handleSavedFiltersListApplied = true;
+
+	// if no #filter-links-select2-placeholder, return
+	const savedFiltersList = $j('#filter-links-select2-placeholder');
+	if(!savedFiltersList.length) return;
+
+	// if url includes `filterLinkTitle` parameter, show title after page header
+	const urlParams = new URLSearchParams(window.location.search);
+	if(urlParams.has('filterLinkTitle')) {
+		const filterTitle = AppGini.sanitizeString(urlParams.get('filterLinkTitle')).trim();
+		if(filterTitle.length) {
+			const filterTitleEl = $j(`
+				<div class="well applied-saved-filter">
+                   <i class="glyphicon glyphicon-filter"></i>
+                   ${filterTitle}
+
+					<button class="btn btn-link btn-sm" type="button" onclick="$j('#NoFilter').click();">
+						<i class="glyphicon glyphicon-remove-circle"></i>
+						<span class="hidden-xs">${AppGini.Translate._map['Reset Filters']}</span>
+					</button>
+
+					<button class="btn btn-link btn-sm pull-right" type="button" onclick="AppGini.deleteSavedFilter('${filterTitle}')">
+						<i class="glyphicon glyphicon-trash text-danger"></i>
+						<span class="text-danger hidden-xs">${AppGini.Translate._map['delete saved filter']}</span>
+					</button>
+				</div>
+			`);
+			filterTitleEl.insertBefore('.page-header');
+		}
+	}
+
+	$j.ajax({
+		url: `${AppGini.config.url}ajax-saved-filters.php`,
+		method: 'GET',
+		success: function(response) {
+			AppGini.populateSavedFiltersList(response.filters);
+		},
+		error: function(xhr, status, error) {
+			AppGini.modalError(error);
+		}
+	});
+}
+
+AppGini.populateSavedFiltersList = (filters) => {
+	if(!Array.isArray(filters) || filters.length === 0) {
+		$j('.filter-links').addClass('hidden');
+		return;
+	}
+
+	// prepare data for select2
+	const select2Data = filters.map((filter, index) => ({
+		id: `filter-${index}-${Date.now()}`,
+		text: filter.title,
+		link: filter.link,
+		icon: filter.icon || 'table.gif',
+	}));
+
+	const filtersList = $j('#filter-links-select2-placeholder');
+	// show filter icon in selection, and if screen size is xs, also show 'saved filters' text
+	const selectionHtml = `<div class="text-center"><i class="glyphicon glyphicon-filter"></i>${screen_size('xs') ? ' ' + AppGini.Translate._map['saved filters'] : ''}</div>`;
+
+	filtersList.select2('destroy');
+	filtersList.select2({
+		data: { results: select2Data, text: 'text' },
+		allowClear: true,
+		dropdownAutoWidth: true,
+		width: '100%',
+		formatResult: (item) => {
+			if(!item.id) return item.text; // optgroup
+			// Create link element using jQuery to properly escape attributes
+			// append `filterLinkTitle` parameter to the link to identify the filter being applied
+			item.link += (item.link.includes('?') ? '&' : '?') + `filterLinkTitle=${encodeURIComponent(item.text)}`;
+			const link = $j('<a/>')
+				.attr('href', item.link)
+				.css({
+					display: 'block',
+					textDecoration: 'none',
+					color: 'inherit'
+				})
+				.html(`<img src="${AppGini.config.url}${item.icon}" alt="" style="vertical-align: middle; height: 1.2em;"> ${item.text}`);
+			return link[0].outerHTML;
+		},
+		escapeMarkup: (m) => m, // Don't escape since we're handling it manually
+		formatSelection: () => selectionHtml,
+	});
+
+	// Set placeholder as filter icon
+	filtersList.data('select2').container.find('.select2-choice .select2-chosen').html(selectionHtml);
+
+	// Navigate to the filter link when a selection is made
+	filtersList.on('change', function(e) {
+		if(e.val && e.added?.link) {
+			window.location.href = e.added.link;
+		}
+	});
+
+	// Append recordsPerPage to filter links
+	AppGini.appendRecordsPerPageToTableLinks();
+
+	// Show the filter links container
+	$j('.filter-links').removeClass('hidden');
+}
+
+AppGini.deleteSavedFilter = (filterTitle) => {
+	// confirm deletion
+	if(!confirm(`${AppGini.Translate._map['confirm delete saved filter']} "${filterTitle}"?`)) {
+		return;
+	}
+
+	// get csrf token
+	const csrfToken = $j('input[name="csrf_token"]').val();
+
+	$j.ajax({
+		url: `${AppGini.config.url}ajax-saved-filters.php`,
+		method: 'DELETE',
+		data: {
+			csrf_token: csrfToken,
+			title: filterTitle
+		},
+		success: function(response) {
+			AppGini.populateSavedFiltersList(response.filters);
+
+			// strip filterLinkTitle parameter from url without reloading the page
+			// this prevents re-displaying the deleted filter title after deletion
+			const url = new URL(window.location.href);
+			url.searchParams.delete('filterLinkTitle');
+			window.history.replaceState({}, document.title, url.toString());
+
+			$j('.applied-saved-filter').html(`
+				<i class="glyphicon glyphicon-ok"></i>
+				${AppGini.Translate._map['saved filter deleted successfully']}
+			`);
+			setTimeout(() => {
+				$j('.applied-saved-filter').fadeOut({ duration: 500, complete: function() { $j(this).remove(); } });
+			}, 2000);
+		},
+		error: function(xhr, status, error) {
+			AppGini.modalError(error);
+		}
+	});
+}
+AppGini.sanitizeString = (str) => {
+	// strip html from str
+	const tempDiv = document.createElement('div');
+	tempDiv.innerHTML = str;
+	return tempDiv.textContent || tempDiv.innerText || '';
 }
