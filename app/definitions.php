@@ -57,7 +57,7 @@
 	@define('HOMEPAGE_TABLES_PER_ROW', 4);
 	@define('HOMEPAGE_PANEL_HEIGHT', 100);
 	@define('HOMEPAGE_QUICK_SEARCH_TABLES', true); // if true, the quick search box on homepage will search in user tables
-	@define('DEFAULT_NAV_MENU', 'vertical');
+	@define('DEFAULT_NAV_MENU', 'horizontal');
 
 	// default backup and restore commands, can be overridden in admin settings > Application tab
 	@define('DB_BACKUP_COMMAND', 'mysqldump -y -e --no-autocommit -q --single-transaction');
