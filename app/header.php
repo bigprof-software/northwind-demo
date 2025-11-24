@@ -33,7 +33,9 @@
 
 		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/<?php echo latest_jquery(); ?>"></script>
 		<script>var $j = jQuery.noConflict();</script>
-		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
+		<?php if(QUEUE_AJAX_REQUESTS) { ?>
+			<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
+		<?php } ?>
 		<script src="<?php echo PREPEND_PATH; ?>resources/moment/moment-with-locales.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.mark.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>

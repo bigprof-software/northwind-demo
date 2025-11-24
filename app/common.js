@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 25.14;
+AppGini.version = 25.15;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;

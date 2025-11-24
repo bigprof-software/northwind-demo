@@ -51,9 +51,9 @@
 						<span class="help-block bspacer-xs collapse" id="Photo-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 15000 KB.<br>Allowed file types: jpg, jpeg, gif, png, webp</div></span>
 						<div class="form-control-static well well-sm">
 							<div class="row" style="margin-right: 0; margin-left: 0;">
-								<div class="col-lg-8 col-md-6" style="padding-left: 0;"><img src="<%%BASE_UPLOAD_PATH%%><%%VALUE(Photo)%%>" class="img-responsive img-thumbnail" id="Photo-image"></div>
+								<div class="col-md-6" style="padding-left: 0;"><img src="<%%BASE_UPLOAD_PATH%%><%%VALUE(Photo)%%>" class="img-responsive img-thumbnail" id="Photo-image"></div>
 								<div class="hidden-md hidden-lg vspacer-lg"></div>
-								<div class="col-lg-4 col-md-6 well upload-toolbox">
+								<div class="col-md-6 well upload-toolbox">
 									<%%REMOVEFILE(Photo)%%>
 									<%%UPLOADFILE(Photo)%%>
 									<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>

@@ -5,7 +5,7 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '25.14');
+	@define('APP_VERSION', '25.15');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);
@@ -62,3 +62,6 @@
 	// default backup and restore commands, can be overridden in admin settings > Application tab
 	@define('DB_BACKUP_COMMAND', 'mysqldump -y -e --no-autocommit -q --single-transaction');
 	@define('DB_RESTORE_COMMAND', 'mysql');
+
+	// if true, ajax requests will be queued to avoid too many concurrent ajax requests on slower servers
+	@define('QUEUE_AJAX_REQUESTS', false);

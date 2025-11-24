@@ -153,6 +153,9 @@
 	if($fix_all) {
 		foreach($schema as $tn => $fields) {
 			foreach($fields as $fn => $fd) {
+				// special cases to skip: appgini_saved_filters.username, appgini_saved_filters.title
+				if($tn == 'appgini_saved_filters' && in_array($fn, ['username', 'title'])) continue;
+
 				if(prepare_def($fd['appgini']) == prepare_def($fd['db'])) continue;
 				fix_field($tn, $fn, $schema, $qry);
 			}
@@ -287,6 +290,10 @@
 		</th></tr>
 		<?php foreach($fields as $fn => $fd) { ?>
 			<?php $diff = ((prepare_def($fd['appgini']) == prepare_def($fd['db'])) ? false : true); ?>
+			<?php
+				// special cases to skip: appgini_saved_filters.username, appgini_saved_filters.title
+				if($tn == 'appgini_saved_filters' && in_array($fn, ['username', 'title'])) $diff = false;
+			?>
 			<?php $no_db = ($fd['db'] ? false : true); ?>
 			<tr class="<?php echo ($diff ? 'warning' : 'field_ok'); ?>">
 				<td></td>

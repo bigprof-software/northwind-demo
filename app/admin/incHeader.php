@@ -25,7 +25,9 @@
 
 		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/<?php echo latest_jquery(); ?>"></script>
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
-		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
+		<?php if(QUEUE_AJAX_REQUESTS) { ?>
+			<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
+		<?php } ?>
 		<script src="toolTips.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo filemtime( __DIR__ . '/../language.php'); ?>"></script>

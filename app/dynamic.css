@@ -148,6 +148,8 @@ img[src="blank.gif"] { max-height: 10px !important; }
 	margin-bottom: 0;
 	background-color: rgba(255, 255, 255, 0.5);
 	box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+	max-width: 25em;
+	float: right;
 }
 .upload-toolbox input[type="file"] {
 	display: inline-block;
@@ -1264,7 +1266,7 @@ body > [unselectable] { color: black; }
 	/* Add `rtl-mirror` class to an element to horizontally flip it in rtl (e.g. arrow glyphs, ... etc) */
 	.rtl-mirror { transform: scale(-1, 1); }
 
-	.upload-toolbox { text-align: right; }
+	.upload-toolbox { text-align: right; float: left !important; }
 
 	/* fix multi-choice layout in rtl */
 	.select2-search-choice { direction: ltr; }

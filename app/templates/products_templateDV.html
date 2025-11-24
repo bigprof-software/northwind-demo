@@ -130,9 +130,9 @@
 						<span class="help-block bspacer-xs collapse" id="TechSheet-description"><div class="alert alert-info bspacer-xs">Maximum file size allowed: 2000 KB.<br>Allowed file types: txt, doc, docx, docm, odt, pdf, rtf</div></span>
 						<div class="form-control-static well well-sm">
 							<div class="row" style="margin-right: 0; margin-left: 0;">
-								<div class="col-lg-8 col-md-6" style="padding-left: 0;"><a id="TechSheet-link" href="link.php?t=products&f=TechSheet&i=<%%VALUE(ProductID)%%>" target="_blank" class="rspacer-lg"><i class="glyphicon glyphicon-file" title="<%%VALUE(TechSheet)%%>" style="font-size: 4em;"></i></a></div>
+								<div class="col-md-6" style="padding-left: 0;"><a id="TechSheet-link" href="link.php?t=products&f=TechSheet&i=<%%VALUE(ProductID)%%>" target="_blank" class="rspacer-lg"><i class="glyphicon glyphicon-file" title="<%%VALUE(TechSheet)%%>" style="font-size: 4em;"></i></a></div>
 								<div class="hidden-md hidden-lg vspacer-lg"></div>
-								<div class="col-lg-4 col-md-6 well upload-toolbox">
+								<div class="col-md-6 well upload-toolbox">
 									<%%REMOVEFILE(TechSheet)%%>
 									<%%UPLOADFILE(TechSheet)%%>
 									<div class="text-bold text-danger file-type-error hidden"><%%TRANSLATION(invalid file type)%%></div>

@@ -195,6 +195,7 @@
 				$internalTables = [
 					'appgini_csv_import_jobs',
 					'appgini_query_log',
+					'appgini_saved_filters',
 					'membership_cache',
 					'membership_grouppermissions',
 					'membership_groups',
