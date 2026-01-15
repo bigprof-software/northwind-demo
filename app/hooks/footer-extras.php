@@ -1,7 +1,7 @@
 <?php if(!$_REQUEST['Embedded']) { ?>
 	<div id="more-info-demo" class="hidden">
 		<div id="more-info-demo-icon" class="pull-left text-success"><i class="glyphicon glyphicon-info-sign"></i></div>
-		<p>This is a demo application created using <a href="https://bigprof.com/appgini/">AppGini</a>.
+		<p>This is a demo application created using <a href="https://bigprof.com/appgini/">AppGini <?php echo APP_VERSION; ?></a>.
 		You can browse it anonymously (read-only access), or <a href="index.php?signIn=1">sign in</a>
 		with username <code>demo</code> and password <code>demo</code> to be able to add records
 		(you can edit only the records added by <i>demo</i> but not other records.)</p>
@@ -16,13 +16,13 @@
 		<div class="btn-group">
 			<button type="button" onclick="location.assign('https://bigprof.com/appgini/');" class="btn btn-default">
 				<span class="hidden-xs hidden-sm"><i class="glyphicon glyphicon-heart"></i> Powered by</span>
-				AppGini <span class="appgini-version"></span>
+				AppGini <?php echo APP_VERSION; ?>
 			</button>
 
 			<button type="button" class="btn btn-default" id="prev-theme" title="Previous theme"><i class="glyphicon glyphicon-triangle-left"></i></button>
 			<button type="button" class="btn btn-default active" id="demo-options">
 				<span class="hidden-xs hidden-sm">Active theme</span>
-				<span class="badge" id="demo-theme-name">Bootstrap</span>
+				<span class="badge" id="demo-theme-name">Paper</span>
 			</button>
 			<button type="button" class="btn btn-default" id="next-theme" title="Next theme"><i class="glyphicon glyphicon-triangle-right"></i></button>
 
@@ -161,6 +161,7 @@
 <script>
 	/* list of available themes */
 	var themes = [
+		'paper.css',
 		'bootstrap.css',
 		'cerulean.css',
 		'cosmo.css',
@@ -168,7 +169,6 @@
 		'darkly.css',
 		'flatly.css',
 		'journal.css',
-		'paper.css',
 		'readable.css',
 		'sandstone.css',
 		'simplex.css',
