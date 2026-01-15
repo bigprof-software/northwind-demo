@@ -293,7 +293,7 @@
 						}
 
 						const iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
-						const rowCount = $j(iframeDoc).find('.table_view tbody tr').length;
+						const rowCount = $j(iframeDoc).find('.table_view tbody tr:not(.sum)').length;
 						if(rowCount > 0) {
 							// show div
 							qsDiv.removeClass('hidden');

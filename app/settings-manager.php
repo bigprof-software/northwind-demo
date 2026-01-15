@@ -59,6 +59,9 @@
 			'appURI' => '',
 			'host' => (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ":{$_SERVER['SERVER_PORT']}")),
 
+			'dbSSL' => [],
+			'dbUseCompression' => false,
+
 			'adminConfig' => [
 				'adminUsername' => '',
 				'adminPassword' => '',
@@ -182,6 +185,15 @@
 			(isset($config_array['appURI']) ? "\t\$appURI = '" . addslashes($config_array['appURI']) . "';\n" : '') .
 			(isset($config_array['host']) ? "\t\$host = '" . addslashes($config_array['host']) . "';\n" : '') .
 
+			"\t\$dbSSL = [\n";
+			if(!empty($config_array['dbSSL']) && is_array($config_array['dbSSL'])) {
+				foreach($config_array['dbSSL'] as $ssl_key => $ssl_val) {
+					$new_config .= "\t\t'" . addslashes($ssl_key) . "' => '" . str_replace(["\n", "\r", "'", '$'], ['\n', '\r', "\'", '\$'], $ssl_val) . "',\n";
+				}
+			}
+			$new_config .= "\t];\n";
+			$new_config .= "\t\$dbUseCompression = " . (!empty($config_array['dbUseCompression']) ? 'true' : 'false') . ";\n\n" .
+
 			"\n\t\$adminConfig = [\n" .
 				$new_admin_config .
 			"\t];";
@@ -219,6 +231,8 @@
 			$config['dbPort'] = $dbPort;
 			$config['appURI'] = $appURI;
 			$config['host'] = $host;
+			$config['dbSSL'] = isset($dbSSL) ? $dbSSL : [];
+			$config['dbUseCompression'] = isset($dbUseCompression) ? $dbUseCompression : false;
 			$config['adminConfig'] = $adminConfig;
 			if(empty($config['adminConfig']['baseUploadPath'])) $config['adminConfig']['baseUploadPath'] = 'images';
 		}
@@ -277,6 +291,8 @@
 			'dbPort' => $dbPort,
 			'appURI' => formatUri(dirname($_SERVER['SCRIPT_NAME'])),
 			'host' => (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] == '80' || $_SERVER['SERVER_PORT'] == '443' ? '' : ":{$_SERVER['SERVER_PORT']}")),
+			'dbSSL' => isset($dbSSL) ? $dbSSL : [],
+			'dbUseCompression' => isset($dbUseCompression) ? $dbUseCompression : false,
 			'adminConfig' => $adminConfig
 		]);
 	}

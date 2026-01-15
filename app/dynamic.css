@@ -163,6 +163,7 @@ img[src="blank.gif"] { max-height: 10px !important; }
 .clear-upload {
 	cursor: pointer;
 }
+.pointer { cursor: pointer; }
 
 /* auto-complete matches */
 .select2-result-selectable .select2-match, .select2-result-unselectable .select2-match {

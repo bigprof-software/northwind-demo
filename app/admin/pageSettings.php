@@ -83,6 +83,8 @@
 			'dbPort' => config('dbPort'),
 			'appURI' => formatUri(preg_replace('/admin$/', '', dirname($_SERVER['SCRIPT_NAME']))),
 			'host' => config('host'),
+			'dbSSL' => config('dbSSL'),
+			'dbUseCompression' => config('dbUseCompression'),
 
 			'adminConfig' => array_merge([
 				'adminUsername' => strtolower($post['adminUsername']),
@@ -385,6 +387,51 @@
 			<?php echo settings_textbox('smtp_port', $Translation['smtp_port'], $adminConfig['smtp_port'], $Translation['smtp_port_hint']); ?>
 			<?php echo settings_textbox('smtp_user', $Translation['smtp_user'], $adminConfig['smtp_user']); ?>
 			<?php echo settings_textbox('smtp_pass', $Translation['smtp_pass'], $adminConfig['smtp_pass'], '', 'password'); ?>
+
+			<div class="text-center">
+				<button type="button" class="btn btn-info" onclick="sendTestEmail();"><i class="glyphicon glyphicon-send hspacer-sm"></i> <?php echo $Translation['send test email']; ?></button>
+			</div>
+			<script>
+				function sendTestEmail() {
+					const originalBtnHTML = $j('.btn-info').html();
+					$j('.btn-info').prop('disabled', true).html('<i class="glyphicon glyphicon-refresh spin"></i> <?php echo $Translation['send test email']; ?>');
+
+					const mailFunction = $j('input[name=mail_function]:checked').val();
+					const data = {
+						csrf_token: $j('input[name=csrf_token]').val(),
+						senderEmail: $j('input[name=senderEmail]').val(),
+						senderName: $j('input[name=senderName]').val(),
+						mailFunction: mailFunction,
+					};
+
+					if(mailFunction === 'smtp') {
+						data.smtpServer = $j('#smtp_server').val();
+						data.smtpEncryption = $j('input[name=smtp_encryption]:checked').val();
+						data.smtpPort = $j('#smtp_port').val();
+						data.smtpUser = $j('#smtp_user').val();
+						data.smtpPass = $j('#smtp_pass').val();
+					}
+
+					$j.ajax({
+						url: 'ajax-send-test-email.php',
+						type: 'POST',
+						data,
+						success: function(response) {
+							alert(response.message);
+						},
+						error: function(xhr, status, error) {
+							var errMsg = error || status || xhr.statusText;
+							if(xhr.responseJSON && xhr.responseJSON.status == 'error' && xhr.responseJSON.message) {
+								errMsg = xhr.responseJSON.message;
+							}
+							alert('<?php echo $Translation['error:']; ?> ' + errMsg);
+						},
+						complete: function() {
+							$j('.btn-info').prop('disabled', false).html(originalBtnHTML);
+						}
+					});
+				}
+			</script>
 		</div>
 
 		<div class="tab-pane" id="users-settings">

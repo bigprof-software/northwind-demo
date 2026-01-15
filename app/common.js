@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 25.15;
+AppGini.version = 26.10;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;
@@ -3323,8 +3323,11 @@ AppGini.handleDVFormChange = () => {
 	// if no #insert or #update buttons, return
 	if(!$j('#insert').length && !$j('#update').length) return;
 
-	$j('form').eq(0).on('change', function() {
+	$j('form').eq(0).on('change', function(e) {
 		if($j(this).data('already_changed')) return;
+
+		// skip if triggered by quick search
+		if($j(e.target).attr('id') == 'SearchString') return;
 
 		if($j('#deselect').length) {
 			$j('#deselect')

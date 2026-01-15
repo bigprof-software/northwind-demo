@@ -223,13 +223,13 @@ class VerticalNav {
 					
 					const navbarTopHeight = $j('.navbar-fixed-top').outerHeight(true) ?? 0;
 					const headerTop = (() => {
-						const ht = $j('.page-header h1').offset()?.top ?? 0; 
+						const ht = $j('.page-header').css('margin-top').replace('px', '') * 1;
 						return ht < 200 ? ht : 0; // if the header is too far down (e.g. children in DVP), assume it's not there and set to 0
 					})();
 					const navbarBottomHeight = $j('.navbar-fixed-bottom').outerHeight(true) ?? 0;
 					const stickyTop = $j('.row').eq(0).offset().top ?? 0;
 
-					// set the vertical nav top padding to align with the page header
+					// set the vertical nav top padding to the value of the top margin of the page header
 					const vertNavCss = {
 						'padding-top': `${headerTop}px`,
 						'min-height': `calc(100vh - ${navbarBottomHeight}px - ${navbarTopHeight}px)`,

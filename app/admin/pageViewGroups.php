@@ -84,7 +84,7 @@
 					<td><a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>"><?php echo htmlspecialchars($row[1]); ?></a></td>
 					<td><?php echo htmlspecialchars(trim($row[2] ?? '')); ?></td>
 					<td class="text-right"><?php echo $groupMembersCount; ?></td>
-					<td class="text-center h3">
+					<td class="text-center h4">
 						<!-- edit -->
 						<a href="pageEditGroup.php?groupID=<?php echo $row[0]; ?>" title="<?php echo html_attr($Translation['Edit group']); ?>"><i class="glyphicon glyphicon-pencil"></i></a>
 						<span class="hspacer-sm"></span>
@@ -182,6 +182,7 @@
 
 <style>
 	.form-inline .form-group{ margin: 0.5em 1em; }
+	td { vertical-align: middle !important; }
 </style>
 
 <?php include(__DIR__ . '/incFooter.php');

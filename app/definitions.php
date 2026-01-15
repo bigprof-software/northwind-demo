@@ -5,7 +5,7 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '25.15');
+	@define('APP_VERSION', '26.10');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);
@@ -49,7 +49,7 @@
 	@define('MULTI_TENANTS', false);
 	@define('FORCE_SETUP_CAPTCHA', true);
 	@define('HOMEPAGE_NAVMENUS', false);
-	@define('DEFAULT_THEME', 'bootstrap');
+	@define('DEFAULT_THEME', 'paper');
 	@define('BOOTSTRAP_3D_EFFECTS', false); // if true, the 3D effects will be used for the bootstrap theme
 	@define('THEME_COMPACT', true);
 	@define('NO_THEME_SELECTION', false); // if true, the theme selection will not be available in the user profile page

@@ -181,7 +181,8 @@
 </div>
 
 <style>
-	.form-inline .form-group{ margin: .5em 1em; }
+	.form-inline .form-group{ margin: 0.5em 1em; }
+	td { vertical-align: middle !important; }
 </style>
 
 <script>

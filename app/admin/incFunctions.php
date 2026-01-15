@@ -307,6 +307,9 @@
 		$dbDatabase = config('dbDatabase');
 		$dbPort = config('dbPort');
 
+		$ssl = config('dbSSL');
+		$dbUseCompression = config('dbUseCompression');
+
 		if($connected) return $db_link;
 
 		global $Translation;
@@ -320,7 +323,7 @@
 		}
 
 		/****** Connect to MySQL ******/
-		if(!($db_link = @db_connect($dbServer, $dbUsername, $dbPassword, NULL, $dbPort))) {
+		if(!($db_link = @db_connect($dbServer, $dbUsername, $dbPassword, NULL, $dbPort, NULL, $ssl, $dbUseCompression))) {
 			$o['error'] = db_error($db_link, true);
 			if(!empty($o['silentErrors'])) return false;
 

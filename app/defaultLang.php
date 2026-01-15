@@ -962,4 +962,22 @@ $TranslationEn = [
 	'confirm delete saved filter' => 'Are you sure you want to delete this saved filter?',
 	'saved filter deleted successfully' => 'Saved filter link deleted successfully',
 	'saved filter delete failed' => 'Failed to delete filter link',
+
+	// Added in 26.10
+	'send test email' => 'Send test email',
+	'advanced settings' => 'Advanced settings',
+	'mysql compression' => 'MySQL compression',
+	'mysql compression help' => 'Enable this if your database server supports compressed connections. This can improve performance if your database server is on a different machine than your web server.',
+	'mysql ssl' => 'SSL connection',
+	'mysql ssl help' => 'Check this if your database server requires an SSL connection.',
+	'mysql ssl key' => 'Client SSL Key',
+	'mysql ssl key help' => 'Path to the client SSL key file. Usually optional. Example: <code>/etc/mysql/client-key.pem</code>',
+	'mysql ssl cert' => 'Client SSL Certificate',
+	'mysql ssl cert help' => 'Path to the client SSL certificate file. Usually optional. Example: <code>/etc/mysql/client-cert.pem</code>',
+	'mysql ssl ca' => 'SSL CA',
+	'mysql ssl ca help' => 'Path to the SSL CA (Certificate Authority) file. Example: <code>/etc/mysql/ca-cert.pem</code>',
+	'mysql ssl no verify' => 'Don\'t verify SSL certificate',
+	'mysql ssl no verify help' => 'Check this if you are using self-signed certificates or if you don\'t want to verify the server certificate.',
+	'mysql connection encrypted' => 'MySQL connection is encrypted using SSL.',
+	'mysql connection not encrypted' => 'MySQL connection is not encrypted.',
 ];

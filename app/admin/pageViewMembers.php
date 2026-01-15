@@ -246,7 +246,7 @@
 			<td>
 				<?php echo (($row[8] && $row[9]) ? $Translation['Banned'] : ($row[9] ? $Translation['active'] : $Translation['waiting approval'] )); ?>
 			</td>
-			<td class="text-center h3">
+			<td class="text-center h4">
 				<!-- edit -->
 				<?php if($adminConfig['anonymousMember'] == $row[0]) { ?>
 					<i class="glyphicon glyphicon-pencil text-muted"></i>
@@ -335,7 +335,8 @@
 </form>
 
 <style>
-	.form-inline .form-group{ margin: .5em 1em; }
+	.form-inline .form-group{ margin: 0.5em 1em; }
+	td { vertical-align: middle !important; }
 	.sort-link { cursor: pointer; }
 </style>
 
