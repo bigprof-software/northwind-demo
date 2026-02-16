@@ -40,8 +40,8 @@
 
 	if($isSMTP) {
 		$pm->isSMTP();
-		$pm->SMTPDebug = 0;
-		$pm->Debugoutput = 'html';
+		$pm->SMTPDebug = 3;
+		$pm->Debugoutput = 'text';
 		$pm->Host = $smtpServer;
 		$pm->Port = $smtpPort;
 		$pm->SMTPAuth = !empty($smtpUser) || !empty($smtpPass);
@@ -57,9 +57,11 @@
 	$pm->Subject = 'Test email from ' . APP_TITLE;
 	$pm->msgHTML('If you are seeing this, your email configuration is working!');
 
+	ob_start();
 	if(!$pm->send()) {
 		http_response_code(500); // Internal Server Error
-		die(json_encode(['status' => 'error', 'message' => $pm->ErrorInfo]));
+		die(json_encode(['status' => 'error', 'message' => ob_get_clean()]));
 	}
+	ob_end_clean();
 
 	echo json_encode(['status' => 'ok', 'message' => str_replace('<EMAIL>', $senderEmail, $Translation['sending message ok'])]);
