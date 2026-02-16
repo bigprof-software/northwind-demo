@@ -23,10 +23,6 @@
 
 	@date_default_timezone_set(TIMEZONE);
 
-	require_once(APP_DIR . '/defaultLang.php');
-	include_once(APP_DIR . '/language.php');
-	$Translation = array_merge($TranslationEn, $Translation);
-
 	require_once(APP_DIR . '/db.php');
 	require_once(APP_DIR . '/admin/incFunctions.php');
 
@@ -36,6 +32,8 @@
 		$class = str_replace('\\', '/', $class);
 		@include_once(APP_DIR . "/resources/lib/{$class}.php");
 	});
+
+	loadLanguage();
 
 	/* trim $_POST, $_GET, $_REQUEST */
 	if(count($_POST)) $_POST = array_trim($_POST);

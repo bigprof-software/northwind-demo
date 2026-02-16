@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 26.10;
+AppGini.version = 26.11;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;
@@ -137,6 +137,11 @@ $j(function() {
 
 	/* remove empty email links */
 	$j('a[href="mailto:"]').remove();
+
+	if($j('.theme-rtl').length) {
+		/* for RTL languages, flip *-right and *-left classes */
+		$j('.navbar-left, .navbar-right, .pull-left, .pull-right').addClass('flip');
+	}
 
 	/* fix links inside alerts */
 	$j('.alert a:not(.btn)').addClass('alert-link');
@@ -462,6 +467,7 @@ AppGini.ajaxCache = function() {
 
 function customers_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	// check all required fields have values
@@ -484,6 +490,7 @@ function customers_validateData(insertMode) {
 }
 function employees_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	// check file uploads (file type and size)
@@ -496,18 +503,29 @@ function employees_validateData(insertMode) {
 }
 function orders_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
+
+	if(!AppGini.Validation.float('Freight', -9E+18, 9E+18)) errors = true;
 
 	return !errors;
 }
 function order_details_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
+
+	if(!AppGini.Validation.float('UnitPrice', -9E+18, 9E+18)) errors = true;
+
+	if(!AppGini.Validation.integer('Quantity', -32768, 32767)) errors = true;
+
+	if(!AppGini.Validation.float('Discount', -9E+18, 9E+18)) errors = true;
 
 	return !errors;
 }
 function products_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	// check file uploads (file type and size)
@@ -516,10 +534,19 @@ function products_validateData(insertMode) {
 		return false;
 	}
 
+	if(!AppGini.Validation.float('UnitPrice', -9E+18, 9E+18)) errors = true;
+
+	if(!AppGini.Validation.integer('UnitsInStock', -32768, 32767)) errors = true;
+
+	if(!AppGini.Validation.integer('UnitsOnOrder', -32768, 32767)) errors = true;
+
+	if(!AppGini.Validation.integer('ReorderLevel', -32768, 32767)) errors = true;
+
 	return !errors;
 }
 function categories_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	// check file uploads (file type and size)
@@ -532,12 +559,14 @@ function categories_validateData(insertMode) {
 }
 function suppliers_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	return !errors;
 }
 function shippers_validateData(insertMode) {
 	$j('.has-error').removeClass('has-error');
+	$j('.help-block.error').remove();
 	var errors = false;
 
 	// check all required fields have values
@@ -2204,6 +2233,63 @@ AppGini.Validation = {
 		$j('#' + mow).one('shown.bs.modal', function() {
 			$j(this).find('.modal-footer .btn').eq(0).focus();
 		});
+
+		return false;
+	},
+
+	integer: function(name, min, max) {
+		const val = $j('#' + name).val().trim();
+		const intVal = parseInt(val);
+		const self = AppGini.Validation;
+
+		if(val == '' || (intVal > min && intVal < max)) return true;
+
+		// add error help block after the input if not already present
+		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
+			$j(`<div class="help-block error">${AppGini.Translate._map['field must be integer between x and y']
+				.replace('[x]', `<code class="locale-int">${min}</code>`)
+				.replace('[y]', `<code class="locale-int">${max}</code>`)}</div>`).insertAfter($j(`#${name}`));
+		}
+		self._focusError.text(name);
+
+		return false;
+	},
+
+	float: function(name, min, max) {
+		const val = $j('#' + name).val().trim();
+		const floatVal = parseFloat(val);
+		const self = AppGini.Validation;
+
+		if(val == '' || (floatVal > min && floatVal < max)) return true;
+
+		// add error help block after the input if not already present
+		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
+			$j(`<div class="help-block error">${AppGini.Translate._map['field must be number between x and y']
+				.replace('[x]', `<code class="locale-float">${min}</code>`)
+				.replace('[y]', `<code class="locale-float">${max}</code>`)}</div>`).insertAfter($j(`#${name}`));
+		}
+		self._focusError.text(name);
+
+		return false;
+	},
+
+	decimal: function(name, digits, precision) {
+		// for decimal validation, all that matters is that the max length of the value before the decimal point doesn't exceed {digits - precision}.
+		// values after the decimal point don't matter as extras would be truncated on server side anyway.
+		// also, the sign doesn't matter as well, so we can ignore it for validation purposes.
+		const val = $j('#' + name).val().trim();
+		const intVal = parseInt(val);
+		const self = AppGini.Validation;
+
+		if(val == '' || (intVal.toString().replace('-', '').length <= (digits - precision))) return true;
+
+		// add error help block after the input if not already present
+		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
+			$j(`<div class="help-block error">${AppGini.Translate._map['field must be number with max x digits and y decimals']
+				.replace('[x]', `<code class="locale-int">${digits}</code>`)
+				.replace('[y]', `<code class="locale-int">${precision}</code>`)}</div>`).insertAfter($j(`#${name}`));
+		}
+		self._focusError.text(name);
 
 		return false;
 	},

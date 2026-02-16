@@ -521,7 +521,7 @@
 		ob_start();
 		// notification template
 		?>
-		<div id="%%ID%%" class="alert alert-dismissable %%CLASS%%" style="opacity: 1; padding-top: 6px; padding-bottom: 6px; animation: fadeIn 1.5s ease-out; z-index: 100; position: relative;">
+		<div id="%%ID%%" class="alert alert-dismissable %%CLASS%%" style="opacity: 1; padding-top: 6px; padding-bottom: 6px; animation: fadeIn 1.5s ease-out; z-index: 2500; position: relative;">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			%%MSG%%
 		</div>
@@ -1217,11 +1217,13 @@ EOT;
 		$mtime = filemtime( __DIR__ . '/dynamic.css');
 		$theme = getUserTheme();
 		$theme3d = ($theme == 'bootstrap' && BOOTSTRAP_3D_EFFECTS ? '<link rel="stylesheet" href="' . PREPEND_PATH . 'resources/initializr/css/bootstrap-theme.css">' . "\n" : '');
+		$themeRTL = rtl('<link rel="stylesheet" href="' . PREPEND_PATH . 'resources/initializr/css/rtl.css">' . "\n");
 
 		$css_links = <<<EOT
 
 			<link rel="stylesheet" href="{$prepend_path}resources/initializr/css/{$theme}.css">
 			{$theme3d}
+			{$themeRTL}
 			<link rel="stylesheet" href="{$prepend_path}resources/select2/select2.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}resources/timepicker/bootstrap-timepicker.min.css" media="screen">
 			<link rel="stylesheet" href="{$prepend_path}dynamic.css?{$mtime}">

@@ -5,13 +5,13 @@
 <!-- add the following to the employees_init() hook (in hooks/employees.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="employees-Photo-<%%VALUE(EmployeeID)%%>" class="employees-Photo"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Photo)%%>" data-lightbox="employees-Photo"><img src="thumbnail.php?i=<%%VALUE(Photo)%%>&t=employees&f=Photo&v=tv" class="img-thumbnail"></a></td>
-		<td id="employees-LastName-<%%VALUE(EmployeeID)%%>" class="employees-LastName"><%%SELECT%%><%%VALUE(LastName)%%><%%ENDSELECT%%></td>
-		<td id="employees-FirstName-<%%VALUE(EmployeeID)%%>" class="employees-FirstName"><%%SELECT%%><%%VALUE(FirstName)%%><%%ENDSELECT%%></td>
-		<td id="employees-Title-<%%VALUE(EmployeeID)%%>" class="employees-Title"><%%SELECT%%><%%VALUE(Title)%%><%%ENDSELECT%%></td>
-		<td id="employees-HireDate-<%%VALUE(EmployeeID)%%>" class="employees-HireDate"><%%SELECT%%><%%VALUE(HireDate)%%><%%ENDSELECT%%></td>
-		<td id="employees-Country-<%%VALUE(EmployeeID)%%>" class="employees-Country"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
-		<td id="employees-ReportsTo-<%%VALUE(EmployeeID)%%>" class="employees-ReportsTo"><%%SELECT%%><%%VALUE(ReportsTo)%%><%%ENDSELECT%%></td>
+		<td id="employees-Photo-<%%VALUE(EmployeeID)%%>" class="employees-Photo rtl-left"><a href="<%%BASE_UPLOAD_PATH%%><%%VALUE(Photo)%%>" data-lightbox="employees-Photo"><img src="thumbnail.php?i=<%%VALUE(Photo)%%>&t=employees&f=Photo&v=tv" class="img-thumbnail"></a></td>
+		<td id="employees-LastName-<%%VALUE(EmployeeID)%%>" class="employees-LastName rtl-left"><%%SELECT%%><%%VALUE(LastName)%%><%%ENDSELECT%%></td>
+		<td id="employees-FirstName-<%%VALUE(EmployeeID)%%>" class="employees-FirstName rtl-left"><%%SELECT%%><%%VALUE(FirstName)%%><%%ENDSELECT%%></td>
+		<td id="employees-Title-<%%VALUE(EmployeeID)%%>" class="employees-Title rtl-left"><%%SELECT%%><%%VALUE(Title)%%><%%ENDSELECT%%></td>
+		<td id="employees-HireDate-<%%VALUE(EmployeeID)%%>" class="employees-HireDate rtl-left"><%%SELECT%%><%%VALUE(HireDate)%%><%%ENDSELECT%%></td>
+		<td id="employees-Country-<%%VALUE(EmployeeID)%%>" class="employees-Country rtl-left"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
+		<td id="employees-ReportsTo-<%%VALUE(EmployeeID)%%>" class="employees-ReportsTo rtl-left"><%%SELECT%%><%%VALUE(ReportsTo)%%><%%ENDSELECT%%></td>
 		<td id="employees-Age-<%%VALUE(EmployeeID)%%>" class="employees-Age text-right"><%%SELECT%%><%%VALUE(Age)%%><%%ENDSELECT%%></td>
 		<td id="employees-TotalSales-<%%VALUE(EmployeeID)%%>" class="employees-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>
 		<td class="child-employees-ReportsTo child-records-info" data-id="<%%VALUE(EmployeeID)%%>" data-table="employees" data-lookup-field="ReportsTo">

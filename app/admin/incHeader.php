@@ -17,20 +17,23 @@
 		<meta name="description" content="">
 		<title><?php echo APP_TITLE . ' | ' . $Translation['admin area'] . (isset($GLOBALS['page_title']) ? html_attr(" | {$GLOBALS['page_title']}") : ''); ?></title>
 
-		<link id="browser_favicon" rel="shortcut icon" href="<?php echo PREPEND_PATH; ?>resources/table_icons/administrator.png">
+		<link id="browser_favicon" rel="shortcut icon" href="<?= PREPEND_PATH ?>resources/table_icons/administrator.png">
 
-		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/<?php echo $theme; ?>.css">
-		<?php echo $bootstrap3d; ?>
-		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>dynamic.css?<?php echo filemtime( __DIR__ . '/../dynamic.css'); ?>">
+		<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/<?= $theme ?>.css">
+		<?= $bootstrap3d ?>
+		<?php if(rtl()) { ?>
+			<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/rtl.css">
+		<?php } ?>
+		<link rel="stylesheet" href="<?= PREPEND_PATH ?>dynamic.css?<?= filemtime( __DIR__ . '/../dynamic.css') ?>">
 
-		<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/<?php echo latest_jquery(); ?>"></script>
+		<script src="<?= PREPEND_PATH ?>resources/jquery/js/<?= latest_jquery() ?>"></script>
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
 		<?php if(QUEUE_AJAX_REQUESTS) { ?>
 			<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
 		<?php } ?>
 		<script src="toolTips.js"></script>
 		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
-		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo filemtime( __DIR__ . '/../language.php'); ?>"></script>
+		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo userLanguage() . userLanguageLastModified(); ?>"></script>
 		<script>
 
 			// VALIDATION FUNCTIONS FOR VARIOUS PAGES
@@ -163,7 +166,7 @@
 		</style>
 	</head>
 	<body>
-	<div class="admin-area container theme-<?php echo $theme; ?> <?php echo getUserThemeCompact(); ?><?php echo BOOTSTRAP_3D_EFFECTS ? ' theme-3d' : ''; ?>">
+	<div class="admin-area container theme-<?= $theme; ?> <?= getUserThemeCompact(); ?><?= BOOTSTRAP_3D_EFFECTS ? ' theme-3d' : '' ?><?= rtl(' theme-rtl') ?>">
 
 		<!-- top navbar -->
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -209,7 +212,6 @@
 							<li><a href="pageRebuildThumbnails.php"><i class="glyphicon menu-item-icon text-info glyphicon-picture"></i> <?php echo  $Translation['rebuild thumbnails']; ?></a></li>
 							<li><a href="pageMail.php?sendToAll=1"><i class="glyphicon menu-item-icon text-info glyphicon-envelope"></i> <?php echo $Translation['mail all users']; ?></a></li>
 							<li><a href="pageServerStatus.php"><i class="glyphicon menu-item-icon text-info glyphicon-hdd"></i> <?php echo $Translation['server status']; ?></a></li>
-							<li><a href="pageTranslation.php"><i class="glyphicon menu-item-icon text-info glyphicon-globe"></i> <?php echo $Translation['translation tool']; ?></a></li>
 							<li class="divider"></li>
 							<li><a href="pageTransferOwnership.php"><i class="glyphicon menu-item-icon text-info glyphicon-transfer"></i> <?php echo $Translation['ownership batch transfer']; ?></a></li>
 							<li><a href="pageRebuildFields.php"><i class="glyphicon menu-item-icon text-info glyphicon-refresh"></i> <?php echo  $Translation['view or rebuild fields']; ?></a></li>

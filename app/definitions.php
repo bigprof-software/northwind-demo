@@ -5,14 +5,13 @@
 	@define('SESSION_NAME', 'Northwind');
 	@define('APP_TITLE', 'Northwind');
 	@define('APP_DIR', __DIR__);
-	@define('APP_VERSION', '26.10');
+	@define('APP_VERSION', '26.11');
 	@define('maxSortBy', 4);
 	@define('empty_lookup_value', '{empty_value}');
 	@define('MULTIPLE_SUPER_ADMINS', false);
 
 	@define('DATABASE', 'mysqli');
 	@define('mysql_charset', 'utf8mb4');
-	@define('RTL', false);
 
 	@define('TIMEZONE', 'America/New_York');
 
@@ -65,3 +64,14 @@
 
 	// if true, ajax requests will be queued to avoid too many concurrent ajax requests on slower servers
 	@define('QUEUE_AJAX_REQUESTS', false);
+
+	// 2FA Settings:
+	// Expiry time for One-Time Password (OTP) in minutes. Default is 15 minutes. Min recommended is 5 minutes. Valid range is 1 to 30.
+	define('OTP_EXPIRY_MINUTES', 15);
+	// OTP length (number of digits). Default is 6 digits. Valid range is 4 to 10.
+	define('OTP_LENGTH', 6);
+	// OTP CSS styling inside the email message
+	define('OTP_EMAIL_CSS', 'font-size: 24px; font-weight: bold; margin: 10px 0; border: 1px solid #ccc; padding: 10px; max-width: 225px; text-align: center; letter-spacing: 6px;');
+
+	define('DEFAULT_LANGUAGE', 'en');
+

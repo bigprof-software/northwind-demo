@@ -2,7 +2,7 @@
 require(__DIR__ . '/incCommon.php');
 
 // get groupID of anonymous group
-$groupID = $name = $description = $allowCSVImport = $visitorSignup = null;
+$groupID = $name = $description = $allowCSVImport = $visitorSignup = $allow_2fa = null;
 $anon_safe = makeSafe($adminConfig['anonymousGroup'], false);
 $anonGroupID = sqlValue("SELECT `groupID` FROM `membership_groups` WHERE `name`='{$anon_safe}'");
 
@@ -19,6 +19,7 @@ if(Request::val('saveChanges')) {
 	$name = makeSafe(Request::val('name'));
 	$description = makeSafe(Request::val('description'));
 	$allowCSVImport = (Request::val('allowCSVImport') ? 1 : 0);
+	$allow_2fa = (Request::val('allow_2fa') ? 1 : 0);
 
 	$allowSignup = (Request::val('visitorSignup') ? 1 : 0);
 	$needsApproval = (Request::val('visitorSignup') == 2 ? 0 : 1);
@@ -42,7 +43,7 @@ if(Request::val('saveChanges')) {
 		// add group
 		insert(
 			'membership_groups',
-			compact('name', 'description', 'allowSignup', 'needsApproval', 'allowCSVImport')
+			compact('name', 'description', 'allowSignup', 'needsApproval', 'allowCSVImport', 'allow_2fa')
 		);
 
 		// get new groupID
@@ -69,7 +70,7 @@ if(Request::val('saveChanges')) {
 		// update group
 		update(
 			'membership_groups',
-			compact('name', 'description', 'allowSignup', 'needsApproval', 'allowCSVImport'),
+			compact('name', 'description', 'allowSignup', 'needsApproval', 'allowCSVImport', 'allow_2fa'),
 			compact('groupID')
 		);
 
@@ -110,6 +111,7 @@ if($groupID != '') {
 		$description = $row['description'];
 		$visitorSignup = ($row['allowSignup'] == 1 && $row['needsApproval'] == 1 ? 1 : ($row['allowSignup'] == 1 ? 2 : 0));
 		$allowCSVImport = ($row['allowCSVImport'] || $name == 'Admins' ? 1 : 0);
+		$allow_2fa = ($row['allow_2fa'] ? 1 : 0);
 
 		// get group permissions for each table
 		$res = sql("SELECT * FROM `membership_grouppermissions` WHERE `groupID`='{$groupID}'", $eo);
@@ -245,6 +247,19 @@ while($row = db_fetch_assoc($res)) {
 					</label>
 				</div>
 				<span class="help-block"><?php echo $Translation['description of import CSV files option']; ?></span>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label class="col-sm-4 col-md-3 col-lg-2 col-lg-offset-2 control-label"></label>
+			<div class="col-sm-8 col-md-9 col-lg-6 ">
+				<div class="checkbox">
+					<label>
+						<input type="checkbox" value="1" name="allow_2fa" <?php echo ($allow_2fa ? 'checked' : ''); ?>>
+						<?php echo $Translation['Require 2FA']; ?>
+					</label>
+				</div>
+				<span class="help-block"><?php echo $Translation['group require 2fa description']; ?></span>
 			</div>
 		</div>
 

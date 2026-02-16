@@ -5,13 +5,13 @@
 <!-- add the following to the suppliers_init() hook (in hooks/suppliers.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="suppliers-CompanyName-<%%VALUE(SupplierID)%%>" class="suppliers-CompanyName"><%%SELECT%%><%%VALUE(CompanyName)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-ContactName-<%%VALUE(SupplierID)%%>" class="suppliers-ContactName"><%%SELECT%%><%%VALUE(ContactName)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-ContactTitle-<%%VALUE(SupplierID)%%>" class="suppliers-ContactTitle"><%%SELECT%%><%%VALUE(ContactTitle)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone"><%%SELECT%%><%%VALUE(Phone)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax"><%%SELECT%%><%%VALUE(Fax)%%><%%ENDSELECT%%></td>
-		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
+		<td id="suppliers-CompanyName-<%%VALUE(SupplierID)%%>" class="suppliers-CompanyName rtl-left"><%%SELECT%%><%%VALUE(CompanyName)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-ContactName-<%%VALUE(SupplierID)%%>" class="suppliers-ContactName rtl-left"><%%SELECT%%><%%VALUE(ContactName)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-ContactTitle-<%%VALUE(SupplierID)%%>" class="suppliers-ContactTitle rtl-left"><%%SELECT%%><%%VALUE(ContactTitle)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-Country-<%%VALUE(SupplierID)%%>" class="suppliers-Country rtl-left"><%%SELECT%%><%%VALUE(Country)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-Phone-<%%VALUE(SupplierID)%%>" class="suppliers-Phone rtl-left"><%%SELECT%%><%%VALUE(Phone)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-Fax-<%%VALUE(SupplierID)%%>" class="suppliers-Fax rtl-left"><%%SELECT%%><%%VALUE(Fax)%%><%%ENDSELECT%%></td>
+		<td id="suppliers-HomePage-<%%VALUE(SupplierID)%%>" class="suppliers-HomePage rtl-left"><a href="link.php?t=suppliers&f=HomePage&i=<%%VALUE(SupplierID)%%>" target="_blank" title="<%%VALUE(HomePage)%%>" class="btn btn-default"><i class="glyphicon glyphicon-lg glyphicon-globe text-info"></i></a></td>
 		<td class="child-products-SupplierID child-records-info" data-id="<%%VALUE(SupplierID)%%>" data-table="products" data-lookup-field="SupplierID">
 			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Products supplied)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
 			<a href="products_view.php?filterer_SupplierID=<%%VALUE(SupplierID)%%>&addNew_x=1&Embedded=1" target="_blank" class="modal-link new-child" title="<%%TRANSLATION(Add New)%%> (Products supplied)" style="visibility: hidden;"><i class="text-success glyphicon glyphicon-plus"></i></a>

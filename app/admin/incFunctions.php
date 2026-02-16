@@ -192,18 +192,9 @@
 			if($include_internal_tables) {
 				// merge internal tables with user tables
 				$internalIcon = 'resources/images/appgini-icon.png';
-				$internalTables = [
-					'appgini_csv_import_jobs',
-					'appgini_query_log',
-					'appgini_saved_filters',
-					'membership_cache',
-					'membership_grouppermissions',
-					'membership_groups',
-					'membership_userpermissions',
-					'membership_userrecords',
-					'membership_users',
-					'membership_usersessions',
-				];
+				$allTables = array_keys(get_table_fields(null, true));
+				$userTables = array_keys($arrTables);
+				$internalTables = array_diff($allTables, $userTables);
 
 				// format internal tables as 'tn' => ['tn', '', icon, ''] and merge with user tables
 				$arrTables = array_merge($arrTables, array_combine(
@@ -685,6 +676,12 @@
 		echo "<div class=\"alert alert-danger\">{$msg}</div>";
 	}
 	########################################################################
+	/**
+	 * Redirect to the given URL and exit.
+	 * @param string $url - the URL to redirect to
+	 * @param bool $absolute - if true, $url is treated as an absolute URL, otherwise it's treated as relative to application root and prepended with application URL
+	 * @return never
+	 */
 	function redirect($url, $absolute = false) {
 		$fullURL = ($absolute ? $url : application_url($url));
 
@@ -1637,6 +1634,7 @@
 					'allowSignup' => "TINYINT",
 					'needsApproval' => "TINYINT",
 					'allowCSVImport' => "TINYINT NOT NULL DEFAULT '0'",
+					'allow_2fa' => "TINYINT NOT NULL DEFAULT '0'",
 				],
 				'membership_userpermissions' => [
 					'permissionID' => "INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT",
@@ -1674,7 +1672,14 @@
 					'flags' => "TEXT",
 					'allowCSVImport' => "TINYINT NOT NULL DEFAULT '0'",
 					'data' => "LONGTEXT",
-				]
+				],
+				'membership_2fa_requests' => [
+					'request_id' => "VARCHAR(32) NOT NULL PRIMARY KEY",
+					'memberID' => "VARCHAR(100) NOT NULL",
+					'otp' => "VARCHAR(10) NOT NULL",
+					'expiry_ts' => "INT UNSIGNED NOT NULL",
+					'remember_me' => "TINYINT NOT NULL DEFAULT '0'",
+				],
 			];
 
 			$internalTables = [];
@@ -1820,6 +1825,7 @@
 		updateField($tn, 'name', 'VARCHAR(100)', true);
 		addIndex($tn, 'name', true);
 		updateField($tn, 'allowCSVImport', 'TINYINT', true, '0');
+		updateField($tn, 'allow_2fa', 'TINYINT', true, '0');
 	}
 	########################################################################
 	function update_membership_users() {
@@ -1834,6 +1840,13 @@
 		updateField($tn, 'flags', 'TEXT');
 		updateField($tn, 'allowCSVImport', 'TINYINT', true, '0');
 		updateField($tn, 'data', 'LONGTEXT');
+	}
+	########################################################################
+	function update_membership_2fa_requests() {
+		$tn = 'membership_2fa_requests';
+		createTableIfNotExists($tn);
+
+		addIndex($tn, 'expiry_ts');
 	}
 	########################################################################
 	function update_membership_userrecords() {
@@ -2326,6 +2339,21 @@
 		}
 	}
 	#########################################################
+	/**
+	 * Sends an email using PHPMailer
+	 * @param array $mail An associative array with the following keys:
+	 *   - `to`: string or array of recipients. If string, it's the email address of the recipient. If array, it's an array of arrays, each containing the email address and optionally the name of the recipient.
+	 *         Example (array): `'to' => [['email@example.com', 'Name'], ['another@example.com']]`.
+	 *         Example (string): `'to' => 'email@example.com'`.
+	 *  - `name`: (optional) string, name of the recipient if `to` is a string
+	 *  - `cc`: (optional) string or array of CC recipients, same format as `to`
+	 *  - `bcc`: (optional) string or array of BCC recipients, same format as `to`
+	 *  - `subject`: (optional) string, subject of the email
+	 *  - `message`: (optional) string, body of the email. If the message contains no HTML tags, new lines will be converted to `<br>` tags.
+	 *  - `debug`: (optional) integer, SMTP debug level (0-4). Only applicable if SMTP is used. Debug output should be captured via output buffering functions.
+	 *  - `tag`: (optional) mixed, any value to be attached to the PHPMailer object for use in `sendmail_handler` hook.
+	 * @return true on success, or a string with the error message on failure.
+	 */
 	function sendmail($mail) {
 		if(empty($mail['to'])) return 'No recipient defined';
 
@@ -3468,3 +3496,141 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		];
 	}
 
+	/**
+	 * Get a list of available languages from the language folders.
+	 *
+	 * @return array assoc array of language codes to language names
+	 */
+	function getLanguagesList() {
+		static $cached = null;
+		if($cached !== null) return $cached;
+
+		$languages = ['en' => 'English'];
+		$langDir = APP_DIR . '/language';
+		if(!is_dir($langDir)) return $cached = $languages;
+
+		$entries = @scandir($langDir);
+		if(!$entries) return $cached = $languages;
+
+		foreach($entries as $entry) {
+			if($entry[0] == '.') continue;
+			if(!preg_match('/^[a-z]{2}$/i', $entry)) continue;
+
+			$langFile = "{$langDir}/{$entry}/language.php";
+			if(!is_file($langFile)) continue;
+
+			$Translation = [];
+			include $langFile;
+
+			if(!empty($Translation['language'])) {
+				$languages[$entry] = $Translation['language'];
+			} else {
+				$languages[$entry] = $entry;
+			}
+		}
+
+		asort($languages, SORT_NATURAL | SORT_FLAG_CASE);
+		return $cached = $languages;
+	}
+
+	/**
+	 * Get or set the user's preferred language. If no preferred language is set, return the default language.
+	 *
+	 * @param string|null $languageCode two-letter language code to set as the user's preferred language, or null to get the current preferred language
+	 * @return string user's preferred language code, or the default language code if not set
+	 */
+	function userLanguage($languageCode = null) {
+		if(defined('APPGINI_SETUP')) return DEFAULT_LANGUAGE;
+
+		if($languageCode != null && strlen($languageCode) == 2) {
+			// set user language
+			setUserData('language', $languageCode);
+		}
+
+		// get user language
+		return getUserData('language') ?: DEFAULT_LANGUAGE;
+	}
+
+	/**
+	 * Get the path to the user's language file. If the user's language file does not exist, or user is not logged in, fall back to the default language file. If the default language file does not exist, fall back to English.
+	 *
+	 * @return string path to the user's language file
+	 */
+	function userLanguageFile() {
+		$languageCode = userLanguage();
+
+		if($languageCode == 'en') return APP_DIR . '/defaultLang.php';
+
+		$langFile = APP_DIR . "/language/{$languageCode}/language.php";
+
+		if(!is_file($langFile)) {
+			// fallback to default language
+			$languageCode = DEFAULT_LANGUAGE;
+			$langFile = APP_DIR . "/language/{$languageCode}/language.php";
+		}
+
+		if(!is_file($langFile)) {
+			// fallback to English
+			$languageCode = 'en';
+			$langFile = APP_DIR . "/defaultLang.php";
+		}
+
+		return $langFile;
+	}
+
+	/**
+	 * Get the last modified timestamp of the user's language file. If the user's language file does not exist, or user is not logged in, fall back to the default language file. If the default language file does not exist, fall back to English.
+	 *
+	 * @return int last modified timestamp of the user's language file
+	 */
+	function userLanguageLastModified() {
+		$langFile = userLanguageFile();
+		return filemtime($langFile);
+	}
+
+	/**
+	 * Load the user's preferred language translations into the global `$Translation` array. If a translation is missing in the user's language, fall back to the English translation. If user is not logged in, load the default language translations as set in `definitions.php`.
+	 *
+	 * @return string the language code of the loaded language
+	 */
+	function loadLanguage() {
+		global $Translation;
+		static $TranslationEn = [];
+
+		// load English first, which sets the $TranslationEn array
+		require_once APP_DIR . '/defaultLang.php';
+
+		// then load user language. This might set $Translation array only if not English
+		include_once userLanguageFile();
+
+		// now merge $TranslationEn and $Translation, giving precedence to $Translation, and only using $TranslationEn for missing keys
+		$Translation = array_merge($TranslationEn, $Translation ?? []);
+
+		return $Translation['language'];
+	}
+
+	/**
+	 * Determine if the user's preferred language is a right-to-left (RTL) language and optionally return values based on the language direction.
+	 * @param string $returnIfRtl value to return if the language is RTL.
+	 * @param string $returnIfLtr value to return if the language is LTR.
+	 * @return mixed true/false if no parameters are given, or $returnIfRtl/$returnIfLtr based on the language direction.
+	 *
+	 * @example
+	 * ```php
+	 * rtl(); // returns true if RTL, false if LTR
+	 * rtl('rtl-class', 'ltr-class'); // returns 'rtl-class' if RTL, 'ltr-class' if LTR
+	 * rtl('rtl-class'); // returns 'rtl-class' if RTL, '' if LTR
+	 * rtl('', 'ltr-class'); // returns '' if RTL, 'ltr-class' if LTR
+	 * ```
+	 */
+	function rtl($returnIfRtl = '', $returnIfLtr = '') {
+		global $Translation;
+		$rtlLanguages = ['ar', 'he', 'fa', 'ur', 'ps'];
+		$langCode = userLanguage();
+
+		if(in_array($langCode, $rtlLanguages)) {
+			return $returnIfRtl === '' && $returnIfLtr === '' ? true : $returnIfRtl;
+		}
+
+		return $returnIfLtr === '' && $returnIfRtl === '' ? false : $returnIfLtr;
+	}

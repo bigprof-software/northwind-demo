@@ -130,6 +130,24 @@
 		exit;
 	}
 
+	/* update language */
+	if(Request::val('action') == 'updateLanguage') {
+		if(!csrf_token(true)) {
+			@header('HTTP/1.0 403 Forbidden');
+			echo "{$Translation['error:']} {$Translation['csrf token expired or invalid']}";
+			exit;
+		}
+
+		$language = Request::val('language');
+		$languages = getLanguagesList();
+		if(!isset($languages[$language])) {
+			$language = DEFAULT_LANGUAGE;
+		}
+
+		userLanguage($language);
+		exit;
+	}
+
 	/* get user theme */
 	$theme = getUserTheme();
 
@@ -145,6 +163,14 @@
 	if($navMenu === null) {
 		$navMenu = DEFAULT_NAV_MENU;
 		setUserData('navMenu', $navMenu);
+	}
+
+	/* get available languages */
+	$languages = getLanguagesList();
+	$currentLanguage = userLanguage();
+	if(!isset($languages[$currentLanguage])) {
+		$languages[$currentLanguage] = $Translation['language'];
+		asort($languages, SORT_NATURAL | SORT_FLAG_CASE);
 	}
 
 	/* get profile info */
@@ -185,12 +211,10 @@
 			<i class="glyphicon glyphicon-asterisk"></i>
 			<?php echo $Translation['Change your password']; ?>
 		</a></li>
-		<?php if(!NO_THEME_SELECTION) { ?>
-			<li><a href="#tab-theme" role="tab" data-toggle="tab">
-				<i class="glyphicon glyphicon-adjust"></i>
-				<?php echo $Translation['theme selector']; ?>
-			</a></li>
-		<?php } ?>
+		<li><a href="#tab-preferences" role="tab" data-toggle="tab">
+			<i class="glyphicon glyphicon-adjust"></i>
+			<?php echo $Translation['application preferences']; ?>
+		</a></li>
 	</ul>
 
 	<div class="tab-content">
@@ -319,8 +343,24 @@
 				</fieldset>
 			<?php } ?>
 		</div>
-		<?php if(!NO_THEME_SELECTION) { ?>
-			<div class="tab-pane" id="tab-theme">
+		<div class="tab-pane" id="tab-preferences">
+			<div class="well tspacer-lg" id="language-selector">
+				<div class="form-group">
+					<svg style="width: 2em;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+						<path d="M160 0c17.7 0 32 14.3 32 32l0 32 128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-9.6 0-8.4 23.1c-16.4 45.2-41.1 86.5-72.2 122 14.2 8.8 29 16.6 44.4 23.5l50.4 22.4 62.2-140c5.1-11.6 16.6-19 29.2-19s24.1 7.4 29.2 19l128 288c7.2
+							16.2-.1 35.1-16.2 42.2s-35.1-.1-42.2-16.2l-20-45-157.5 0-20 45c-7.2 16.2-26.1 23.4-42.2 16.2s-23.4-26.1-16.2-42.2l39.8-89.5-50.4-22.4c-23-10.2-45-22.4-65.8-36.4-21.3 17.2-44.6 32.2-69.5 44.7L78.3 380.6c-15.8 7.9-35
+							1.5-42.9-14.3s-1.5-35 14.3-42.9l34.5-17.3c16.3-8.2 31.8-17.7 46.4-28.3-13.8-12.7-26.8-26.4-38.9-40.9L81.6 224.7c-11.3-13.6-9.5-33.8 4.1-45.1s33.8-9.5 45.1 4.1l10.2 12.2c11.5 13.9 24.1 26.8 37.4 38.7 27.5-30.4 49.2-66.1
+							63.5-105.4l.5-1.2-210.3 0C14.3 128 0 113.7 0 96S14.3 64 32 64l96 0 0-32c0-17.7 14.3-32 32-32zM416 270.8L365.7 384 466.3 384 416 270.8z"/>
+					</svg>
+					<label for="language" class="text-bold"><?php echo $Translation['preferred language']; ?></label>
+					<select id="language" name="language">
+						<?php foreach($languages as $code => $name) { ?>
+							<option value="<?php echo $code; ?>"<?php echo ($currentLanguage == $code ? ' selected' : ''); ?>><?php echo htmlspecialchars($name); ?></option>
+						<?php } ?>
+					</select>
+				</div>
+			</div>
+			<?php if(!NO_THEME_SELECTION) { ?>
 				<!-- theme selector -->
 				<div id="theme-selector">
 					<div class="bspacer-lg">
@@ -436,8 +476,8 @@
 						});
 					});
 				</script>
-			</div>
-		<?php } ?>
+			<?php } ?>
+		</div>
 	</div>
 
 	<script>
@@ -455,6 +495,23 @@
 					{ action: 'saveProfile', email: $j('#email').val(), custom1: $j('#custom1').val(), custom2: $j('#custom2').val(), custom3: $j('#custom3').val(), custom4: $j('#custom4').val(), csrf_token: $j('#csrf_token').val() },
 					'notify', 'profile', 'loader',
 					'<?php echo basename(__FILE__); ?>?notify=<?php echo urlencode($Translation['Your profile was updated successfully']); ?>'
+				);
+			});
+
+			$j('#language').select2({ width: '100%' });
+
+			$j('#language').on('change', function() {
+				$j('#language').prop('disabled', true);
+				$j('#notify')
+					.html(AppGini.Translate._map['Loading ...'])
+					.removeClass('alert-danger alert-success')
+					.addClass('alert-warning').show();
+
+				post2(
+					'<?php echo basename(__FILE__); ?>',
+					{ action: 'updateLanguage', language: $j('#language').val(), csrf_token: $j('#csrf_token').val() },
+					'ignore', 'language-selector', 'ignore',
+					'<?php echo basename(__FILE__); ?>?notify=<?php echo urlencode($Translation['your language was updated successfully']); ?>'
 				);
 			});
 

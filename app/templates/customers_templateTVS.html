@@ -5,13 +5,13 @@
 <!-- add the following to the customers_init() hook (in hooks/customers.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="customers-CompanyName-<%%VALUE(CustomerID)%%>" class="customers-CompanyName text-bold"><%%VALUE(CompanyName)%%></td>
-		<td id="customers-CustomerID-<%%VALUE(CustomerID)%%>" class="customers-CustomerID text-bold"><%%VALUE(CustomerID)%%></td>
-		<td id="customers-ContactName-<%%VALUE(CustomerID)%%>" class="customers-ContactName text-bold"><%%VALUE(ContactName)%%></td>
-		<td id="customers-Address-<%%VALUE(CustomerID)%%>" class="customers-Address text-bold"><%%VALUE(Address)%%></td>
-		<td id="customers-City-<%%VALUE(CustomerID)%%>" class="customers-City text-bold"><%%VALUE(City)%%></td>
-		<td id="customers-Region-<%%VALUE(CustomerID)%%>" class="customers-Region text-bold"><%%VALUE(Region)%%></td>
-		<td id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country text-bold"><%%VALUE(Country)%%></td>
+		<td id="customers-CompanyName-<%%VALUE(CustomerID)%%>" class="customers-CompanyName rtl-left text-bold"><%%VALUE(CompanyName)%%></td>
+		<td id="customers-CustomerID-<%%VALUE(CustomerID)%%>" class="customers-CustomerID rtl-left text-bold"><%%VALUE(CustomerID)%%></td>
+		<td id="customers-ContactName-<%%VALUE(CustomerID)%%>" class="customers-ContactName rtl-left text-bold"><%%VALUE(ContactName)%%></td>
+		<td id="customers-Address-<%%VALUE(CustomerID)%%>" class="customers-Address rtl-left text-bold"><%%VALUE(Address)%%></td>
+		<td id="customers-City-<%%VALUE(CustomerID)%%>" class="customers-City rtl-left text-bold"><%%VALUE(City)%%></td>
+		<td id="customers-Region-<%%VALUE(CustomerID)%%>" class="customers-Region rtl-left text-bold"><%%VALUE(Region)%%></td>
+		<td id="customers-Country-<%%VALUE(CustomerID)%%>" class="customers-Country rtl-left text-bold"><%%VALUE(Country)%%></td>
 		<td id="customers-TotalSales-<%%VALUE(CustomerID)%%>" class="customers-TotalSales text-right text-bold"><%%VALUE(TotalSales)%%></td>
 		<td class="child-orders-CustomerID child-records-info" data-id="<%%VALUE(CustomerID)%%>" data-table="orders" data-lookup-field="CustomerID">
 			<a href="orders_view.php?filterer_CustomerID=<%%VALUE(CustomerID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Customer's Orders)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>

@@ -32,6 +32,8 @@
 	// do we have a login request?
 	Authentication::signIn();
 
+	loadLanguage();
+
 	// convert expanded sorting variables, if provided, to SortField and SortDirection
 	$postedOrderBy = [];
 	for($i = 0; $i < maxSortBy; $i++) {

@@ -5,10 +5,10 @@
 <!-- add the following to the products_init() hook (in hooks/products.php file) -->
 <!--     $options->ShowTableHeader = 0;     -->
 
-		<td id="products-ProductName-<%%VALUE(ProductID)%%>" class="products-ProductName"><%%SELECT%%><%%VALUE(ProductName)%%><%%ENDSELECT%%></td>
-		<td id="products-SupplierID-<%%VALUE(ProductID)%%>" class="products-SupplierID"><%%SELECT%%><%%VALUE(SupplierID)%%><%%ENDSELECT%%></td>
-		<td id="products-CategoryID-<%%VALUE(ProductID)%%>" class="products-CategoryID"><%%SELECT%%><%%VALUE(CategoryID)%%><%%ENDSELECT%%></td>
-		<td id="products-QuantityPerUnit-<%%VALUE(ProductID)%%>" class="products-QuantityPerUnit"><%%SELECT%%><%%VALUE(QuantityPerUnit)%%><%%ENDSELECT%%></td>
+		<td id="products-ProductName-<%%VALUE(ProductID)%%>" class="products-ProductName rtl-left"><%%SELECT%%><%%VALUE(ProductName)%%><%%ENDSELECT%%></td>
+		<td id="products-SupplierID-<%%VALUE(ProductID)%%>" class="products-SupplierID rtl-left"><%%SELECT%%><%%VALUE(SupplierID)%%><%%ENDSELECT%%></td>
+		<td id="products-CategoryID-<%%VALUE(ProductID)%%>" class="products-CategoryID rtl-left"><%%SELECT%%><%%VALUE(CategoryID)%%><%%ENDSELECT%%></td>
+		<td id="products-QuantityPerUnit-<%%VALUE(ProductID)%%>" class="products-QuantityPerUnit rtl-left"><%%SELECT%%><%%VALUE(QuantityPerUnit)%%><%%ENDSELECT%%></td>
 		<td id="products-UnitPrice-<%%VALUE(ProductID)%%>" class="products-UnitPrice text-right"><%%SELECT%%><%%VALUE(UnitPrice)%%><%%ENDSELECT%%></td>
 		<td id="products-Discontinued-<%%VALUE(ProductID)%%>" class="products-Discontinued text-right"><%%SELECT%%><%%VALUE(Discontinued)%%><%%ENDSELECT%%></td>
 		<td id="products-TotalSales-<%%VALUE(ProductID)%%>" class="products-TotalSales text-right"><%%SELECT%%><%%VALUE(TotalSales)%%><%%ENDSELECT%%></td>

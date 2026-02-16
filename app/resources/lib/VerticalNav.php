@@ -223,6 +223,7 @@ class VerticalNav {
 					
 					const navbarTopHeight = $j('.navbar-fixed-top').outerHeight(true) ?? 0;
 					const headerTop = (() => {
+						if($j('.page-header').length === 0) return 0;
 						const ht = $j('.page-header').css('margin-top').replace('px', '') * 1;
 						return ht < 200 ? ht : 0; // if the header is too far down (e.g. children in DVP), assume it's not there and set to 0
 					})();

@@ -169,10 +169,10 @@
 			}
 
 			// display status
-			echo "<div class=\"alert alert-success\"><h2>{$Translation['admin settings saved']}</h2></div>";
+			echo "<div class=\"alert alert-success\"><h3>{$Translation['admin settings saved']}</h3></div>";
 		} else {
 			// display status
-			echo "<div class=\"alert alert-danger\"><h2>" . str_replace('<ERROR>', $save_result['error'], $Translation['admin settings not saved']) . "</h2></div>";
+			echo "<div class=\"alert alert-danger\"><h3>" . str_replace('<ERROR>', $save_result['error'], $Translation['admin settings not saved']) . "</h3></div>";
 		}
 
 		// exit
@@ -391,6 +391,23 @@
 			<div class="text-center">
 				<button type="button" class="btn btn-info" onclick="sendTestEmail();"><i class="glyphicon glyphicon-send hspacer-sm"></i> <?php echo $Translation['send test email']; ?></button>
 			</div>
+			<!-- hidden modal to show test email error/output -->
+			<div id="testEmailModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="testEmailModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="testEmailModalLabel"><?php echo $Translation['test email output']; ?></h4>
+						</div>
+						<div class="modal-body">
+							<pre id="testEmailOutput" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $Translation['close']; ?></button>
+						</div>
+					</div>
+				</div>
+			</div>
 			<script>
 				function sendTestEmail() {
 					const originalBtnHTML = $j('.btn-info').html();
@@ -417,14 +434,16 @@
 						type: 'POST',
 						data,
 						success: function(response) {
-							alert(response.message);
+							$j('#testEmailOutput').text(response.message);
+							$j('#testEmailModal').modal('show');
 						},
 						error: function(xhr, status, error) {
 							var errMsg = error || status || xhr.statusText;
 							if(xhr.responseJSON && xhr.responseJSON.status == 'error' && xhr.responseJSON.message) {
 								errMsg = xhr.responseJSON.message;
 							}
-							alert('<?php echo $Translation['error:']; ?> ' + errMsg);
+							$j('#testEmailOutput').text(errMsg);
+							$j('#testEmailModal').modal('show');
 						},
 						complete: function() {
 							$j('.btn-info').prop('disabled', false).html(originalBtnHTML);

@@ -40,6 +40,58 @@
 	</h1>
 </div>
 
+<div class="form-group">
+	<div class="checkbox">
+		<label class="text-bold">
+			<input type="checkbox" id="toggle-2fa-all">
+			<?php echo $Translation['Require 2FA for all groups']; ?>
+			<i class="glyphicon glyphicon-lock hspacer-sm text-warning"></i>
+		</label>
+	</div>
+</div>
+
+<script>
+	$j(function() {
+		$j('#toggle-2fa-all').on('change', function() {
+			var enable = $j(this).prop('checked');
+
+			// remove success/error status if any and disable during the ajax call
+			$j(this).closest('.form-group').removeClass('has-success has-error');
+			$j(this).prop('disabled', true);
+
+			$j.ajax({
+				url: 'ajax-toggle-2fa.php',
+				data: {
+					enable: enable ? 1 : 0,
+					csrf_token: <?php echo json_encode(csrf_token(false, true)); ?>
+				},
+				success: function() {
+					// add success status to the checkbox briefly
+					$j('#toggle-2fa-all').closest('.form-group').removeClass('has-error').addClass('has-success');
+					setTimeout(function() {
+						$j('#toggle-2fa-all').closest('.form-group').removeClass('has-success');
+					}, 2000);
+					$j('#toggle-2fa-all').prop('disabled', false);
+				},
+				error: function() {
+					$j('#toggle-2fa-all').closest('.form-group').removeClass('has-success').addClass('has-error');
+					$j('#toggle-2fa-all')
+						.prop('checked', !enable) // revert checkbox state
+						.prop('disabled', false);
+					setTimeout(function() {
+						$j('#toggle-2fa-all').closest('.form-group').removeClass('has-error');
+					}, 4000);
+				}
+			});
+		});
+
+		// Set initial state based on check that all groups have 2FA enabled
+		<?php if(TFA::enabledForAllGroups()) { ?>
+			$j('#toggle-2fa-all').prop('checked', true);
+		<?php } ?>
+	});
+</script>
+
 <table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>

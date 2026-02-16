@@ -6,11 +6,40 @@ IMPORTANT:
 If you wish to translate the interface of your AppGini app,
 DO NOT TRANSLATE THIS FILE.
 
-Instead, you should translate the language.php file.
+Instead, you should create a new folder inside the "language" folder,
+named after the language code you wish to use (e.g., "es" for Spanish,
+"fr" for French, etc.),
+then create a new file named "language.php" inside that folder,
+and translate the $TranslationEn array here into a new $Translation array
+inside that file.
+
+When translating, only translate the strings that are
+TO THE RIGHT OF the arrow sign (=>).
+
+Do NOT translate the strings between square brackets ([])
+Also, leave the text between < and > untranslated.
+And also, leave the special string %s as-is, untranslated.
+
+=====================================================
+PLEASE NOTE:
+============
+When a new version of AppGini is released, new strings
+might be added to the end of "defaultLang.php" file. To translate
+them, simply copy them to your language.php file if they don't exist there yet and
+translate them here. Do NOT translate them directly in the "defaultLang.php" file.
+=====================================================
+
+To avoid any error messages, please make sure to:
+
+1. Add a comma at the end of each line if it's not already there.
+2. Leave the last line in your language file like this:
+];
+
 */
 
 $TranslationEn = [
 	'ImageFolder' => './images/',
+	'language' => 'English',
 	'membership management' => 'Membership Management',
 	'password mismatch' => "Password doesn't match.",
 	'error' => 'Error',
@@ -980,4 +1009,32 @@ $TranslationEn = [
 	'mysql ssl no verify help' => 'Check this if you are using self-signed certificates or if you don\'t want to verify the server certificate.',
 	'mysql connection encrypted' => 'MySQL connection is encrypted using SSL.',
 	'mysql connection not encrypted' => 'MySQL connection is not encrypted.',
+
+	// Added in 26.11
+	'test email output' => 'Test email output',
+	'do not miss our monthly newsletter' => 'Do not miss our monthly newsletter!',
+	'stay updated with latest features' => 'Stay updated with the latest features, tips, top forum posts and deals by subscribing to our newsletter.',
+	'subscribe or read previous issues' => 'Subscribe or read previous issues',
+	'2fa_page_title' => 'Two-Factor Authentication',
+	'2fa_heading' => 'Two-Factor Authentication',
+	'2fa_instruction' => 'An email with a verification code has been sent to your registered address.',
+	'2fa_instruction_sub' => 'Please check your inbox (and spam folder) for the code.',
+	'2fa_label_code' => 'Enter Verification Code',
+	'2fa_btn_verify' => 'Verify',
+	'2fa_btn_cancel' => 'Cancel / Sign Out',
+	'2fa_error_invalid_code' => 'Invalid code. Please try again.',
+	'2fa_error_expired' => 'Your session has expired or the request is invalid.',
+	'2fa_error_sending_mail' => 'Could not send verification email.',
+	'Require 2FA for all groups' => 'Require 2FA for all groups',
+	'Require 2FA' => 'Require 2FA',
+	'group require 2fa description' => 'If enabled, all members of this group will be required to use email-based two-factor authentication when signing in.',
+	'application preferences' => 'Application preferences',
+	'preferred language' => 'Preferred language',
+	'your language was updated successfully' => 'Your language was updated successfully',
+	'invalid language' => 'Invalid language',
+	'otp_email_subject' => 'Your One-Time Password (OTP) for %s',
+	'otp_email_message' => 'Your One-Time Password (OTP) is: %s This OTP is valid for %s minutes. If you did not request this code, please contact the system administrator.',
+	'field must be integer between x and y' => 'This field must be an integer between [x] and [y].',
+	'field must be number between x and y' => 'This field must be a number between [x] and [y].',
+	'field must be number with max x digits and y decimals' => 'This field must be a number with up to [x] digits, including up to [y] decimal places.',
 ];

@@ -6,13 +6,13 @@
 <!--     $options->ShowTableHeader = 0;     -->
 
 		<td id="orders-OrderID-<%%VALUE(OrderID)%%>" class="orders-OrderID text-right"><%%SELECT%%><%%VALUE(OrderID)%%><%%ENDSELECT%%></td>
-		<td id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status"><%%SELECT%%><%%VALUE(Status)%%><%%ENDSELECT%%></td>
-		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID"><%%SELECT%%><%%VALUE(CustomerID)%%><%%ENDSELECT%%></td>
-		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID"><%%SELECT%%><%%VALUE(EmployeeID)%%><%%ENDSELECT%%></td>
-		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate"><%%SELECT%%><%%VALUE(OrderDate)%%><%%ENDSELECT%%></td>
-		<td id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate"><%%SELECT%%><%%VALUE(ShippedDate)%%><%%ENDSELECT%%></td>
-		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia"><%%SELECT%%><%%VALUE(ShipVia)%%><%%ENDSELECT%%></td>
-		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry"><%%SELECT%%><%%VALUE(ShipCountry)%%><%%ENDSELECT%%></td>
+		<td id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status rtl-left"><%%SELECT%%><%%VALUE(Status)%%><%%ENDSELECT%%></td>
+		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID rtl-left"><%%SELECT%%><%%VALUE(CustomerID)%%><%%ENDSELECT%%></td>
+		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID rtl-left"><%%SELECT%%><%%VALUE(EmployeeID)%%><%%ENDSELECT%%></td>
+		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate rtl-left"><%%SELECT%%><%%VALUE(OrderDate)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate rtl-left"><%%SELECT%%><%%VALUE(ShippedDate)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia rtl-left"><%%SELECT%%><%%VALUE(ShipVia)%%><%%ENDSELECT%%></td>
+		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry rtl-left"><%%SELECT%%><%%VALUE(ShipCountry)%%><%%ENDSELECT%%></td>
 		<td id="orders-Total-<%%VALUE(OrderID)%%>" class="orders-Total text-right"><%%SELECT%%><%%VALUE(Total)%%><%%ENDSELECT%%></td>
 		<td class="child-order_details-OrderID child-records-info" data-id="<%%VALUE(OrderID)%%>" data-table="order_details" data-lookup-field="OrderID">
 			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Order Items)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>

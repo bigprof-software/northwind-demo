@@ -25,6 +25,9 @@
 
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/<?php echo $theme; ?>.css">
 		<?php echo $bootstrap3d; ?>
+		<?php if(rtl()) { ?>
+			<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/initializr/css/rtl.css">
+		<?php } ?>
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/select2/select2.css" media="screen">
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/timepicker/bootstrap-timepicker.min.css" media="screen">
 		<link rel="stylesheet" href="<?php echo PREPEND_PATH; ?>resources/datepicker/css/datepicker.css" media="screen">
@@ -75,7 +78,7 @@
 		</script>
 
 		<?php if(!defined('APPGINI_SETUP')) { ?>
-			<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo filemtime( __DIR__ . '/language.php'); ?>"></script>
+			<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo userLanguage() . userLanguageLastModified(); ?>"></script>
 		<?php } ?>
 		<script src="<?php echo PREPEND_PATH; ?>common.js?<?php echo filemtime( __DIR__ . '/common.js'); ?>"></script>
 		<script src="<?php echo PREPEND_PATH; ?>shortcuts.js?<?php echo filemtime( __DIR__ . '/shortcuts.js'); ?>"></script>
@@ -85,7 +88,7 @@
 
 	</head>
 	<body>
-		<div class="users-area container theme-<?php echo $theme; ?> <?php echo getUserThemeCompact(); ?><?php echo BOOTSTRAP_3D_EFFECTS ? ' theme-3d' : ''; ?>">
+		<div class="users-area container theme-<?= $theme ?> <?= getUserThemeCompact() ?><?= BOOTSTRAP_3D_EFFECTS ? ' theme-3d' : '' ?><?= rtl(' theme-rtl') ?>">
 			<?php if(function_exists('handle_maintenance')) echo handle_maintenance(true); ?>
 
 			<?php if(function_exists('htmlUserBar')) echo htmlUserBar(); ?>

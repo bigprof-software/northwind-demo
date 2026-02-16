@@ -6,13 +6,13 @@
 <!--     $options->ShowTableHeader = 0;     -->
 
 		<td id="orders-OrderID-<%%VALUE(OrderID)%%>" class="orders-OrderID text-right text-bold"><%%VALUE(OrderID)%%></td>
-		<td id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status text-bold"><%%VALUE(Status)%%></td>
-		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID text-bold"><%%VALUE(CustomerID)%%></td>
-		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID text-bold"><%%VALUE(EmployeeID)%%></td>
-		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate text-bold"><%%VALUE(OrderDate)%%></td>
-		<td id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate text-bold"><%%VALUE(ShippedDate)%%></td>
-		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia text-bold"><%%VALUE(ShipVia)%%></td>
-		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry text-bold"><%%VALUE(ShipCountry)%%></td>
+		<td id="orders-Status-<%%VALUE(OrderID)%%>" class="orders-Status rtl-left text-bold"><%%VALUE(Status)%%></td>
+		<td id="orders-CustomerID-<%%VALUE(OrderID)%%>" class="orders-CustomerID rtl-left text-bold"><%%VALUE(CustomerID)%%></td>
+		<td id="orders-EmployeeID-<%%VALUE(OrderID)%%>" class="orders-EmployeeID rtl-left text-bold"><%%VALUE(EmployeeID)%%></td>
+		<td id="orders-OrderDate-<%%VALUE(OrderID)%%>" class="orders-OrderDate rtl-left text-bold"><%%VALUE(OrderDate)%%></td>
+		<td id="orders-ShippedDate-<%%VALUE(OrderID)%%>" class="orders-ShippedDate rtl-left text-bold"><%%VALUE(ShippedDate)%%></td>
+		<td id="orders-ShipVia-<%%VALUE(OrderID)%%>" class="orders-ShipVia rtl-left text-bold"><%%VALUE(ShipVia)%%></td>
+		<td id="orders-ShipCountry-<%%VALUE(OrderID)%%>" class="orders-ShipCountry rtl-left text-bold"><%%VALUE(ShipCountry)%%></td>
 		<td id="orders-Total-<%%VALUE(OrderID)%%>" class="orders-Total text-right text-bold"><%%VALUE(Total)%%></td>
 		<td class="child-order_details-OrderID child-records-info" data-id="<%%VALUE(OrderID)%%>" data-table="order_details" data-lookup-field="OrderID">
 			<a href="order_details_view.php?filterer_OrderID=<%%VALUE(OrderID)%%>&Embedded=1" target="_blank" title="<%%TRANSLATION(view)%%> (Order Items)" class="modal-link children-count-link" style="visibility: hidden;"><span class="children-count">0</span> <i class="glyphicon glyphicon-new-window"></i></a>
