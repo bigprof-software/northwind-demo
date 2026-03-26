@@ -964,4 +964,6 @@ $Translation = [
 	'field must be integer between x and y' => 'このフィールドは [x] から [y] の整数でなければなりません。',
 	'field must be number between x and y' => 'このフィールドは [x] から [y] の数値でなければなりません。',
 	'field must be number with max x digits and y decimals' => 'このフィールドは最大 [x] 桁、うち小数点以下 [y] 桁の数値でなければなりません。',
+	'Hide DV' => '詳細ビューを非表示にする',
+	'Show DV' => '詳細ビューを表示する',
 ];

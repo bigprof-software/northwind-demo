@@ -327,7 +327,7 @@
 					<span class="glyphicon glyphicon-menu-hamburger"></span>
 				</button>
 				<!-- application title is obtained from the name besides the yellow database icon in AppGini, use underscores for spaces -->
-				<a class="navbar-brand" href="<?php echo PREPEND_PATH; ?>index.php"><i class="glyphicon glyphicon-home"></i> <?php echo APP_TITLE; ?></a>
+				<a class="navbar-brand" href="<?= PREPEND_PATH ?>index.php"><i class="glyphicon glyphicon-home"></i> <?php echo APP_TITLE; ?></a>
 				<p class="navbar-text pull-left navbar-sub-brand-separator hidden">/</p>
 				<a class="navbar-brand navbar-sub-brand title-link hidden"></a>
 			</div>
@@ -341,11 +341,11 @@
 					</div>
 					<ul class="nav navbar-nav visible-xs">
 						<div class="btn-group">
-							<a class="btn navbar-btn btn-default btn-lg signed-in-as" href="<?php echo PREPEND_PATH; ?>membership_profile.php">
+							<a class="btn navbar-btn btn-default btn-lg signed-in-as" href="<?= PREPEND_PATH ?>membership_profile.php">
 								<i class="glyphicon glyphicon-user"></i>
 								<strong class="username"><?php echo $mi['username']; ?></strong>
 							</a>
-							<a class="btn navbar-btn btn-default btn-lg" href="<?php echo PREPEND_PATH; ?>index.php?signOut=1">
+							<a class="btn navbar-btn btn-default btn-lg" href="<?= PREPEND_PATH ?>index.php?signOut=1">
 								<i class="glyphicon glyphicon-log-out"></i>
 							</a>
 						</div>
@@ -362,11 +362,11 @@
 						<a href="#" class="btn btn-default navbar-btn hidden-xs hidden-browser navbar-right hspacer-lg exit-pwa" title="<?php echo html_attr($Translation['exit']); ?>">
 							<i class="glyphicon glyphicon-remove"></i> <?php echo $Translation['exit']; ?>
 						</a>
-						<a href="<?php echo PREPEND_PATH; ?>index.php?signIn=1" class="btn btn-success navbar-btn navbar-right hidden-xs"><?php echo $Translation['sign in']; ?></a>
+						<a href="<?= PREPEND_PATH ?>index.php?signIn=1" class="btn btn-success navbar-btn navbar-right hidden-xs"><?php echo $Translation['sign in']; ?></a>
 						<p class="navbar-text navbar-right hidden-xs">
 							<?php echo $Translation['not signed in']; ?>
 						</p>
-						<a href="<?php echo PREPEND_PATH; ?>index.php?signIn=1" class="btn btn-success btn-block btn-lg navbar-btn visible-xs">
+						<a href="<?= PREPEND_PATH ?>index.php?signIn=1" class="btn btn-success btn-block btn-lg navbar-btn visible-xs">
 							<?php echo $Translation['not signed in']; ?>
 							<i class="glyphicon glyphicon-chevron-right"></i>
 							<?php echo $Translation['sign in']; ?>
@@ -378,16 +378,16 @@
 								<a href="#" class="dropdown-toggle profile-menu-icon" data-toggle="dropdown"><i class="glyphicon glyphicon-user icon"></i><span class="profile-menu-text"><?php echo $mi['username']; ?></span><b class="caret"></b></a>
 								<ul class="dropdown-menu profile-menu">
 									<li class="user-profile-menu-item" title="<?php echo html_attr($Translation['Your info']); ?>">
-										<a href="<?php echo PREPEND_PATH; ?>membership_profile.php"><i class="glyphicon glyphicon-user"></i> <?php echo $Translation['my account']; ?> <span class="label label-default username"><?php echo $mi['username']; ?></span></a>
+										<a href="<?= PREPEND_PATH ?>membership_profile.php"><i class="glyphicon glyphicon-user"></i> <?php echo $Translation['my account']; ?> <span class="label label-default username"><?php echo $mi['username']; ?></span></a>
 									</li>
 									<li class="keyboard-shortcuts-menu-item hidden-xs" title="<?php echo html_attr($Translation['keyboard shortcuts']); ?>">
 										<a href="#" class="help-shortcuts-launcher">
-											<img src="<?php echo PREPEND_PATH; ?>resources/images/keyboard.png">
+											<img src="<?= PREPEND_PATH ?>resources/images/keyboard.png">
 											<?php echo html_attr($Translation['keyboard shortcuts']); ?>
 										</a>
 									</li>
 									<li class="sign-out-menu-item" title="<?php echo html_attr($Translation['sign out']); ?>">
-										<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation['sign out']; ?></a>
+										<a href="<?= PREPEND_PATH ?>index.php?signOut=1"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation['sign out']; ?></a>
 									</li>
 									<li class="hidden-browser">
 										<a href="#" class="exit-pwa" title="<?php echo html_attr($Translation['exit']); ?>">
@@ -401,9 +401,9 @@
 							/* periodically check if user is still signed in */
 							setInterval(function() {
 								$j.ajax({
-									url: '<?php echo PREPEND_PATH; ?>ajax_check_login.php',
+									url: '<?= PREPEND_PATH ?>ajax_check_login.php',
 									success: function(username) {
-										if(!username.length) window.location = '<?php echo PREPEND_PATH; ?>index.php?signIn=1';
+										if(!username.length) window.location = '<?= PREPEND_PATH ?>index.php?signIn=1';
 									}
 								});
 							}, 60000);
@@ -413,15 +413,15 @@
 
 				<?php if(getLoggedAdmin() !== false) { ?>
 					<ul class="nav navbar-nav navbar-right">
-						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn hidden-xs btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
-						<a href="<?php echo PREPEND_PATH; ?>admin/pageHome.php" class="btn btn-danger navbar-btn visible-xs btn-lg btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
+						<a href="<?= PREPEND_PATH ?>admin/pageHome.php" class="btn btn-danger navbar-btn hidden-xs btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
+						<a href="<?= PREPEND_PATH ?>admin/pageHome.php" class="btn btn-danger navbar-btn visible-xs btn-lg btn-admin-area" title="<?php echo html_attr($Translation['admin area']); ?>"><i class="glyphicon glyphicon-cog"></i> <?php echo $Translation['admin area']; ?></a>
 					</ul>
 				<?php } ?>
 
 				<?php if(userCanImport()){ ?>
 					<ul class="nav navbar-nav navbar-right">
-						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn hidden-xs btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
-						<a href="<?php echo PREPEND_PATH; ?>import-csv.php" class="btn btn-default navbar-btn visible-xs btn-lg btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
+						<a href="<?= PREPEND_PATH ?>import-csv.php" class="btn btn-default navbar-btn hidden-xs btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
+						<a href="<?= PREPEND_PATH ?>import-csv.php" class="btn btn-default navbar-btn visible-xs btn-lg btn-import-csv" title="<?php echo html_attr($Translation['import csv file']); ?>"><i class="glyphicon glyphicon-th"></i> <?php echo $Translation['import CSV']; ?></a>
 					</ul>
 				<?php } ?>
 
@@ -1217,7 +1217,7 @@ EOT;
 		$mtime = filemtime( __DIR__ . '/dynamic.css');
 		$theme = getUserTheme();
 		$theme3d = ($theme == 'bootstrap' && BOOTSTRAP_3D_EFFECTS ? '<link rel="stylesheet" href="' . PREPEND_PATH . 'resources/initializr/css/bootstrap-theme.css">' . "\n" : '');
-		$themeRTL = rtl('<link rel="stylesheet" href="' . PREPEND_PATH . 'resources/initializr/css/rtl.css">' . "\n");
+		$themeRTL = rtl('<link rel="stylesheet" href="' . PREPEND_PATH . 'resources/initializr/css/rtl.css?' . APP_VERSION . '">' . "\n");
 
 		$css_links = <<<EOT
 

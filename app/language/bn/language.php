@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'এই ক্ষেত্রটি [x] এবং [y] বিচারে পূর্ণসংখ্যা হতে হবে,',
 	'field must be number between x and y' => 'এই ক্ষেত্রটি [x] এবং [y] এর মাঝখানে সংখ্যা হতে হবে,',
 	'field must be number with max x digits and y decimals' => 'এই ক্ষেত্রটি সর্বোচ্চ [x] অঙ্কের সংখ্যা এবং [y] দশমিক স্থানসহ হতে হবে,',
+	'Hide DV' => 'ডিটেইল ভিউ ফর্ম লুকান',
+	'Show DV' => 'ডিটেইল ভিউ ফর্ম দেখান',
 ];

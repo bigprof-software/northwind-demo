@@ -966,4 +966,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Detta fält måste vara ett heltal mellan [x] och [y].',
 	'field must be number between x and y' => 'Detta fält måste vara ett tal mellan [x] och [y].',
 	'field must be number with max x digits and y decimals' => 'Detta fält måste vara ett tal med upp till [x] siffror och upp till [y] decimaler.',
+	'Hide DV' => 'Dölj detaljvy-formulär',
+	'Show DV' => 'Visa detaljvy-formulär',
 ];

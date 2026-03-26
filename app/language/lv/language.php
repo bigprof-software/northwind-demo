@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Šim laukam jābūt vesels skaitlis starp [x] un [y].',
 	'field must be number between x and y' => 'Šim laukam jābūt skaitlim starp [x] un [y].',
 	'field must be number with max x digits and y decimals' => 'Šim laukam jābūt skaitlim ar līdz [x] cipariem un līdz [y] decimālieem.',
+	'Hide DV' => 'Paslēpt detalizētā skatījuma veidni',
+	'Show DV' => 'Rādīt detalizētā skatījuma veidni',
 ];

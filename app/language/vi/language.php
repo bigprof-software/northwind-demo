@@ -963,4 +963,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Trường này phải là số nguyên trong khoảng từ [x] đến [y].',
 	'field must be number between x and y' => 'Trường này phải là số trong khoảng từ [x] đến [y].',
 	'field must be number with max x digits and y decimals' => 'Trường này phải là số có tối đa [x] chữ số và tối đa [y] phần thập phân.' ,
+	'Hide DV' => 'Ẩn biểu mẫu xem chi tiết',
+	'Show DV' => 'Hiển thị biểu mẫu xem chi tiết',
 ];

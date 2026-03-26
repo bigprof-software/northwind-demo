@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Бұл алқап [x] пен [y] аралығында бүтін сан болуы керек.',
 	'field must be number between x and y' => 'Бұл алқап [x] пен [y] аралығында сан болуы тиіс.',
 	'field must be number with max x digits and y decimals' => 'Бұл алқап ең көп [x] цифрға дейін және ең көп [y] ондыққа дейін сан болуға тиіс.',
+	'Hide DV' => 'Деректер көрінісі формасын жасыру',
+	'Show DV' => 'Деректер көрінісі формасын көрсету',
 ];

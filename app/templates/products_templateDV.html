@@ -9,15 +9,17 @@
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
+			<button class="btn btn-default btn-lg pull-left dv-form-toggle hidden-xs" type="button" data-toggle="collapse" data-target="#products_dv_form_container" aria-expanded="true" aria-controls="products_dv_form_container" data-title="Hide DV"><i class="glyphicon glyphicon-chevron-up" style="line-height: 32px;"></i></button>
 			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="order_details_view.php?filterer_ProductID=<%%URLVALUE(ProductID)%%>&<%%EMBEDDED%%>" id="order_details_link"><img src="resources/table_icons/application_form_magnify.png"> Order Items</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="order_details_view.php?filterer_ProductID=<%%URLVALUE(ProductID)%%>&<%%EMBEDDED%%>" id="xs_order_details_link"><img src="resources/table_icons/application_form_magnify.png"> Order Items</a>
 			<input type="hidden" id="order_details_hclink" value="order_details_view.php?filterer_ProductID=<%%URLVALUE(ProductID)%%>&<%%EMBEDDED%%>">
+			<button class="btn btn-default btn-lg btn-block visible-xs dv-form-toggle" type="button" data-toggle="collapse" data-target="#products_dv_form_container" aria-expanded="true" aria-controls="products_dv_form_container"><i class="glyphicon glyphicon-chevron-up" style="line-height: 32px;"></i> <span data-translate="Hide DV"></span></button>
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<hr class="hidden-xs hidden-sm">
 
-	<div class="row">
+	<div class="row collapse in" id="products_dv_form_container">
+		<hr class="hidden-xs hidden-sm dv-form-top-border">
 		<!-- form inputs -->
 		<div class="col-md-8 col-lg-9 dv-form" id="products_dv_form" data-tablename="products">
 			<fieldset class="form-horizontal">
@@ -72,7 +74,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="UnitPrice">Unit Price</label>
 					<div class="col-lg-9">
-						<input maxlength="12" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>">
+						<input maxlength="12" type="text" class="form-control" name="UnitPrice" id="UnitPrice" value="<%%VALUE(UnitPrice)%%>" onchange="AppGini.Validation.float('UnitPrice', -9E+18, 9E+18)">
 					</div>
 				</div>
 
@@ -81,7 +83,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="UnitsInStock">Units In Stock</label>
 					<div class="col-lg-9">
-						<input maxlength="6" type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>">
+						<input maxlength="6" type="text" class="form-control" name="UnitsInStock" id="UnitsInStock" value="<%%VALUE(UnitsInStock)%%>" onchange="AppGini.Validation.integer('UnitsInStock', -32768, 32767)">
 					</div>
 				</div>
 
@@ -90,7 +92,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="UnitsOnOrder">Units On Order</label>
 					<div class="col-lg-9">
-						<input maxlength="6" type="text" class="form-control" name="UnitsOnOrder" id="UnitsOnOrder" value="<%%VALUE(UnitsOnOrder)%%>">
+						<input maxlength="6" type="text" class="form-control" name="UnitsOnOrder" id="UnitsOnOrder" value="<%%VALUE(UnitsOnOrder)%%>" onchange="AppGini.Validation.integer('UnitsOnOrder', -32768, 32767)">
 					</div>
 				</div>
 
@@ -99,7 +101,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="ReorderLevel">Reorder Level</label>
 					<div class="col-lg-9">
-						<input maxlength="6" type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>">
+						<input maxlength="6" type="text" class="form-control" name="ReorderLevel" id="ReorderLevel" value="<%%VALUE(ReorderLevel)%%>" onchange="AppGini.Validation.integer('ReorderLevel', -32768, 32767)">
 					</div>
 				</div>
 

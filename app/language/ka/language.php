@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'აღნიშნული ველი უნდა იყოს დაახლოებით მთელობით [x] და [y] შორის.',
 	'field must be number between x and y' => 'აღნიშნული ველი უნდა იყოს ციფრული [x] და [y] შორის.',
 	'field must be number with max x digits and y decimals' => 'აღნიშნული ველი უნდა იყოს რიცხვი, რომელიც შეიცავს მაქსიმუმ [x] ციფრს და [y] ათწილიანს.',
+	'Hide DV' => 'დამალე დეტალური ხედვის ფორმა',
+	'Show DV' => 'დამახასიათებელი ნახვა ფორმას',
 ];

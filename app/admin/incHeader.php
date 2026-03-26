@@ -19,21 +19,21 @@
 
 		<link id="browser_favicon" rel="shortcut icon" href="<?= PREPEND_PATH ?>resources/table_icons/administrator.png">
 
-		<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/<?= $theme ?>.css">
+		<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/<?= $theme ?>.css?<?= APP_VERSION ?>">
 		<?= $bootstrap3d ?>
 		<?php if(rtl()) { ?>
-			<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/rtl.css">
+			<link rel="stylesheet" href="<?= PREPEND_PATH ?>resources/initializr/css/rtl.css?<?= APP_VERSION ?>">
 		<?php } ?>
 		<link rel="stylesheet" href="<?= PREPEND_PATH ?>dynamic.css?<?= filemtime( __DIR__ . '/../dynamic.css') ?>">
 
 		<script src="<?= PREPEND_PATH ?>resources/jquery/js/<?= latest_jquery() ?>"></script>
 		<script>var $j = jQuery.noConflict(); var AppGini = AppGini || {};</script>
 		<?php if(QUEUE_AJAX_REQUESTS) { ?>
-			<script src="<?php echo PREPEND_PATH; ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
+			<script src="<?= PREPEND_PATH ?>resources/jquery/js/jquery.ajax.min.js?v=<?php echo APP_VERSION; ?>"></script>
 		<?php } ?>
 		<script src="toolTips.js"></script>
-		<script src="<?php echo PREPEND_PATH; ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
-		<script src="<?php echo PREPEND_PATH; ?>lang.js.php?<?php echo userLanguage() . userLanguageLastModified(); ?>"></script>
+		<script src="<?= PREPEND_PATH ?>resources/initializr/js/vendor/bootstrap.min.js"></script>
+		<script src="<?= PREPEND_PATH ?>lang.js.php?<?php echo userLanguage() . userLanguageLastModified(); ?>"></script>
 		<script>
 
 			// VALIDATION FUNCTIONS FOR VARIOUS PAGES
@@ -260,8 +260,8 @@
 				</ul>
 
 				<div class="navbar-right flip">
-					<a href="<?php echo PREPEND_PATH; ?>index.php" class="btn btn-success navbar-btn"><?php echo $Translation["user's area"] ; ?></a>
-					<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1" class="btn btn-warning navbar-btn"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation['sign out'] ; ?></a>
+					<a href="<?= PREPEND_PATH ?>index.php" class="btn btn-success navbar-btn"><?php echo $Translation["user's area"] ; ?></a>
+					<a href="<?= PREPEND_PATH ?>index.php?signOut=1" class="btn btn-warning navbar-btn"><i class="glyphicon glyphicon-log-out"></i> <?php echo $Translation['sign out'] ; ?></a>
 				</div>
 			</div>
 		</nav>
@@ -269,9 +269,9 @@
 			/* periodically check if user is still signed in */
 			setInterval(function() {
 				$j.ajax({
-					url: '<?php echo PREPEND_PATH; ?>ajax_check_login.php',
+					url: '<?= PREPEND_PATH ?>ajax_check_login.php',
 					success: function(username) {
-						if(!username.length) window.location = '<?php echo PREPEND_PATH; ?>index.php?signIn=1';
+						if(!username.length) window.location = '<?= PREPEND_PATH ?>index.php?signIn=1';
 					}
 				});
 			}, 60000);

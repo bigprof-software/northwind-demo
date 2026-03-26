@@ -963,4 +963,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Bu alan [x] ile [y] arasında bir tamsayı olmalıdır.',
 	'field must be number between x and y' => 'Bu alan [x] ile [y] arasında bir sayı olmalıdır.',
 	'field must be number with max x digits and y decimals' => 'Bu alan en fazla [x] basamaklı bir sayı olmalı ve en fazla [y] ondalık basamağa sahip olmalıdır.',
+	'Hide DV' => 'Gizle ayrıntı görünüm formunu',
+	'Show DV' => 'Ayrıntı görünüm formunu göster',
 ];

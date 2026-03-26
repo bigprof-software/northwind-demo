@@ -229,12 +229,13 @@ class VerticalNav {
 					})();
 					const navbarBottomHeight = $j('.navbar-fixed-bottom').outerHeight(true) ?? 0;
 					const stickyTop = $j('.row').eq(0).offset().top ?? 0;
+					const vertNavTopOffset = Math.max(navbarTopHeight, stickyTop);
 
 					// set the vertical nav top padding to the value of the top margin of the page header
 					const vertNavCss = {
 						'padding-top': `${headerTop}px`,
-						'min-height': `calc(100vh - ${navbarBottomHeight}px - ${navbarTopHeight}px)`,
-						height: `calc(100vh - ${navbarBottomHeight}px - ${navbarTopHeight}px)`,
+						'min-height': `calc(100vh - ${navbarBottomHeight}px - ${vertNavTopOffset}px)`,
+						height: `calc(100vh - ${navbarBottomHeight}px - ${vertNavTopOffset}px)`,
 						top: `${stickyTop}px`
 					};
 					$vertNav.css(vertNavCss);
@@ -252,7 +253,11 @@ class VerticalNav {
 						${originalBodyBgColor} calc(${navWidth}px + 2px)
 					)`});
 
-					$j('.btn-toggle-vertical-nav').css('top', `${navbarTopHeight - 10}px`);
+					$j('.btn-toggle-vertical-nav').css({
+						top: `${vertNavTopOffset - 10}px`,
+						left: !$j('body > .theme-rtl').length ? `${navWidth}px` : 'auto',
+						right: $j('body > .theme-rtl').length ? `${navWidth}px` : 'auto',
+					});
 
 					// if in rtl mode, adjust the indicator position
 					if ($j('body > .theme-rtl').length) {

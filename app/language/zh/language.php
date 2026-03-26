@@ -961,4 +961,6 @@ $Translation = [
 	'field must be integer between x and y' => '该字段必须是介于 [x] 与 [y] 之间的整数。',
 	'field must be number between x and y' => '该字段必须是介于 [x] 与 [y] 之间的数字。',
 	'field must be number with max x digits and y decimals' => '该字段为最多 [x] 位整数，含最多 [y] 位小数的数字。',
+	'Hide DV' => '隐藏详细视图表单',
+	'Show DV' => '显示详细视图表单',
 ];

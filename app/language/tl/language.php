@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Dapat na isang buong numero ang hanay na mula x hanggang y.',
 	'field must be number between x and y' => 'Dapat na isang numero ang hanay na mula x hanggang y.',
 	'field must be number with max x digits and y decimals' => 'Dapat na isang numero na may hanggang [x] na digit at hanggang [y] na decimal.',
+	'Hide DV' => 'Itago ang anyong detalyadong pananaw',
+	'Show DV' => 'Ipakita ang anyong detalyadong pananaw',
 ];

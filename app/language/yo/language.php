@@ -958,4 +958,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Aaye yi gbọdọ jẹ integer laarin [x] ati [y],',
 	'field must be number between x and y' => 'Aaye yi gbọdọ jẹ nọmba laarin [x] ati [y],',
 	'field must be number with max x digits and y decimals' => 'Aaye yi gbọdọ jẹ nọmba pẹlu to [x] nọmba dẹẹditi ati awọn ipin mẹta [y],',
+	'Hide DV' => 'Pẹtẹwọ alaye ifihan fọọmu',
+	'Show DV' => 'Fihan fọọmu wiwo alaye',
 ];

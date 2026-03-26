@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'See väli peab olema täisarv vahemikus [x] kuni [y].',
 	'field must be number between x and y' => 'See väli peab olema arv vahemikus [x] kuni [y].',
 	'field must be number with max x digits and y decimals' => 'See väli peab olema arv, mis sisaldab kuni [x] numbrit ja maksimaalselt [y] kümnendkohax.',
+	'Hide DV' => 'Peida detailvaade vorm',
+	'Show DV' => 'Kuva detailvaade vorm',
 ];

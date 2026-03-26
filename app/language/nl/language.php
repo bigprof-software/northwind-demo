@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Veld moet een geheel getal tussen [x] en [y] zijn.',
 	'field must be number between x and y' => 'Veld moet een getal tussen [x] en [y] zijn.',
 	'field must be number with max x digits and y decimals' => 'Veld moet een getal zijn met maximaal [x] cijfers en maximaal [y] decimalen.',
+	'Hide DV' => 'Detailscherm verbergen',
+	'Show DV' => 'Detailscherm weergeven',
 ];

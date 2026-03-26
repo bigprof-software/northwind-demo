@@ -961,4 +961,6 @@ $Translation = [
 	'field must be integer between x and y' => '이 필드는 [x]에서 [y] 사이의 정수여야 합니다.',
 	'field must be number between x and y' => '이 필드는 [x]에서 [y] 사이의 숫자여야 합니다.',
 	'field must be number with max x digits and y decimals' => '이 필드는 최대 [x]자리의 숫자이며 소수점 이하 [y]자리까지 허용됩니다.',
+	'Hide DV' => '세부 보기 양식 숨기기',
+	'Show DV' => '세부 보기 양식 표시하기',
 ];

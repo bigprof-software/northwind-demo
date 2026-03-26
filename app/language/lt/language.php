@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Šis laukas turi būti sveikasis skaičius tarp [x] ir [y],',
 	'field must be number between x and y' => 'Šis laukas turi būti skaičius tarp [x] ir [y],',
 	'field must be number with max x digits and y decimals' => 'Šis laukas turi būti skaičius, kurio skaitmenų skaičius yra iki [x], įskaitant iki [y] dešimtųjų dalių,',
+	'Hide DV' => 'Paslėpti detalų peržiūros formą',
+	'Show DV' => 'Rodyti detalų peržiūros formą',
 ];

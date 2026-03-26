@@ -3285,10 +3285,11 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 	 * @param array $headers  headers to send with the request, in the format ['header' => 'value']
 	 * @param string $type  request type, either 'GET' or 'POST'
 	 * @param string $cookieJar  path to a file to read/store cookies in
+	 * @param bool $skipCertVerification  whether to skip SSL certificate verification (default: false)
 	 *
 	 * @return array  response, including `'headers'` and `'body'`, or error info if request failed
 	 */
-	function httpRequest($url, $payload = [], $headers = [], $type = 'GET', $cookieJar = null) {
+	function httpRequest($url, $payload = [], $headers = [], $type = 'GET', $cookieJar = null, $skipCertVerification = false) {
 		// prep raw headers
 		if(!isset($headers['User-Agent'])) $headers['User-Agent'] = $_SERVER['HTTP_USER_AGENT'];
 		if(!isset($headers['Accept'])) $headers['Accept'] = $_SERVER['HTTP_ACCEPT'];
@@ -3317,8 +3318,8 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 			CURLOPT_RETURNTRANSFER => true,
 		];
 
-		/* if this is a localhost request, no need to verify SSL */
-		if(preg_match('/^https?:\/\/(localhost|127\.0\.0\.1)/i', $url)) {
+		/* if this is a localhost request, or explicitly skipping cert verify, no need to verify SSL */
+		if(preg_match('/^https?:\/\/(localhost|127\.0\.0\.1)/i', $url) || $skipCertVerification) {
 			$options[CURLOPT_SSL_VERIFYPEER] = false;
 			$options[CURLOPT_SSL_VERIFYHOST] = false;
 		}
@@ -3633,4 +3634,29 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		}
 
 		return $returnIfLtr === '' && $returnIfRtl === '' ? false : $returnIfLtr;
+	}
+
+	/**
+	 * Get the MIME type of a file.
+	 *
+	 * @param string $filePath The path to the file.
+	 * @return string|false The MIME type of the file, or false if the file does not exist.
+	 */
+	function getMimeType($filePath) {
+		if(!is_file($filePath)) return false;
+
+		$mimeType = 'application/octet-stream';
+		if(function_exists('finfo_open')) {
+			$finfo = finfo_open(FILEINFO_MIME_TYPE);
+			if($finfo) {
+				$detected = finfo_file($finfo, $filePath);
+				if($detected) $mimeType = $detected;
+				finfo_close($finfo);
+			}
+		} elseif(function_exists('mime_content_type')) {
+			$detected = mime_content_type($filePath);
+			if($detected) $mimeType = $detected;
+		}
+
+		return $mimeType;
 	}

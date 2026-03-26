@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Este campo debe ser un entero entre [x] y [y].',
 	'field must be number between x and y' => 'Este campo debe ser un número entre [x] y [y].',
 	'field must be number with max x digits and y decimals' => 'Este campo debe ser un número con un máximo de [x] dígitos y hasta [y] decimales.',
+	'Hide DV' => 'Ocultar formulario de vista detallada',
+	'Show DV' => 'Mostrar formulario de vista detallada',
 ];

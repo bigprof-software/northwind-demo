@@ -963,4 +963,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Tämä kenttä on oltava kokonaisluku välillä [x] ja [y].',
 	'field must be number between x and y' => 'Tämän kentän on oltava luku välillä [x] ja [y].',
 	'field must be number with max x digits and y decimals' => 'Tämän kentän on oltava luku, jossa enintään [x] numeroa ja enintään [y] desimaalia.',
+	'Hide DV' => 'Piilota yksityiskohtien näkymä -lomake',
+	'Show DV' => 'Näytä yksityiskohtien näkymä -lomake',
 ];

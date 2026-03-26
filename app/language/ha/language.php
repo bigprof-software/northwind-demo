@@ -963,4 +963,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Wannan fanni dole ne ya kasance cikakken adadi tsakanin [x] da [y].',
 	'field must be number between x and y' => 'Wannan fanni dole ne ya kasance adadi tsakanin [x] da [y].',
 	'field must be number with max x digits and y decimals' => 'Wannan fanni dole ne ya kasance adadi mai digits har zuwa [x], ciki har da digiri na y.',
+	'Hide DV' => 'Hauke duban-bayanan sirri',
+	'Show DV' => 'Nuna fom din hoto na cikakken bayani',
 ];

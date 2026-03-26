@@ -958,4 +958,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Medan ini mesti integer antara [x] dan [y].',
 	'field must be number between x and y' => 'Medan ini mesti nombor antara [x] dan [y].',
 	'field must be number with max x digits and y decimals' => 'Medan ini mesti nombor dengan maksimum [x] digit dan hingga [y] perpuluhan.',
+	'Hide DV' => 'Sembunyikan borang paparan butiran',
+	'Show DV' => 'Tampilkan borang paparan butiran',
 ];

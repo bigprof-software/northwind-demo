@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Shamba hili linapaswa kuwa nambari kamili kati ya x na y.',
 	'field must be number between x and y' => 'Shamba hili linapaswa kuwa na nambari kati ya x na y.',
 	'field must be number with max x digits and y decimals' => 'Shamba hili linapaswa kuwa na nambari yenye hadi tarakimu [x], ikiwa na msimbo wa desimali [y].',
+	'Hide DV' => 'Ficha fomu ya muonekano wa maelezo',
+	'Show DV' => 'Onyesha fomu ya muonekano wa maelezo',
 ];

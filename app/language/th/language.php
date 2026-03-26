@@ -962,4 +962,6 @@ $Translation = [
 	'field must be integer between x and y' => 'ค่าฟิลด์นี้ต้องเป็นจำนวนเต็มระหว่าง [x] และ [y]!',
 	'field must be number between x and y' => 'ค่าฟิลด์นี้ต้องเป็นจำนวนระหว่าง [x] และ [y]!',
 	'field must be number with max x digits and y decimals' => 'ค่าฟิลด์นี้ต้องเป็นตัวเลขที่มีสูงสุด [x] หลัก และมีทศนิยมได้ถึง [y] ตำแหน่ง!',
+	'Hide DV' => 'ซ่อนหน้าต่างมุมมองรายละเอียด',
+	'Show DV' => 'แสดงหน้าต่างมุมมองรายละเอียด',
 ];

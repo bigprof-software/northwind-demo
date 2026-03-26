@@ -965,4 +965,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Bidang ini harus berupa bilangan bulat antara [x] dan [y].',
 	'field must be number between x and y' => 'Bidang ini harus berupa angka antara [x] dan [y].',
 	'field must be number with max x digits and y decimals' => 'Bidang ini harus berupa angka dengan maks. [x] digit, termasuk hingga [y] desimal.',
+	'Hide DV' => 'Sembunyikan form tampilan detail',
+	'Show DV' => 'Tampilkan form tampilan detail',
 ];

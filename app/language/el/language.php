@@ -967,4 +967,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Αυτό το πεδίο πρέπει να είναι ακέραιος μεταξύ [x] και [y].',
 	'field must be number between x and y' => 'Αυτό το πεδίο πρέπει να είναι αριθμός μεταξύ [x] και [y].',
 	'field must be number with max x digits and y decimals' => 'Αυτό το πεδίο πρέπει να είναι αριθμός με έως [x] ψηφία, συμπεριλαμβανομένων έως [y] δεκαδικών θέσεων.',
+	'Hide DV' => 'Απόκρυψη μορφής λεπτομερούς προβολής',
+	'Show DV' => 'Εμφάνιση μορφής λεπτομερούς προβολής',
 ];

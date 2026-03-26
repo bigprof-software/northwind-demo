@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Ez a mező egész szám legyen [x] és [y] között.',
 	'field must be number between x and y' => 'Ez a mező szám legyen [x] és [y] között.',
 	'field must be number with max x digits and y decimals' => 'Ez a mező szám legyen legfeljebb [x] számjegyű, legfeljebb [y] tizedesjeggyel.',
+	'Hide DV' => 'Rejtse el részletes nézet űrlapját',
+	'Show DV' => 'Mutassa meg a részletes nézet űrlapját',
 ];

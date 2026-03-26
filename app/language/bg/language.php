@@ -958,4 +958,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Това поле трябва да бъде цяло число между [x] и [y].',
 	'field must be number between x and y' => 'Това поле трябва да бъде число между [x] и [y].',
 	'field must be number with max x digits and y decimals' => 'Това поле трябва да бъде число с до [x] цифри и до [y] десетични места.',
+	'Hide DV' => 'Скрий детайлния изглед на формата',
+	'Show DV' => 'Покажи детайлния изглед на формата',
 ];

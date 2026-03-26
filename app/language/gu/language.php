@@ -964,4 +964,6 @@ $Translation = [
 	'field must be integer between x and y' => 'આ ક્ષેત્ર [x] અને [y] વચ્ચે પૂર્ણાંક હોવો જોઈએ',
 	'field must be number between x and y' => 'આ ક્ષેત્ર [x] અને [y] વચ્ચે સંખ્યात्मक હોવો જોઈએ',
 	'field must be number with max x digits and y decimals' => 'આ ક્ષેત્ર [x] અંક સુધીની સંખ્યા હોવી જોઈએ અને [y] દશાંશ દીઠો જોઇએ',
+	'Hide DV' => 'ડિફોલ્ટ દૃശ്യ આડોર_HIDE<Gujarati>\',\'Show DV\' => \'ડિટેઈલ વ્યૂ ફોર્મ બતાવો',
+	'Show DV' => 'ડેટેલVIEW ફોર્મ બતાવો',
 ];

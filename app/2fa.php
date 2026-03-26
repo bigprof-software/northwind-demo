@@ -71,7 +71,7 @@ include(__DIR__ . "/header.php"); // header uses PREPEND_PATH
 					</div>
 					<button type="submit" class="btn btn-success btn-block btn-lg"><?php echo $Translation['2fa_btn_verify']; ?></button>
 					<div style="margin-top: 10px; text-align: center;">
-						<a href="<?php echo PREPEND_PATH; ?>index.php?signOut=1"><?php echo $Translation['2fa_btn_cancel']; ?></a>
+						<a href="<?= PREPEND_PATH ?>index.php?signOut=1"><?php echo $Translation['2fa_btn_cancel']; ?></a>
 					</div>
 				</form>
 			</div>

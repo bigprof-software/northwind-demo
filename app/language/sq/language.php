@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Ky fusha duhet të jetë një numër i plotë mes [x] dhe [y].',
 	'field must be number between x and y' => 'Ky fush duhet të jetë një numër midis [x] dhe [y].',
 	'field must be number with max x digits and y decimals' => 'Ky fush duhet të jetë një numër me deri në [x] shifra dhe deri në [y] vendqe pas decimalit.',
+	'Hide DV' => 'Fshij DV',
+	'Show DV' => 'Trego DV',
 ];

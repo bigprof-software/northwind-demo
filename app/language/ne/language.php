@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'यो फील्ड x र y बीच पूर्णांक हुनुपर्नेछ ।',
 	'field must be number between x and y' => 'यो फील्ड x र y बीच नम्बर हुनुपर्नेछ ।',
 	'field must be number with max x digits and y decimals' => 'यो फील्ड अधिकतम [x] अङ्कका साथ नम्बर हुनुपर्नेछ, जसमा [y] दशमलव स्थानहरू सम्म हुन्छन् ।',
+	'Hide DV' => 'गोपाउन विवरण दृश्य फर्म',
+	'Show DV' => 'देखाउन विवरण दृश्य फर्म',
 ];

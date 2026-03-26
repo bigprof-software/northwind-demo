@@ -961,4 +961,6 @@ $Translation = [
 	'field must be integer between x and y' => 'ଏହି କ୍ଷେତ୍ରଟି [x] ଥକୁ [y] ମଧ୍ୟରେ ସଂଖ୍ୟା ହେବା ଦରକାର',
 	'field must be number between x and y' => 'ଏହି କ୍ଷେତ୍ରଟି [x] ଥକୁ [y] ମଧ୍ୟରେ ସଂଖ୍ୟା ହେବା ଜରୁରୀ',
 	'field must be number with max x digits and y decimals' => 'ଏହି କ୍ଷେତ୍ରଟି [x] ର ଶେଷ ପରମାଣରେ ସମ୍ପୂର୍ଣ୍ଣ ନମ୍ବର ହେବା ଉଚିତ, ରେଡ଼ ସ୍ଥାନରେ [y] ଡ୍ଯିସିମାଲ ପଦବୀ ସହିତ',
+	'Hide DV' => 'ଡିଟେଲ୍ ଭ୍ୟୁ ଫରମ୍ କୁ ଲୁଚାଇଁ',
+	'Show DV' => 'ଡିଟେଲ୍ ଭ୍ୟୁ ଫରମ୍ କୁ ପ୍ରଦଶିତ କରନ୍ତୁ',
 ];

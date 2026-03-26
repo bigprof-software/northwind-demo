@@ -961,4 +961,6 @@ $Translation = [
 	'field must be integer between x and y' => 'ይህ መስክ ከ [x] እስከ [y] ቁጥሮች መካከል ያማካሚ መደበኛ ነው።',
 	'field must be number between x and y' => 'ይህ መስክ ከ [x] እስከ [y] ቁጥሮች መካከል የሚሆነ ቁጥር መኖረት አለበት።',
 	'field must be number with max x digits and y decimals' => 'ይህ መስክ ከ [x] ቁጥሮች የቆጠራ ብዛት እና ከ [y] ዙርተ ክንታት ያሉት ቁጥር መኖረት አለብስ።',
+	'Hide DV' => 'የዝርዝር መግለጫ ቅርጸ እቃ አውጣችሁ',
+	'Show DV' => 'የዝርዝር መግለጫ ቅርጸ እቃ ታይቷ' ,
 ];

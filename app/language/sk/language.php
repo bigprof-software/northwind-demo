@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Tento údaj musí byť celé číslo medzi [x] a [y].',
 	'field must be number between x and y' => 'Tento údaj musí byť číslo medzi [x] a [y].',
 	'field must be number with max x digits and y decimals' => 'Tento údaj musí byť číslo s najviac [x] číslicami a až [y] desatinnými miestami.',
+	'Hide DV' => 'Skryť podrobné zobrazenie',
+	'Show DV' => 'Zobraziť podrobné zobrazenie',
 ];

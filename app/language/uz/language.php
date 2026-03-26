@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Ushbu maydon [x] dan [y] gacha butun son bo\'lishi kerak.',
 	'field must be number between x and y' => 'Ushbu maydon [x] dan [y] gacha raqam bo\'lishi kerak.',
 	'field must be number with max x digits and y decimals' => 'Ushbu maydon [x] raqamdan kam yoki teng bo\'lishi, shuningdek [y] o\'nlik kasr xonasiga ega bo\'lishi kerak.',
+	'Hide DV' => 'Hide detail view form',
+	'Show DV' => 'Show detail view form',
 ];

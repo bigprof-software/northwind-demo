@@ -1,6 +1,6 @@
 var AppGini = AppGini || {};
 
-AppGini.version = 26.11;
+AppGini.version = 26.13;
 
 /* global constants */
 const NO_GEOLOCATION_THOUGH_REQUIRED = -1;
@@ -363,6 +363,8 @@ $j(function() {
 	AppGini.controlBackButtonBehavior();
 	AppGini.handleSaveFilters();
 	AppGini.handleSavedFiltersList();
+	AppGini.Translate.apply();
+	AppGini.handleToggleDV();
 });
 
 /* show/hide TV action buttons based on whether records are selected or not */
@@ -2242,7 +2244,10 @@ AppGini.Validation = {
 		const intVal = parseInt(val);
 		const self = AppGini.Validation;
 
-		if(val == '' || (intVal > min && intVal < max)) return true;
+		if(val == '' || (intVal >= min && intVal <= max)) {
+			$j(`#${name}`).parents('.form-group').removeClass('has-error').find('.help-block.error').remove();
+			return true;
+		}
 
 		// add error help block after the input if not already present
 		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
@@ -2260,7 +2265,10 @@ AppGini.Validation = {
 		const floatVal = parseFloat(val);
 		const self = AppGini.Validation;
 
-		if(val == '' || (floatVal > min && floatVal < max)) return true;
+		if(val == '' || (floatVal >= min && floatVal <= max)) {
+			$j(`#${name}`).parents('.form-group').removeClass('has-error').find('.help-block.error').remove();
+			return true;
+		}
 
 		// add error help block after the input if not already present
 		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
@@ -2281,7 +2289,10 @@ AppGini.Validation = {
 		const intVal = parseInt(val);
 		const self = AppGini.Validation;
 
-		if(val == '' || (intVal.toString().replace('-', '').length <= (digits - precision))) return true;
+		if(val == '' || (intVal.toString().replace('-', '').length <= (digits - precision))) {
+			$j(`#${name}`).parents('.form-group').removeClass('has-error').find('.help-block.error').remove();
+			return true;
+		}
 
 		// add error help block after the input if not already present
 		if(!$j(`#${name}`).parents('.form-group').find('.help-block.error').length) {
@@ -2545,15 +2556,15 @@ AppGini.showKeyboardShortcuts = (e) => {
 		`).appendTo(`#${modalId} .modal-footer`);
 }
 
-/* copy .warning colors to a separate class .highlighted-record */
+/* create css class .highlighted-record */
 AppGini.defineHighlightClass = function() {
 	if(AppGini._defineHighlightClassOk != undefined) return;
 
 	AppGini._defineHighlightClassOk = true;
-	$j('<div class="bg-warning defineHighlightClass">.</div>').appendTo('.container, .container-fluid');
-	var bgColor = $j('.bg-warning').css('background-color'), textColor = $j('.bg-warning').css('color');
+	$j('<div class="bg-info defineHighlightClass">.</div>').appendTo('.container, .container-fluid');
+	var bgColor = $j(`.defineHighlightClass`).css('background-color'), textColor = $j(`.defineHighlightClass`).css('color');
 	$j('.defineHighlightClass').remove();
-	$j('<style>.highlighted-record { background-color: ' + bgColor + ' !important; color: ' + textColor + ' !important; }</style>')
+	$j('<style>.highlighted-record { background-color: ' + bgColor + ' !important; color: ' + textColor + ' !important; a{ color: ' + textColor + ' !important; } }</style>')
 		.appendTo('.container, .container-fluid');
 }
 
@@ -4314,4 +4325,35 @@ AppGini.sanitizeString = (str) => {
 	const tempDiv = document.createElement('div');
 	tempDiv.innerHTML = str;
 	return tempDiv.textContent || tempDiv.innerText || '';
+}
+AppGini.handleToggleDV = () => {
+	// run only once
+	if(AppGini._handleToggleDVApplied != undefined) return;
+	AppGini._handleToggleDVApplied = true;
+
+	const toggle = $j('.dv-form-toggle');
+	if(!toggle.length) return;
+
+	// if parent of .dv-form-toggle has no visible buttons, hide the toggle button as well
+	let linksCheckInterval = setInterval(() => {
+		if(toggle.parent().find('a.btn:visible').length == 0) {
+			toggle.addClass('hidden');
+			$j('.dv-form-top-border').addClass('hidden');
+			clearInterval(linksCheckInterval);
+		}
+	}, 100);
+
+	toggle.on('click', (e) => {
+		// if has .collapsed class, set title to 'Show DV', else set title to 'Hide DV'
+		const toggle = $j(e.currentTarget);
+
+		// as this is triggered before the collapse action, the presence of 'collapsed' class indicates the current state, not the state after toggle
+		const isCollapsed = !toggle.hasClass('collapsed');
+
+		const title = isCollapsed ? AppGini.Translate._map['Show DV'] : AppGini.Translate._map['Hide DV'];
+		toggle.attr('title', title);
+
+		// find child span that has a data-translate attribute and set its text to the translated title
+		toggle.find('span[data-translate]').text(title);
+	});
 }

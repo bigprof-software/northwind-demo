@@ -963,4 +963,6 @@ $Translation = [
 	'field must be integer between x and y' => 'دغه ساحه باید د [x] او [y] تر منځ عدد بشپړ عدد وي',
 	'field must be number between x and y' => 'دغه ساحه باید د [x] او [y] تر منځ عدد وي',
 	'field must be number with max x digits and y decimals' => 'دغه ساحه باید تر [x] عددونو پورې عدد وي او د [y] اعشاري ځایونو پورې ویشل کیدی شي',
+	'Hide DV' => 'د تفصیل مشاهدې فارم پټ کړئ',
+	'Show DV' => 'د تفصیل مشاهدې فارم ښکاره کړئ',
 ];

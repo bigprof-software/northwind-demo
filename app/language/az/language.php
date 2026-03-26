@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Bu sahə [x] ilə [y] arasında tam ədəd olmalıdır',
 	'field must be number between x and y' => 'Bu sahə [x] ilə [y] arasında ədəd olmalıdır',
 	'field must be number with max x digits and y decimals' => 'Bu sahə ən çox [x] ədədli və ən çox [y] onluqlu ədədlərdən ibarət olmalıdır',
+	'Hide DV' => 'Detallı baxış formasını gizlə',
+	'Show DV' => 'Detallı baxış formasını göstər',
 ];

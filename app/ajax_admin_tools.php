@@ -53,7 +53,7 @@
 			ob_start();
 			?>
 
-			<div class="dropdown pull-right invisible" id="admin-tools-menu-button">
+			<div class="dropdown pull-right flip invisible" id="admin-tools-menu-button">
 				<button
 					type="button"
 					data-toggle="dropdown"

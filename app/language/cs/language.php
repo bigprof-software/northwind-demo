@@ -965,4 +965,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Tento údaj musí být celočíselný v rozmezí od [x] do [y].',
 	'field must be number between x and y' => 'Tento údaj musí být číslo v rozmezí od [x] do [y].',
 	'field must be number with max x digits and y decimals' => 'Tento údaj musí být číslo s nejvýše [x] číslicemi a až [y] desetinnými místy.',
+	'Hide DV' => 'Skryj detail view formulář',
+	'Show DV' => 'Zobraz detail view formulář',
 ];

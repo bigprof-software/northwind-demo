@@ -956,4 +956,6 @@ $Translation = [
 	'field must be integer between x and y' => 'השדה חייב להיות מספר שלם בין [x] ל-[y].',
 	'field must be number between x and y' => 'השדה חייב להיות מספר בין [x] ל-[y].',
 	'field must be number with max x digits and y decimals' => 'השדה חייב להיות מספר עם עד [x] ספרות, כולל עד [y] מקומות עשרוניים.',
+	'Hide DV' => 'הסתר תצוגת פרט',
+	'Show DV' => 'הצג תצוגת פרט',
 ];

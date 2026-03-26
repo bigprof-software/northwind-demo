@@ -957,4 +957,6 @@ $Translation = [
 	'field must be integer between x and y' => 'Ovo polje mora biti cijeli broj između [x] i [y].',
 	'field must be number between x and y' => 'Ovo polje mora biti broj između [x] i [y].',
 	'field must be number with max x digits and y decimals' => 'Ovo polje mora biti broj s najviše [x] znamenki i najviše [y] decimalnih mjesta.',
+	'Hide DV' => 'Sakrij detaljni prikaz obrasca',
+	'Show DV' => 'Prikaži detaljni prikaz obrasca',
 ];

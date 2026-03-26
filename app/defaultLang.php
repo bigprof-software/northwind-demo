@@ -1037,4 +1037,8 @@ $TranslationEn = [
 	'field must be integer between x and y' => 'This field must be an integer between [x] and [y].',
 	'field must be number between x and y' => 'This field must be a number between [x] and [y].',
 	'field must be number with max x digits and y decimals' => 'This field must be a number with up to [x] digits, including up to [y] decimal places.',
+
+	// Added in 26.13
+	'Hide DV' => 'Hide detail view form',
+	'Show DV' => 'Show detail view form',
 ];

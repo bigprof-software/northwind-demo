@@ -965,4 +965,6 @@ $Translation = [
 	'field must be integer between x and y' => 'يجب أن تكون هذه القيمة عددًا صحيحًا بين [x] و[y].',
 	'field must be number between x and y' => 'يجب أن تكون هذه القيمة عددًا بين [x] و[y].',
 	'field must be number with max x digits and y decimals' => 'يجب أن تحتوي هذه القيمة على عدد يصل إلى [x] أرقام مع تصل إلى [y] أماكن عشرية.',
+	'Hide DV' => 'إخفاء عرض التفاصيل',
+	'Show DV' => 'إظهار عرض التفاصيل',
 ];

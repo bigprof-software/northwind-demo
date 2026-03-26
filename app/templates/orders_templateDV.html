@@ -9,15 +9,17 @@
 	<!-- child links -->
 	<div class="row vspacer-md">
 		<div class="col-xs-12 children-links">
+			<button class="btn btn-default btn-lg pull-left dv-form-toggle hidden-xs" type="button" data-toggle="collapse" data-target="#orders_dv_form_container" aria-expanded="true" aria-controls="orders_dv_form_container" data-title="Hide DV"><i class="glyphicon glyphicon-chevron-up" style="line-height: 32px;"></i></button>
 			<a class="hidden-xs btn btn-default btn-lg pull-right hidden hspacer-sm vspacer-sm" href="order_details_view.php?filterer_OrderID=<%%URLVALUE(OrderID)%%>&<%%EMBEDDED%%>" id="order_details_link"><img src="resources/table_icons/application_form_magnify.png"> Order Items</a>
 			<a class="visible-xs btn btn-default btn-lg btn-block hidden vspacer-sm" href="order_details_view.php?filterer_OrderID=<%%URLVALUE(OrderID)%%>&<%%EMBEDDED%%>" id="xs_order_details_link"><img src="resources/table_icons/application_form_magnify.png"> Order Items</a>
 			<input type="hidden" id="order_details_hclink" value="order_details_view.php?filterer_OrderID=<%%URLVALUE(OrderID)%%>&<%%EMBEDDED%%>">
+			<button class="btn btn-default btn-lg btn-block visible-xs dv-form-toggle" type="button" data-toggle="collapse" data-target="#orders_dv_form_container" aria-expanded="true" aria-controls="orders_dv_form_container"><i class="glyphicon glyphicon-chevron-up" style="line-height: 32px;"></i> <span data-translate="Hide DV"></span></button>
 			<div class="clearfix"></div>
 		</div>
 	</div>
-	<hr class="hidden-xs hidden-sm">
 
-	<div class="row">
+	<div class="row collapse in" id="orders_dv_form_container">
+		<hr class="hidden-xs hidden-sm dv-form-top-border">
 		<!-- form inputs -->
 		<div class="col-md-8 col-lg-9 dv-form" id="orders_dv_form" data-tablename="orders">
 			<fieldset class="form-horizontal">
@@ -108,7 +110,7 @@
 					<hr class="hidden-md hidden-lg">
 					<label class="control-label col-lg-3" for="Freight">Freight</label>
 					<div class="col-lg-9">
-						<input maxlength="12" type="text" class="form-control" name="Freight" id="Freight" value="<%%VALUE(Freight)%%>">
+						<input maxlength="12" type="text" class="form-control" name="Freight" id="Freight" value="<%%VALUE(Freight)%%>" onchange="AppGini.Validation.float('Freight', -9E+18, 9E+18)">
 					</div>
 				</div>
 

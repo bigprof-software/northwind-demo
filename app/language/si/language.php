@@ -958,4 +958,6 @@ $Translation = [
 	'field must be number between x and y' => 'මෙම ක්ෂේත්‍රය [x] සහ [y] අතර සංඛ්‍යාවක් වීම වැදගත්ය',
 	'field must be number with max x digits and y decimals' => 'මෙම ක්ෂේත්‍රය වැඩිම වස්තුව [x] අංකයන් ගෙන [y] දශම ස්ථාන වතාවකුත් සමඟ සංඛ්‍යාවක් විය යුතුය',
 	'field must be integer between x and y' => 'මෙම බිත්තිය තුල අගයන් [x] සහ [y] අතර ඉලක්කම්වලින් ගණනය විය යුතුය',
+	'Hide DV' => 'DV ලුහුබැඳුම් පෙළ සඟවන්න පූරණය කරන්න',
+	'Show DV' => 'DV ලුහුබැඳුම් පෙළ පෙන්වන්න',
 ];

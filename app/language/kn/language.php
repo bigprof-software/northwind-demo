@@ -961,4 +961,6 @@ $Translation = [
 	'field must be integer between x and y' => 'ಈ ಕ್ಷೇತ್ರವು x ಮತ್ತು y ನಡುವಿನ ಪೂರ್ಣಾಂಕವಾಗಿರಬೇಕು, x ಮತ್ತು y ನಡುವೆ.',
 	'field must be number between x and y' => 'ಈ ಕ್ಷೇತ್ರವು x ಮತ್ತು y ನಡುವಿನ ಸಂಖ್ಯೆಯಾಗಿರಬೇಕು, ಅನುವಾದದಲ್ಲಿ.',
 	'field must be number with max x digits and y decimals' => 'ಈ ಕ್ಷೇತ್ರವು მაქ್ಸ್ x ಅಂಕಾಗಳಿಗಿಂತ ಹೆಚ್ಚಿನ ಸಂಖ್ಯೆ ಇರಬಾರದು ಮತ್ತು y ದಶಮಲವಿಲ್ಲದಿದ್ದಾರೆ.',
+	'Hide DV' => 'ವಿವರ ವೀಕ್ಷಣಾ ಫಾರ್ಮ್ ಅನ್ನು ಮರೆಮಾಡಿ',
+	'Show DV' => 'ವಿವರ ವೀಕ್ಷಣಾ ಫಾರ್ಮ್ ಅನ್ನು ತೋರಿಸಿ',
 ];
