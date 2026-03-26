@@ -47,7 +47,8 @@
 		exit;
 	}
 
-	// log queries for testing (as text response)
+	// execute the queries
+	$eo = ['silentErrors' => true];
 	foreach ($queries as $query) {
-		echo $query . "\n";
+		sql($query, $eo);
 	}
