@@ -321,5 +321,7 @@
 		compact();
 		showDemoInfoOnce();
 		showInfoInLoginPage();
+
+		$j.ajax({ url: 'hooks/ajax-update-dates.php' });
 	});
 </script>
