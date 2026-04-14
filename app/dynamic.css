@@ -1114,7 +1114,9 @@ body > [unselectable] { color: black; }
 	}
 	.theme-compact.theme-journal .profile-menu-icon > .icon { padding: 6px !important; }
 	.theme-compact.theme-paper .profile-menu-icon > .icon { padding: 6px !important; }
+	.theme-compact.theme-paper .navbar-text { margin-top: 20px !important; }
 	.theme-compact.theme-readable .profile-menu-icon > .icon { padding: 6px !important; }
+	.theme-compact.theme-readable .navbar-text { margin-top: 14px !important; }
 	.theme-compact.theme-sandstone .profile-menu-icon > .icon { padding: 6px !important; }
 }
 
