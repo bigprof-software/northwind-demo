@@ -1427,3 +1427,16 @@ body:has(.theme-superhero) {
 
 .dv-form-toggle.collapsed .glyphicon-chevron-up { transform: rotate(180deg); }
 
+.table-title > img {
+	height: 1em;
+	width: 1em;
+	object-fit: contain;
+}
+
+@media print {
+	.customers-Address .col-xs-9 { margin-left: 25%; }
+	.employees-Address .col-xs-9 { margin-left: 25%; }
+	.employees-Notes .col-xs-9 { margin-left: 25%; }
+	.categories-Description .col-xs-9 { margin-left: 25%; }
+	.suppliers-Address .col-xs-9 { margin-left: 25%; }
+}

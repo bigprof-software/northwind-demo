@@ -967,7 +967,7 @@
 						'appgini' => "VARCHAR(30) NULL",
 						'info' => [
 							'caption' => 'Contact Name',
-							'description' => '',
+							'description' => 'Name of contact person in company',
 						],
 					],
 					'ContactTitle' => [
@@ -995,7 +995,7 @@
 						'appgini' => "VARCHAR(15) NULL",
 						'info' => [
 							'caption' => 'Region',
-							'description' => '',
+							'description' => 'Provide customer\'s region here',
 						],
 					],
 					'PostalCode' => [
