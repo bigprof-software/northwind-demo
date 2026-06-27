@@ -8,9 +8,9 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			OrderID: <?php echo json_encode(['id' => $rdata['OrderID'], 'value' => $rdata['OrderID'], 'text' => $jdata['OrderID']]); ?>,
-			Category: <?php echo json_encode($jdata['Category']); ?>,
-			ProductID: <?php echo json_encode(['id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID']]); ?>
+			OrderID: <?php echo json_encode(['id' => $rdata['OrderID'], 'value' => $rdata['OrderID'], 'text' => $jdata['OrderID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			Category: <?php echo json_encode($jdata['Category'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ProductID: <?php echo json_encode(['id' => $rdata['ProductID'], 'value' => $rdata['ProductID'], 'text' => $jdata['ProductID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

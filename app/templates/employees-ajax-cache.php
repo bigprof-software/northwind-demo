@@ -8,7 +8,7 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			ReportsTo: <?php echo json_encode(['id' => $rdata['ReportsTo'], 'value' => $rdata['ReportsTo'], 'text' => $jdata['ReportsTo']]); ?>
+			ReportsTo: <?php echo json_encode(['id' => $rdata['ReportsTo'], 'value' => $rdata['ReportsTo'], 'text' => $jdata['ReportsTo']], JSON_INVALID_UTF8_SUBSTITUTE); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

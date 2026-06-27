@@ -135,7 +135,7 @@
 								$j.ajax({
 									url: 'ajax_combo.php',
 									dataType: 'json',
-									data: <?php echo json_encode(['id' => to_utf8($fltrr_val), 't' => $this->TableName, 'f' => $filterer, 'o' => 0]); ?>
+									data: <?php echo json_encode(['id' => to_utf8($fltrr_val), 't' => $this->TableName, 'f' => $filterer, 'o' => 0], JSON_INVALID_UTF8_SUBSTITUTE); ?>
 								}).done(function(resp) {
 									$j('#<?php echo $fltrr_name; ?>_display_value').html(resp.results[0].text);
 								});

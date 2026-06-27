@@ -8,15 +8,15 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			CustomerID: <?php echo json_encode(['id' => $rdata['CustomerID'], 'value' => $rdata['CustomerID'], 'text' => $jdata['CustomerID']]); ?>,
-			EmployeeID: <?php echo json_encode(['id' => $rdata['EmployeeID'], 'value' => $rdata['EmployeeID'], 'text' => $jdata['EmployeeID']]); ?>,
-			ShipVia: <?php echo json_encode(['id' => $rdata['ShipVia'], 'value' => $rdata['ShipVia'], 'text' => $jdata['ShipVia']]); ?>,
-			ShipName: <?php echo json_encode($jdata['ShipName']); ?>,
-			ShipAddress: <?php echo json_encode($jdata['ShipAddress']); ?>,
-			ShipCity: <?php echo json_encode($jdata['ShipCity']); ?>,
-			ShipRegion: <?php echo json_encode($jdata['ShipRegion']); ?>,
-			ShipPostalCode: <?php echo json_encode($jdata['ShipPostalCode']); ?>,
-			ShipCountry: <?php echo json_encode($jdata['ShipCountry']); ?>
+			CustomerID: <?php echo json_encode(['id' => $rdata['CustomerID'], 'value' => $rdata['CustomerID'], 'text' => $jdata['CustomerID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			EmployeeID: <?php echo json_encode(['id' => $rdata['EmployeeID'], 'value' => $rdata['EmployeeID'], 'text' => $jdata['EmployeeID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipVia: <?php echo json_encode(['id' => $rdata['ShipVia'], 'value' => $rdata['ShipVia'], 'text' => $jdata['ShipVia']], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipName: <?php echo json_encode($jdata['ShipName'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipAddress: <?php echo json_encode($jdata['ShipAddress'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipCity: <?php echo json_encode($jdata['ShipCity'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipRegion: <?php echo json_encode($jdata['ShipRegion'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipPostalCode: <?php echo json_encode($jdata['ShipPostalCode'], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			ShipCountry: <?php echo json_encode($jdata['ShipCountry'], JSON_INVALID_UTF8_SUBSTITUTE); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

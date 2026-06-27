@@ -8,8 +8,8 @@
 
 		/* data for selected record, or defaults if none is selected */
 		var data = {
-			SupplierID: <?php echo json_encode(['id' => $rdata['SupplierID'], 'value' => $rdata['SupplierID'], 'text' => $jdata['SupplierID']]); ?>,
-			CategoryID: <?php echo json_encode(['id' => $rdata['CategoryID'], 'value' => $rdata['CategoryID'], 'text' => $jdata['CategoryID']]); ?>
+			SupplierID: <?php echo json_encode(['id' => $rdata['SupplierID'], 'value' => $rdata['SupplierID'], 'text' => $jdata['SupplierID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>,
+			CategoryID: <?php echo json_encode(['id' => $rdata['CategoryID'], 'value' => $rdata['CategoryID'], 'text' => $jdata['CategoryID']], JSON_INVALID_UTF8_SUBSTITUTE); ?>
 		};
 
 		/* initialize or continue using AppGini.cache for the current table */

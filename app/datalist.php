@@ -1767,7 +1767,7 @@ class DataList {
 
 		ob_start(); ?>
 		<script>
-			console.log(JSON.stringify(<?php echo json_encode($arr); ?>, true, 2));
+			console.log(JSON.stringify(<?php echo json_encode($arr, JSON_INVALID_UTF8_SUBSTITUTE); ?>, true, 2));
 		</script>
 		<?php
 		$html .= ob_get_clean();

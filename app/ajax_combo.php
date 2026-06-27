@@ -394,6 +394,6 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 			'results' => $prepared_data,
 			'more' => ($res && db_num_rows($res) >= $results_per_page),
 			'elapsed' => round(microtime(true) - $start_ts, 3),
-		]);
+		], JSON_INVALID_UTF8_SUBSTITUTE);
 	}
 

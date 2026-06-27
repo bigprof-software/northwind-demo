@@ -61,7 +61,7 @@
 			?>
 			var AppGini = AppGini || {};
 
-			AppGini.config = <?php echo json_encode($jsAppConfig, JSON_PARTIAL_OUTPUT_ON_ERROR); ?>
+			AppGini.config = <?php echo json_encode($jsAppConfig, JSON_INVALID_UTF8_SUBSTITUTE); ?>
 
 			<?php if(!defined('APPGINI_SETUP')) { ?>
 				// register service worker for PWA and improve caching

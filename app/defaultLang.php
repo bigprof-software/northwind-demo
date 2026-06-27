@@ -1041,4 +1041,8 @@ $TranslationEn = [
 	// Added in 26.13
 	'Hide DV' => 'Hide detail view form',
 	'Show DV' => 'Show detail view form',
+
+	// Added in 26.14
+	'upload folder warning' => 'Upload folder access warning',
+	'upload folder not accessible' => 'The configured upload folder is not accessible to the web server. Uploaded files may fail to open in the browser. Please make sure the folder exists and its permissions allow read/execute access (for example 755 or 775): ',
 ];

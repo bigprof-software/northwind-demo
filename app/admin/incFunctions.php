@@ -967,7 +967,7 @@
 						'appgini' => "VARCHAR(30) NULL",
 						'info' => [
 							'caption' => 'Contact Name',
-							'description' => 'Name of contact person in company',
+							'description' => '',
 						],
 					],
 					'ContactTitle' => [
@@ -995,7 +995,7 @@
 						'appgini' => "VARCHAR(15) NULL",
 						'info' => [
 							'caption' => 'Region',
-							'description' => 'Provide customer\'s region here',
+							'description' => '',
 						],
 					],
 					'PostalCode' => [
@@ -3131,6 +3131,44 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		if($dir == '') $dir = config('adminConfig')['baseUploadPath'];
 
 		return rtrim($dir, '\\/') . DIRECTORY_SEPARATOR;
+	}
+	#########################################################
+	function getUploadFolderStatus($dir = '') {
+		$uploadDir = getUploadDir($dir);
+		$absolutePathPattern = '~^(?:[A-Za-z]:[\\\\/]|[\\\\/])~';
+		$path = $uploadDir;
+		if(!preg_match($absolutePathPattern, $path)) {
+			$path = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $path);
+		} else {
+			$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+		}
+		$path = rtrim($path, '\\/') . DIRECTORY_SEPARATOR;
+		$exists = is_dir($path);
+		$readable = $exists && is_readable($path);
+		$writable = false;
+
+		if($readable) {
+			$tmpFile = $path . uniqid('php_perm_', true) . '.tmp';
+			$writable = (@file_put_contents($tmpFile, 't') !== false);
+			if($writable) @unlink($tmpFile);
+		}
+
+		// if readable and writable, apply realpath
+		if($readable && $writable) {
+			$realPath = realpath($path);
+			if($realPath !== false) {
+				$path = $realPath;
+			}
+		}
+
+		return [
+			'path' => $path,
+			'exists' => $exists,
+			'readable' => $readable,
+			'writable' => $writable,
+			'executable' => $readable,
+			'usable' => $readable && $writable,
+		];
 	}
 	#########################################################
 	function bgStyleToClass($html) {
