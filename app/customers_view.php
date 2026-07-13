@@ -124,6 +124,12 @@
 	$x->TableTitle = 'Customers';
 	$x->TableIcon = 'resources/table_icons/account_balances.png';
 	$x->PrimaryKey = '`customers`.`CustomerID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'Country', 'type' => 'select2', 'label' => 'Country'],
+		['field' => 'TotalSales', 'type' => 'numeric-range', 'label' => 'Total Sales'],
+	];
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'asc';
 

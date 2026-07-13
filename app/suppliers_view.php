@@ -124,6 +124,11 @@
 	$x->TableTitle = 'Suppliers';
 	$x->TableIcon = 'resources/table_icons/car.png';
 	$x->PrimaryKey = '`suppliers`.`SupplierID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'Country', 'type' => 'select2', 'label' => 'Country'],
+	];
 	$x->DefaultSortField = '2';
 	$x->DefaultSortDirection = 'asc';
 

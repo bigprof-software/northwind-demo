@@ -124,6 +124,18 @@
 	$x->TableTitle = 'Products';
 	$x->TableIcon = 'resources/table_icons/handbag.png';
 	$x->PrimaryKey = '`products`.`ProductID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'SupplierID', 'type' => 'select2', 'label' => 'Supplier'],
+		['field' => 'CategoryID', 'type' => 'select2', 'label' => 'Category'],
+		['field' => 'UnitPrice', 'type' => 'numeric-range', 'label' => 'Unit Price'],
+		['field' => 'UnitsInStock', 'type' => 'numeric-range', 'label' => 'Units In Stock'],
+		['field' => 'UnitsOnOrder', 'type' => 'numeric-range', 'label' => 'Units On Order'],
+		['field' => 'ReorderLevel', 'type' => 'numeric-range', 'label' => 'Reorder Level'],
+		['field' => 'Discontinued', 'type' => 'checkbox', 'label' => 'Discontinued'],
+		['field' => 'TotalSales', 'type' => 'numeric-range', 'label' => 'Total Sales'],
+	];
 	$x->DefaultSortField = '2';
 	$x->DefaultSortDirection = 'asc';
 

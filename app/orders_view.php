@@ -159,6 +159,19 @@
 	$x->TableTitle = 'Orders';
 	$x->TableIcon = 'resources/table_icons/cash_register.png';
 	$x->PrimaryKey = '`orders`.`OrderID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'CustomerID', 'type' => 'select2', 'label' => 'Customer'],
+		['field' => 'EmployeeID', 'type' => 'select2', 'label' => 'Employee'],
+		['field' => 'OrderDate', 'type' => 'date-range', 'label' => 'Order Date'],
+		['field' => 'RequiredDate', 'type' => 'date-range', 'label' => 'Required Date'],
+		['field' => 'ShippedDate', 'type' => 'date-range', 'label' => 'Shipped Date'],
+		['field' => 'ShipVia', 'type' => 'select2', 'label' => 'Ship Via'],
+		['field' => 'Freight', 'type' => 'numeric-range', 'label' => 'Freight'],
+		['field' => 'added_date', 'type' => 'date-range', 'label' => 'Added date'],
+		['field' => 'Total', 'type' => 'numeric-range', 'label' => 'Total'],
+	];
 	$x->DefaultSortField = '1';
 	$x->DefaultSortDirection = 'desc';
 

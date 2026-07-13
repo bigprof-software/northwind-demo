@@ -967,7 +967,7 @@
 						'appgini' => "VARCHAR(30) NULL",
 						'info' => [
 							'caption' => 'Contact Name',
-							'description' => '',
+							'description' => 'Name of contact person in company',
 						],
 					],
 					'ContactTitle' => [
@@ -995,7 +995,7 @@
 						'appgini' => "VARCHAR(15) NULL",
 						'info' => [
 							'caption' => 'Region',
-							'description' => '',
+							'description' => 'Provide customer\'s region here',
 						],
 					],
 					'PostalCode' => [
@@ -2998,71 +2998,233 @@
 	}
 	#########################################################
 	function lookupQuery($tn, $lookupField) {
-		/*
-			This is the query accessible from the 'Advanced' window under the 'Lookup field' tab in AppGini.
-			For auto-fill lookups, this is the same as the query of the main lookup field, except the second
-			column is replaced by the caption of the auto-fill lookup field.
-		*/
-		$lookupQuery = [
-			'customers' => [
-			],
-			'employees' => [
-				'ReportsTo' => 'SELECT `employees`.`EmployeeID`, IF(CHAR_LENGTH(`employees`.`LastName`) || CHAR_LENGTH(`employees`.`FirstName`), CONCAT_WS(\'\', `employees`.`LastName`, \', \', `employees`.`FirstName`), \'\') FROM `employees` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`employees`.`ReportsTo` ORDER BY 2',
-			],
-			'orders' => [
-				'CustomerID' => 'SELECT `customers`.`CustomerID`, `customers`.`CompanyName` FROM `customers` ORDER BY 2',
-				'EmployeeID' => 'SELECT `employees`.`EmployeeID`, IF(CHAR_LENGTH(`employees`.`LastName`) || CHAR_LENGTH(`employees`.`FirstName`), CONCAT_WS(\'\', `employees`.`LastName`, \', \', `employees`.`FirstName`), \'\') FROM `employees` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`employees`.`ReportsTo` ORDER BY 2',
-				'ShipVia' => 'SELECT `shippers`.`ShipperID`, `shippers`.`CompanyName` FROM `shippers` ORDER BY 2',
-				'ShipName' => 'SELECT `customers`.`CustomerID`, `customers`.`CompanyName` FROM `customers` ORDER BY 2',
-				'ShipAddress' => 'SELECT `customers`.`CustomerID`, `customers`.`Address` FROM `customers` ORDER BY 2',
-				'ShipCity' => 'SELECT `customers`.`CustomerID`, `customers`.`City` FROM `customers` ORDER BY 2',
-				'ShipRegion' => 'SELECT `customers`.`CustomerID`, `customers`.`Region` FROM `customers` ORDER BY 2',
-				'ShipPostalCode' => 'SELECT `customers`.`CustomerID`, `customers`.`PostalCode` FROM `customers` ORDER BY 2',
-				'ShipCountry' => 'SELECT `customers`.`CustomerID`, `customers`.`Country` FROM `customers` ORDER BY 2',
-			],
-			'order_details' => [
-				'OrderID' => 'SELECT `orders`.`OrderID`, `orders`.`OrderID` FROM `orders` LEFT JOIN `customers` as customers1 ON `customers1`.`CustomerID`=`orders`.`CustomerID` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`orders`.`EmployeeID` LEFT JOIN `shippers` as shippers1 ON `shippers1`.`ShipperID`=`orders`.`ShipVia` ORDER BY 2',
-				'Category' => 'SELECT `products`.`ProductID`, IF(CHAR_LENGTH(`products`.`CategoryID`) || CHAR_LENGTH(`products`.`SupplierID`), CONCAT_WS(\'\', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS(\'\',   `categories1`.`CategoryName`), \'\'), \' / \', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS(\'\',   `suppliers1`.`CompanyName`), \'\')), \'\') FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ORDER BY 2',
-				'ProductID' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` 
-WHERE COALESCE(`products`.`Discontinued`, 0) != 1
- ORDER BY 2',
-			],
-			'products' => [
-				'SupplierID' => 'SELECT `suppliers`.`SupplierID`, `suppliers`.`CompanyName` FROM `suppliers` ORDER BY 2',
-				'CategoryID' => 'SELECT `categories`.`CategoryID`, `categories`.`CategoryName` FROM `categories` ORDER BY 2',
-			],
-			'categories' => [
-			],
-			'suppliers' => [
-			],
-			'shippers' => [
-			],
-		];
+		$lookupsConfig = get_lookups();
 
-		return $lookupQuery[$tn][$lookupField];
+		if(!isset($lookupsConfig[$tn][$lookupField])) return null;
+
+		$cfg = $lookupsConfig[$tn][$lookupField];
+
+		return "SELECT `{$cfg['parent_table']}`.`{$cfg['parent_pk_field']}`, {$cfg['parent_caption']}"
+			. " FROM {$cfg['parent_from']}"
+			. " ORDER BY 2";
 	}
 
 	#########################################################
+	function get_lookups() {
+		/*
+			Returns the lookup field configurations for all tables.
+			Single source of truth for lookup field definitions
+			(parent table, pk field, caption expression, FROM clause,
+			filterers, list type, etc.).
+		*/
+		static $lookups = null;
+		if($lookups === null) {
+			$lookups = [
+		'customers' => [
+		],
+		'employees' => [
+			'ReportsTo' => [
+				'parent_table' => 'employees',
+				'parent_pk_field' => 'EmployeeID',
+				'parent_caption' => 'IF(CHAR_LENGTH(`employees`.`LastName`) || CHAR_LENGTH(`employees`.`FirstName`), CONCAT_WS(\'\', `employees`.`LastName`, \', \', `employees`.`FirstName`), \'\')',
+				'parent_from' => '`employees` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`employees`.`ReportsTo` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 2,
+				'not_null' => false,
+			],
+		],
+		'orders' => [
+			'CustomerID' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`CompanyName`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'EmployeeID' => [
+				'parent_table' => 'employees',
+				'parent_pk_field' => 'EmployeeID',
+				'parent_caption' => 'IF(CHAR_LENGTH(`employees`.`LastName`) || CHAR_LENGTH(`employees`.`FirstName`), CONCAT_WS(\'\', `employees`.`LastName`, \', \', `employees`.`FirstName`), \'\')',
+				'parent_from' => '`employees` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`employees`.`ReportsTo` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipVia' => [
+				'parent_table' => 'shippers',
+				'parent_pk_field' => 'ShipperID',
+				'parent_caption' => '`shippers`.`CompanyName`',
+				'parent_from' => '`shippers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipName' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`CompanyName`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipAddress' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`Address`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipCity' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`City`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipRegion' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`Region`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipPostalCode' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`PostalCode`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ShipCountry' => [
+				'parent_table' => 'customers',
+				'parent_pk_field' => 'CustomerID',
+				'parent_caption' => '`customers`.`Country`',
+				'parent_from' => '`customers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+		],
+		'order_details' => [
+			'OrderID' => [
+				'parent_table' => 'orders',
+				'parent_pk_field' => 'OrderID',
+				'parent_caption' => '`orders`.`OrderID`',
+				'parent_from' => '`orders` LEFT JOIN `customers` as customers1 ON `customers1`.`CustomerID`=`orders`.`CustomerID` LEFT JOIN `employees` as employees1 ON `employees1`.`EmployeeID`=`orders`.`EmployeeID` LEFT JOIN `shippers` as shippers1 ON `shippers1`.`ShipperID`=`orders`.`ShipVia` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'Category' => [
+				'parent_table' => 'products',
+				'parent_pk_field' => 'ProductID',
+				'parent_caption' => 'IF(CHAR_LENGTH(`products`.`CategoryID`) || CHAR_LENGTH(`products`.`SupplierID`), CONCAT_WS(\'\', IF(    CHAR_LENGTH(`categories1`.`CategoryName`), CONCAT_WS(\'\',   `categories1`.`CategoryName`), \'\'), \' / \', IF(    CHAR_LENGTH(`suppliers1`.`CompanyName`), CONCAT_WS(\'\',   `suppliers1`.`CompanyName`), \'\')), \'\')',
+				'parent_from' => '`products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'ProductID' => [
+				'parent_table' => 'products',
+				'parent_pk_field' => 'ProductID',
+				'parent_caption' => '`products`.`ProductName`',
+				'parent_from' => '`products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` ',
+				'filterers' => [],
+				'custom_query' => 'SELECT `products`.`ProductID`, `products`.`ProductName` FROM `products` LEFT JOIN `suppliers` as suppliers1 ON `suppliers1`.`SupplierID`=`products`.`SupplierID` LEFT JOIN `categories` as categories1 ON `categories1`.`CategoryID`=`products`.`CategoryID` 
+WHERE COALESCE(`products`.`Discontinued`, 0) != 1
+ ORDER BY 2',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+		],
+		'products' => [
+			'SupplierID' => [
+				'parent_table' => 'suppliers',
+				'parent_pk_field' => 'SupplierID',
+				'parent_caption' => '`suppliers`.`CompanyName`',
+				'parent_from' => '`suppliers` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+			'CategoryID' => [
+				'parent_table' => 'categories',
+				'parent_pk_field' => 'CategoryID',
+				'parent_caption' => '`categories`.`CategoryName`',
+				'parent_from' => '`categories` ',
+				'filterers' => [],
+				'custom_query' => '',
+				'inherit_permissions' => false,
+				'list_type' => 0,
+				'not_null' => false,
+			],
+		],
+		'categories' => [
+		],
+		'suppliers' => [
+		],
+		'shippers' => [
+		],
+			];
+		}
+		return $lookups;
+	}
 	function pkGivenLookupText($val, $tn, $lookupField, $falseIfNotFound = false) {
 		static $cache = [];
 		if(isset($cache[$tn][$lookupField][$val])) return $cache[$tn][$lookupField][$val];
 
-		if(!$lookupQuery = lookupQuery($tn, $lookupField)) {
+		$lookupsConfig = get_lookups();
+
+		if(!isset($lookupsConfig[$tn][$lookupField])) {
 			$cache[$tn][$lookupField][$val] = false;
 			return false;
 		}
 
-		$m = [];
+		$cfg = $lookupsConfig[$tn][$lookupField];
 
-		// quit if query can't be parsed
-		if(!preg_match('/select\s+(.*?),\s+(.*?)\s+from\s+(.*)/i', $lookupQuery, $m)) {
-			$cache[$tn][$lookupField][$val] = false;
-			return false;
-		}
+		$pkField = "`{$cfg['parent_table']}`.`{$cfg['parent_pk_field']}`";
+		$captionExpr = $cfg['parent_caption'];
+		$from = preg_replace('/\s+order\s+by.*$/i', '', $cfg['parent_from']);
 
-		list($all, $pkField, $lookupField, $from) = $m;
-		$from = preg_replace('/\s+order\s+by.*$/i', '', $from);
-		if(!$lookupField || !$from) {
+		if(!$captionExpr || !$from) {
 			$cache[$tn][$lookupField][$val] = false;
 			return false;
 		}
@@ -3071,7 +3233,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		if(!preg_match('/\s+where\s+/i', $from)) $from .= ' WHERE 1=1 AND';
 
 		$safeVal = makeSafe($val);
-		$id = sqlValue("SELECT {$pkField} FROM {$from} {$lookupField}='{$safeVal}'");
+		$id = sqlValue("SELECT {$pkField} FROM {$from} {$captionExpr}='{$safeVal}'");
 		if($id !== false) {
 			$cache[$tn][$lookupField][$val] = $id;
 			return $id;
@@ -3195,7 +3357,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 		$data = [];
 
 		$user = makeSafe(getMemberInfo()['username']);
-		if(!$user) return false;
+		if(!$user || Authentication::isGuest()) return false;
 
 		$dataJson = sqlValue("SELECT `data` FROM `membership_users` WHERE `memberID`='$user'");
 		if($dataJson) {
@@ -3214,7 +3376,7 @@ WHERE COALESCE(`products`.`Discontinued`, 0) != 1
 	#########################################################
 	function getUserData($key) {
 		$user = makeSafe(getMemberInfo()['username']);
-		if(!$user) return null;
+		if(!$user || Authentication::isGuest()) return null;
 
 		$dataJson = sqlValue("SELECT `data` FROM `membership_users` WHERE `memberID`='$user'");
 		if(!$dataJson) return null;

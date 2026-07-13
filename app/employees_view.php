@@ -155,6 +155,16 @@
 	$x->TableTitle = 'Employees';
 	$x->TableIcon = 'resources/table_icons/administrator.png';
 	$x->PrimaryKey = '`employees`.`EmployeeID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'BirthDate', 'type' => 'date-range', 'label' => 'Birth Date'],
+		['field' => 'HireDate', 'type' => 'date-range', 'label' => 'Hire Date'],
+		['field' => 'Country', 'type' => 'select2', 'label' => 'Country'],
+		['field' => 'ReportsTo', 'type' => 'select2', 'label' => 'ReportsTo'],
+		['field' => 'Age', 'type' => 'numeric-range', 'label' => 'Age'],
+		['field' => 'TotalSales', 'type' => 'numeric-range', 'label' => 'Total Sales'],
+	];
 	$x->DefaultSortField = '4';
 	$x->DefaultSortDirection = 'asc';
 

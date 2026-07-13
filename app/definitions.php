@@ -16,7 +16,7 @@
 	@define('TIMEZONE', 'America/New_York');
 
 	@define('datalist_db_encoding', 'UTF-8');
-	@define('FILTER_GROUPS', 20); // maximum number of filters groups
+	@define('FILTER_GROUPS', 40); // maximum number of filters groups (40: 1-20 for filters page, 21-30 reserved, 31-40 for panel)
 	@define('datalist_filters_count', FILTER_GROUPS); // for backward compatibility
 	@define('FILTERS_PER_GROUP', 4); // changing this value might lead to unexpected behavior as it has not been tested with other values
 	@define('MAX_FILTER_LINKS_PER_USER', 100); // maximum number of saved filter links per user
@@ -56,7 +56,7 @@
 	@define('HOMEPAGE_TABLES_PER_ROW', 4);
 	@define('HOMEPAGE_PANEL_HEIGHT', 100);
 	@define('HOMEPAGE_QUICK_SEARCH_TABLES', true); // if true, the quick search box on homepage will search in user tables
-	@define('DEFAULT_NAV_MENU', 'horizontal');
+	@define('DEFAULT_NAV_MENU', 'vertical');
 
 	// default backup and restore commands, can be overridden in admin settings > Application tab
 	@define('DB_BACKUP_COMMAND', 'mysqldump -y -e --no-autocommit -q --single-transaction');

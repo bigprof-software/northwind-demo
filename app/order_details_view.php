@@ -104,6 +104,16 @@
 	$x->TableTitle = 'Order Items';
 	$x->TableIcon = 'resources/table_icons/application_form_magnify.png';
 	$x->PrimaryKey = '`order_details`.`odID`';
+
+	// Filters panel
+	$x->filtersPanel = [
+		['field' => 'OrderID', 'type' => 'select2', 'label' => 'Order ID'],
+		['field' => 'ProductID', 'type' => 'select2', 'label' => 'Product'],
+		['field' => 'UnitPrice', 'type' => 'numeric-range', 'label' => 'Unit Price'],
+		['field' => 'Quantity', 'type' => 'numeric-range', 'label' => 'Quantity'],
+		['field' => 'Discount', 'type' => 'numeric-range', 'label' => 'Discount'],
+		['field' => 'Subtotal', 'type' => 'numeric-range', 'label' => 'Subtotal'],
+	];
 	$x->DefaultSortField = '2';
 	$x->DefaultSortDirection = 'asc';
 

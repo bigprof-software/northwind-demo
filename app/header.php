@@ -95,6 +95,8 @@
 
 			<?php echo VerticalNav::html(); ?>
 
+			<?php echo FiltersPanel::html(); ?>
+
 			<div class="main-content">
 
 				<?php echo WindowMessages::getHtml(); ?>
